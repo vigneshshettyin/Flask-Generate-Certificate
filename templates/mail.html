@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block body %}
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Send Mails</h1>
+                    <!-- Content Row -->
+                    <div class="row">
+
+                        <div class="col-xl-8 col-lg-7">
+
+                            <!-- Mailing area -->
+                            <div class="card shadow mb-4" style="width: 90%;">
+                                <div class="card-header py-3">
+                                    {% with messages = get_flashed_messages(with_categories=true) %}
+                          {% if messages %}
+                          {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message}}</div>
+
+                        {% endfor %}
+                       {% endif %}
+                      {% endwith %}
+                                </div>
+                                <div class="card-body">
+                                    <form action="/view/mail" method="post">
+                                        <div class="form-group">
+                                            <div class="form-group" style="width: 70%;">
+                                          <label for="exampleInputPassword1">Name</label>
+                                          <input type="text" name="name" class="form-control" id="exampleInputtext" required>
+                                        </div>
+                                            <div class="input-group mb-3" style="width: 70%;">
+                                                <input type="text" name="username" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2" required>
+                                                <div class="input-group-append">
+                                                  <span class="input-group-text" id="basic-addon2">@cgv.in.net</span>
+                                                </div>
+                                            </div>
+                                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                        </div>
+                                        <div class="form-group" style="width: 70%;">
+                                          <label for="exampleInputPassword1">Receiver Email </label>
+                                          <input type="text" name="toemail" class="form-control" id="exampleInputtext" required>
+                                        </div>
+                                        <div class="form-group" style="width: 70%;">
+                                          <label for="exampleInputPassword1">Subject</label>
+                                          <input type="text" name="subject" class="form-control" id="exampleInputtext" required>
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                             <textarea id="summernote" name="editordata" required></textarea>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                      </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+{% endblock %}

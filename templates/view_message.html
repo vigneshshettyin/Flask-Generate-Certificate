@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <form>
+  <div class="form-group">
+    <textarea id="summernote" name="editordata" required>{{post.message}}</textarea>
+  </div>
+</form>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+            {% endblock %}

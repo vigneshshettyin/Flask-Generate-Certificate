@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+{% block body %}
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                <div style="padding: 5px">
+
+                </div>
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                          {% if messages %}
+                          {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                         {{ message}}
+                        </div>
+                        {% endfor %}
+                       {% endif %}
+                      {% endwith %}
+                        <div class="card-header py-3">
+                         <a href="/edit/users/0" class="btn btn-success btn-icon-split">
+                                        <span class="icon text-white-50">
+                                           <i class="fa fa-plus" aria-hidden="true"></i>
+                                        </span>
+                                        <span class="text">Add User</span>
+                  </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Status</th>
+                                            <th>Activate / Deactivate</th>
+                                            <th>Date</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+{#                                    Start loop#}
+{% for post in post %}
+                                        <tr>
+                                            <td>{{ post.id}}</td>
+                                            <td>{{ post.name}}</td>
+                                            <td>{{ post.email }}</td>
+                                            <td>{{ post.status }}</td>
+                                            <td><a href="/activate/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
+                                            <td>{{ post.lastlogin }}</td>
+                                            <td><a href="/edit/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-edit"></i></a></td>
+                                            <td><a href="/delete/users/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
+                                        </tr>
+
+{#                                    end loop#}
+{% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+            {% endblock %}

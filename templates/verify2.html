@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <title>{{ postc.name }} : {{ json["favTitle"] }}</title>
+  <meta name="title" content="CGV : Online Certificate Verification System">
+	<meta name="description" content="A Startup Company based in India, that offers Full-Stack Web Development, User Interface Design, etc at a very reasonable cost. Contact us at contact@vigneshshetty.in">
+  <meta charset="utf-8">
+       <!-- Favicons -->
+  <link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
+  <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro&display=swap" rel="stylesheet">
+
+  <style>
+
+    body{
+      font-family: 'Source Serif Pro', serif;
+      background: linear-gradient(to bottom, #66ffff 0%, #99ff99 100%);
+      height: 100%;
+      margin: 0;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    .des_logo{
+      font-size: 30px;
+      padding-top: 30px;
+      text-align: center;
+    }
+
+    .footer{
+      font-size: 16px;
+      padding-top: 120px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <br>
+  <div class="row">
+
+{#      <img class="img-responsive center-block" src="images/logo.png" alt="" height="80" width="80">#}
+
+      <p class="des_logo">India’s largest Online Verification Network</p>
+      <p class="text-center lead">Online Certificate Verification</p>
+
+  <br><br><br><br><br>
+
+  <div class="text-center">
+
+    <div class="col-sm-3">
+
+
+    </div>
+
+    <div class="col-sm-6">
+
+        <form class="form-inline" action="/certificate/verify" method="post">
+    <div class="form-group">
+    <input type="text" class="form-control input-lg" name="certificateno" placeholder="Certificate Number" value="{{ postc.number }}" required>
+    </div>
+    &nbsp;&nbsp;
+    <button type="submit" name="submit" class="btn btn-primary btn-lg">View</button>
+
+            <br>
+            <br>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                          {% if messages %}
+                          {% for category, message in messages %}
+                        <div style="padding-top: 20px" class="alert alert-{{ category }}" role="alert">
+                        <h4> {{ message}}</h4>
+                        </div>
+                        {% endfor %}
+                       {% endif %}
+                      {% endwith %}
+  </form>
+
+    </div>
+
+    <div class="col-sm-3">
+
+
+    </div>
+
+  </div>
+
+  <br><br><br><br>
+
+<div class="row">
+<div class="col-sm-12">
+    <p></p>
+    <p></p>
+  </div>
+</div>
+<div class="row">
+   <div class="col align-self-center">
+
+          <table class="table table-bordered table-hover" style="font-family: 'Ubuntu', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif; font-size: 20px; overflow: scroll">
+  <tbody>
+    <tr>
+      <th scope="row">Name</th>
+      <td>{{ postc.name }}</td>
+
+    </tr>
+    <tr>
+      <th scope="row">Course Name</th>
+      <td>{{ postc.coursename }}</td>
+    </tr>
+  <tr>
+      <th scope="row">Organization</th>
+      <td>{{ posto.name }}</td>
+    </tr>
+  <tr>
+      <th scope="row">Date of Certification</th>
+      <td>{{ postc.dateupdate[:11:] }}</td>
+    </tr>
+  </tbody>
+</table>
+
+      </div></div>
+
+<p class="text-center footer"> Online Certificate Verification System <br> Powered by - <a style="text-decoration:none;" href="https://cgv.in.net/">CGV</a>
+<br> IP Address : 43.247.157.20</p>
+</div>
+</div>
+</body>
+
+</html>

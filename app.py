@@ -103,7 +103,6 @@ class Feedback(db.Model):
 x = datetime.now()
 time = x.strftime("%c")
 # ip_address = "43.247.157.20";
-ipc = request.environ['HTTP_X_FORWARDED_FOR']
 # ipc = "43.247.157.20"
 
 # @app.route('/test')
@@ -199,7 +198,7 @@ def contact_page():
         message = request.form.get('editordata')
         # ip_address = "43.247.157.20";
         # TODO: Comment above line when website is live on web
-        ip_address = ipc
+        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
         # ip_address = "XX.XXX.XXX.XX"
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
@@ -221,7 +220,7 @@ def feedback_page():
         message = request.form.get('message')
         # ip_address = "43.247.157.20";
         # TODO: Comment above line when website is live on web
-        ip_address = ipc
+        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
         # ip_address = "XX.XXX.XXX.XX"
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
@@ -239,7 +238,7 @@ def newsletter_page():
         email = request.form.get('email')
         # ip_address = "43.247.157.20";
         # TODO: Comment above line when website is live on web
-        ip_address = ipc
+        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
         # ip_address = "XX.XXX.XXX.XX"
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
@@ -257,7 +256,7 @@ def newsletter_page():
 
 @app.route("/certificate/verify", methods=['GET', 'POST'])
 def certificate_verify():
-    ip_address = ipc
+    ip_address = request.environ['HTTP_X_FORWARDED_FOR']
     # ip_address = "43.247.157.20";
     if(request.method=='POST'):
         certificateno = request.form.get('certificateno')
@@ -273,7 +272,7 @@ def certificate_verify():
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])
 def certificate_generate():
-    ip_address = ipc
+    ip_address = request.environ['HTTP_X_FORWARDED_FOR']
     # ip_address = "43.247.157.20";
     if(request.method=='POST'):
         certificateno = request.form.get('certificateno')
@@ -318,7 +317,7 @@ def loginPage():
             updateloginTime = Users.query.filter_by(email=email).first()
             updateloginTime.lastlogin = time
             db.session.commit()
-            ip_address = ipc
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
             url = requests.get("http://ip-api.com/json/{}".format(ip_address))
             j = url.json()
             city = j["city"]

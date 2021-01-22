@@ -306,6 +306,7 @@ def certificate_generated_string(number):
 @app.route('/login', methods = ['GET', 'POST'])
 def loginPage():
     # TODO: Check for active session
+    ipc=request.environ['HTTP_X_FORWARDED_FOR']
     if current_user.is_authenticated:
         return redirect(url_for('dashboard_page'))
     if (request.method == 'POST'):

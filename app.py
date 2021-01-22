@@ -103,15 +103,15 @@ class Feedback(db.Model):
 x = datetime.now()
 time = x.strftime("%c")
 # ip_address = "43.247.157.20";
-# ipc = request.environ['HTTP_X_FORWARDED_FOR']
-ipc = "43.247.157.20"
+ipc = request.environ['HTTP_X_FORWARDED_FOR']
+# ipc = "43.247.157.20"
 
-@app.route('/test')
-def test_page():
-    entry = Organization(name="Vignesh Shetty", email='vigneshshetty.in@gmail.com', subname="Backend Technologies", phone="6362490109", date=time)
-    db.session.add(entry)
-    db.session.commit()
-    return redirect(url_for('loginPage'))
+# @app.route('/test')
+# def test_page():
+#     entry = Organization(name="Vignesh Shetty", email='vigneshshetty.in@gmail.com', subname="Backend Technologies", phone="6362490109", date=time)
+#     db.session.add(entry)
+#     db.session.commit()
+#     return redirect(url_for('loginPage'))
 
 @app.route('/forgot', methods = ['GET', 'POST'])
 def forgot_password_page():
@@ -374,7 +374,7 @@ def register_page():
             password = sha256_crypt.hash(password)
             response = Users.query.filter_by(email=email).first()
             if(response==None):
-                entry = Users(name=name, email=email, password=password,lastlogin=time, createddate=time, status=1, orgid=1)
+                entry = Users(name=name, email=email, password=password,lastlogin=time, createddate=time, status=0, orgid=1)
                 db.session.add(entry)
                 db.session.commit()
                 flash("Now contact your organization head for account activation!", "success")

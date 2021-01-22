@@ -106,12 +106,12 @@ time = x.strftime("%c")
 # ipc = request.environ['HTTP_X_FORWARDED_FOR']
 ipc = "43.247.157.20"
 
-# @app.route('/test')
-# def test_page():
-#     entry = Organization( id= 0, name="NA", email='NA@gmail.com', subname="NA", phone="NA", date=time)
-#     db.session.add(entry)
-#     db.session.commit()
-#     return render_template('index.html', json=json)
+@app.route('/test')
+def test_page():
+    entry = Organization(name="Vignesh Shetty", email='vigneshshetty.in@gmail.com', subname="Backend Technologies", phone="6362490109", date=time)
+    db.session.add(entry)
+    db.session.commit()
+    return redirect(url_for('loginPage'))
 
 @app.route('/forgot', methods = ['GET', 'POST'])
 def forgot_password_page():

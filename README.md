@@ -1,5 +1,6 @@
 # Flask-Generate-Certificate
 🚀Database Management System Mini Project Online Certificate Generation Verification. Includes backend dashboard can also perform CRUD operations via dashboard.
+<br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)
 [![Forks](https://img.shields.io/github/forks/vigneshshettyin/Online-Certificate-Generation-Verification.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/network/members)

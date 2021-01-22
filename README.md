@@ -75,7 +75,7 @@ This project is licensed under the MPL-2.0 License. See the [LICENSE](./LICENSE)
 ## For the Future 
 If you can help us with these. Please don't hesitate to open a [Pull Request](https://github.com/vigneshshettyin/Flask-Generate-Certificate/pulls).
 
-## Cool Developers🚧
+## Cool Developer🚧
 
 <table>
   <tr>

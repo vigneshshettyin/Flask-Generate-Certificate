@@ -57,7 +57,7 @@ We highly recommend to read through the:<br>
 
 </td><td valign="top" width="50%">
 
-[![MAC](http://img.youtube.com/vi/Ys2iFw8Bypk/0.jpg)](http://www.youtube.com/watch?v=Ys2iFw8Bypk"MAC DEMO")
+[![MAC](http://img.youtube.com/vi/Ys2iFw8Bypk/0.jpg)](http://www.youtube.com/watch?v=Ys2iFw8Bypk "MAC DEMO")
 
 </td></tr></table>  
 

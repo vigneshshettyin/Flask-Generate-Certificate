@@ -182,7 +182,7 @@ def mail_page():
             except Exception as e:
                 print("Error")
                 flash("Error while sending mail!", "danger")
-        return render_template('mail.html', json=json)
+        return render_template('mail.html', json=json, c_user_name= current_user.name)
 
 
 @app.route('/')

@@ -6,12 +6,7 @@ from password_generator import PasswordGenerator
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from datetime import datetime
-import json, requests, psycopg2, random, string
-
-
-#TODO: LOCK USER SECTION
-#TODO: LOCK ORGANIZATION SECTION
-
+import json, requests, psycopg2, random, string, pytz
 
 with open('import.json', 'r') as c:
     json = json.load(c)["jsondata"]
@@ -23,12 +18,10 @@ app.secret_key = "jdjsdjJJJJjhi*(%#@-CGV-PORTAL-VERIFY-@)(&$%wer387jjhdsujs28729
 app.config['SQLALCHEMY_DATABASE_URI'] = json['databaseUri']
 db = SQLAlchemy(app)
 
-#use LoginManager to provide login functionality and do some initial confg
 login_manager = LoginManager(app)
 login_manager.login_view = 'loginPage'
 login_manager.login_message_category = 'info'
 
-#function to load the currently active user
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(user_id)
@@ -100,10 +93,11 @@ class Feedback(db.Model):
     city = db.Column(db.String(20), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
-x = datetime.now()
+IST = pytz.timezone('Asia/Kolkata')
+x = datetime.now(IST)
 time = x.strftime("%c")
-# ip_address = "43.247.157.20";
-# ipc = "43.247.157.20"
+host=False;
+ipc = "43.247.157.20";
 
 # @app.route('/test')
 # def test_page():
@@ -140,9 +134,6 @@ def forgot_password_page():
                     sg = SendGridAPIClient(json['sendgridapi'])
                     response = sg.send(message)
                     flash("You will receive a mail shortly. Password rested successfully!", "success")
-                    # print(response.status_code)
-                    # print(response.body)
-                    # print(response.headers)
                 except Exception as e:
                     print(e.message)
         elif(post==None):
@@ -196,10 +187,10 @@ def contact_page():
         email = request.form.get('email')
         phone = request.form.get('phone')
         message = request.form.get('editordata')
-        # ip_address = "43.247.157.20";
-        # TODO: Comment above line when website is live on web
-        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-        # ip_address = "XX.XXX.XXX.XX"
+        if(host==True):
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        else:
+            ip_address = ipc;
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
         city = j["city"]
@@ -218,10 +209,10 @@ def feedback_page():
         phone = request.form.get('phone')
         rating = request.form.get('rating')
         message = request.form.get('message')
-        # ip_address = "43.247.157.20";
-        # TODO: Comment above line when website is live on web
-        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-        # ip_address = "XX.XXX.XXX.XX"
+        if (host == True):
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        else:
+            ip_address = ipc;
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
         city = j["city"]
@@ -236,10 +227,10 @@ def feedback_page():
 def newsletter_page():
     if (request.method == 'POST'):
         email = request.form.get('email')
-        # ip_address = "43.247.157.20";
-        # TODO: Comment above line when website is live on web
-        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-        # ip_address = "XX.XXX.XXX.XX"
+        if (host == True):
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        else:
+            ip_address = ipc;
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
         city = j["city"]
@@ -256,8 +247,10 @@ def newsletter_page():
 
 @app.route("/certificate/verify", methods=['GET', 'POST'])
 def certificate_verify():
-    ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-    # ip_address = "43.247.157.20";
+    if (host == True):
+        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+    else:
+        ip_address = ipc;
     if(request.method=='POST'):
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
@@ -272,8 +265,10 @@ def certificate_verify():
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])
 def certificate_generate():
-    ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-    # ip_address = "43.247.157.20";
+    if (host == True):
+        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+    else:
+        ip_address = ipc;
     if(request.method=='POST'):
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
@@ -306,7 +301,6 @@ def certificate_generated_string(number):
 @app.route('/login', methods = ['GET', 'POST'])
 def loginPage():
     # TODO: Check for active session
-    ipc=request.environ['HTTP_X_FORWARDED_FOR']
     if current_user.is_authenticated:
         return redirect(url_for('dashboard_page'))
     if (request.method == 'POST'):
@@ -318,13 +312,16 @@ def loginPage():
             updateloginTime = Users.query.filter_by(email=email).first()
             updateloginTime.lastlogin = time
             db.session.commit()
-            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            if (host == True):
+                ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            else:
+                ip_address = ipc;
             url = requests.get("http://ip-api.com/json/{}".format(ip_address))
             j = url.json()
             city = j["city"]
             country = j["country"]
             html_text1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Login Alert</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">Is that you?</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">We noticed you logged in to your CGV account from a new device and a new location.</p> <br><div style="background:#f6f7f8;border-radius:3px"> <br> City : '''
-            html_final = html_text1 + str(city) + '''<br><br> Country : '''+ str(country)+'''<br><br>Time : '''+str(time)+'''<br><br>IP : '''+str(ipc)
+            html_final = html_text1 + str(city) + '''<br><br> Country : '''+ str(country)+'''<br><br>Time : '''+str(time)+'''<br><br>IP : '''+str(ip_address)
             html_text2 = '''<br><p>Tip: To keep your account secured, please contact us to update your email id. Ignore if it’s already updated.</p></div><br><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
             html_final = html_final + html_text2
             subject = " New device login from "+str(city)+", "+str(country)+" detected."
@@ -336,22 +333,12 @@ def loginPage():
             try:
                 sg = SendGridAPIClient(json['sendgridapi'])
                 responsemail = sg.send(message)
-                # flash("Email sent successfully!", "success")
-                # print(response.status_code)
-                # print(response.body)
-                # print(response.headers)
             except Exception as e:
-                print("Error")
-            # TODO:Invoke new session
-            # log the user in using login_user
+                print(e)
             login_user(response, remember=remember)
-            # go to the page that the user tried to access if exists
-            # otherwise go to the dash page
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('dashboard_page'))
-        # TODO:Add a invalid login credentials message using flash
         else:
-            # if (response == None or (sha256_crypt.verify(password, response.password) != 1)):
             flash("Invalid credentials or account not activated!", "danger")
             return render_template('login.html', json=json)
     else:

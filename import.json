@@ -4,10 +4,10 @@
   "favDescription": "",
   "copyrightMessage": "CGV",
   "devImgName": "",
-  "databaseUri": "#",
-    "sendgridapi": "#",
-    "admin_email": "#",
-    "site_url": "#",
-    "pdfapi": "#"
+  "databaseUri": "postgres://anhpfnbyvsaida:a5a817bd94f1c2f9f0df5748cb616a61dd1c9af0a7c4c30b5de4ae467e689b89@ec2-54-172-17-119.compute-1.amazonaws.com:5432/dacrjocgeg8030",
+    "sendgridapi": "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",
+    "admin_email": "vigneshshetty.in@gmail.com",
+    "site_url": "cgvcertify.herokuapp.com",
+    "pdfapi": "07e0db571881c459800418a17ff3a36a"
 }
 }

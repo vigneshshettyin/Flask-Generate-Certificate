@@ -93,8 +93,8 @@ class Feedback(db.Model):
 IST = pytz.timezone('Asia/Kolkata')
 x = datetime.now(IST)
 time = x.strftime("%c")
-host=False;
-ipc = "43.247.157.20";
+host=json["host_status"]
+ipc = json["demo_ip"]
 
 # @app.route('/test')
 # def test_page():

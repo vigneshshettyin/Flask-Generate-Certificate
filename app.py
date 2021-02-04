@@ -11,7 +11,6 @@ import json, requests, psycopg2, random, string, pytz
 with open('import.json', 'r') as c:
     json = json.load(c)["jsondata"]
 
-
 app = Flask(__name__)
 
 app.secret_key = "jdjsdjJJJJjhi*(%#@-CGV-PORTAL-VERIFY-@)(&$%wer387jjhdsujs28729&&*(*&"
@@ -60,7 +59,6 @@ class Certificate(db.Model):
     orgid = db.Column(db.Integer, db.ForeignKey('organization.id'))
     userid = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-
 class Newsletter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
@@ -68,7 +66,6 @@ class Newsletter(db.Model):
     country = db.Column(db.String(50), nullable=False)
     city = db.Column(db.String(50), nullable=False)
     date = db.Column(db.String(50), nullable=False)
-
 
 class Contact(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -142,9 +139,6 @@ def forgot_password_page():
 
     return render_template('forgot-password.html', json=json)
 
-
-
-
 @app.route('/view/mail', methods = ['GET', 'POST'])
 @login_required
 def mail_page():
@@ -167,14 +161,10 @@ def mail_page():
                 sg = SendGridAPIClient(json['sendgridapi'])
                 response = sg.send(message)
                 flash("Email sent successfully!", "success")
-                # print(response.status_code)
-                # print(response.body)
-                # print(response.headers)
             except Exception as e:
                 print("Error")
                 flash("Error while sending mail!", "danger")
         return render_template('mail.html', json=json, c_user_name= current_user.name)
-
 
 @app.route('/')
 def home_page():
@@ -262,7 +252,6 @@ def certificate_verify():
             flash("No details found. Contact your organization!", "danger")
     return render_template('verify.html', json=json, ip=ip_address)
 
-
 @app.route("/certificate/generate", methods=['GET', 'POST'])
 def certificate_generate():
     if (host == True):
@@ -344,7 +333,6 @@ def loginPage():
     else:
         return render_template('login.html', json=json)
 
-# sha256_crypt.encrypt()
 @app.route('/register',methods = ['GET', 'POST'])
 def register_page():
     if current_user.is_authenticated:
@@ -377,10 +365,6 @@ def register_page():
                 try:
                     sg = SendGridAPIClient(json['sendgridapi'])
                     response = sg.send(message)
-                    # flash('Email Sent Successfully!', success)
-                    # print(response.status_code)
-                    # print(response.body)
-                    # print(response.headers)
                 except Exception as e:
                     print("Error!")
                     flash("Error while sending mail!", "danger")
@@ -389,8 +373,6 @@ def register_page():
                 return render_template('register.html', json=json)
 
     return render_template('register.html', json=json)
-
-
 
 @app.route('/dashboard')
 @login_required
@@ -401,15 +383,11 @@ def dashboard_page():
         postn=len(Newsletter.query.order_by(Newsletter.id).all())
         return render_template('dashboard.html', json=json, postc=postc, postct=postct, postf=postf, postn=postn, c_user_name= current_user.name)
 
-
-
 @app.route("/view/org", methods = ['GET', 'POST'])
 @login_required
 def view_org_page():
         post=Organization.query.order_by(Organization.id).all()
         return render_template('org_table.html', post=post, json=json, c_user_name= current_user.name)
-
-
 
 @app.route("/view/users", methods = ['GET', 'POST'])
 @login_required
@@ -419,7 +397,6 @@ def view_users_page():
             return render_template('users_table.html', post=post, json=json, c_user_name= current_user.name)
         else:
             return render_template('block.html',json=json, c_user_name= current_user.name)
-
 
 @app.route("/view/certificates", methods = ['GET', 'POST'])
 @login_required
@@ -484,10 +461,6 @@ def edit_certificates_page(id):
                         try:
                             sg = SendGridAPIClient(json['sendgridapi'])
                             response = sg.send(message)
-                            # flash('Email Sent Successfully!', success)
-                            # print(response.status_code)
-                            # print(response.body)
-                            # print(response.headers)
                         except Exception as e:
                             print("Error!")
                             flash("Error while sending mail!", "danger")
@@ -539,10 +512,6 @@ def edit_users_page(id):
                         try:
                             sg = SendGridAPIClient(json['sendgridapi'])
                             response = sg.send(message)
-                            # flash('Email Sent Successfully!', success)
-                            # print(response.status_code)
-                            # print(response.body)
-                            # print(response.headers)
                         except Exception as e:
                             print("Error!")
                             flash("Error while sending mail!", "danger")
@@ -611,13 +580,8 @@ def edit_org_page(id):
                     try:
                         sg = SendGridAPIClient(json['sendgridapi'])
                         response = sg.send(message)
-                        # flash('Email Sent Successfully!', success)
-                        # print(response.status_code)
-                        # print(response.body)
-                        # print(response.headers)
                     except Exception as e:
                         print(e.message)
-                    # flash('Error!', danger)
                 else:
                     post = Organization.query.filter_by(id=id).first()
                     if(post.email==json["admin_email"]):
@@ -695,18 +659,15 @@ def delete_newsletter_page(id):
         flash("Newsletter response deleted successfully!", "success")
         return redirect('/view/newsletters')
 
-#logout route
 @app.route('/logout')
 @login_required
 def logout():
-    #log the user out using logout_user, flash a msg and go to the login page
     logout_user()
     flash('Logged Out Successfully!', 'success')
     return redirect(url_for('loginPage'))
 
 @app.errorhandler(404)
 def page_not_found(e):
-    # note that we set the 404 status explicitly
     return render_template('404.html'), 404
 
 if __name__ == '__main__':

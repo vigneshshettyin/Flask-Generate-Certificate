@@ -79,7 +79,7 @@ If you can help us with these. Please don't hesitate to open a [Pull Request](ht
 
 <table>
   <tr>
-    <td align="center"><a href="https://www.linkedin.com/in/vigneshshettyin/"><img src="https://avatars3.githubusercontent.com/u/61915786?s=460&u=75ed488de9581ae3cfe3aa6515e404314308dfbe&v=4" width="100px;" alt=""/><br /><sub><b>Vignesh Shetty</b></sub></a></td>
+    <td align="center"><a href="https://www.linkedin.com/in/vigneshshettyin/"><img src="https://avatars.githubusercontent.com/u/77713888?s=460&u=28a461a4ae6826d8daa5074823b7753a0385e2fa&v=4" width="100px;" alt=""/><br /><sub><b>Vignesh Shetty</b></sub></a></td>
   </tr>
 </table>
 

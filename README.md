@@ -39,16 +39,15 @@ Click Here to view the deployment!
  
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://cgvcertify.herokuapp.com/)
 <br>
-Demo Login Credentials
-<br>
-Email: me@vigneshshetty.in
-<br>
-Password : demo
 <br>
 When you are done with the setup, you should host your website online.
 We highly recommend to read through the:<br>
 - [Deploying on Heroku](https://stackabuse.com/deploying-a-flask-application-to-heroku/).<br>
-
+- [Deploying on AWS](https://www.serverless.com/blog/flask-python-rest-api-serverless-lambda-dynamodb).<br>
+- [Deploying on AWS](https://www.serverless.com/blog/flask-python-rest-api-serverless-lambda-dynamodb).<br>
+- [Deploying on Azure](https://medium.com/@nikovrdoljak/deploy-your-flask-app-on-azure-in-3-easy-steps-b2fe388a589e).<br>
+- [Deploying on Google Cloud](https://medium.com/@dmahugh_70618/deploying-a-flask-app-to-google-app-engine-faa883b5ffab).<br>
+- [Deploying on Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-app-using-gunicorn-to-app-platform).<br>
 
 ## Mockup & Demo 🛠️
 

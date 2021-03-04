@@ -7,6 +7,7 @@
 [![Stargazers](https://img.shields.io/github/stars/vigneshshettyin/Flask-Generate-Certificate.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificater/stargazers)
 [![Issues](https://img.shields.io/github/issues/vigneshshettyin/Flask-Generate-Certificate.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)
 [![MPL-2.0 License](https://img.shields.io/github/license/vigneshshettyin/Flask-Generate-Certificate.svg?style=flat-square)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/master/LICENSE)
+[![CodeFactor](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate/badge)](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate)
 
 Feel free to use it as-is or customize it as much as you want.
 

@@ -4,12 +4,12 @@
   "favDescription": "",
   "copyrightMessage": "CGV",
   "devImgName": "",
-  "databaseUri": "@",
-    "sendgridapi": "@",
+  "databaseUri": "sqlite:///cgv.db",
+    "sendgridapi": "#",
     "admin_email": "vigneshshetty.in@gmail.com",
     "site_url": "cgvcertify.herokuapp.com",
-    "pdfapi": "@",
-    "host_status": "True",
+    "pdfapi": "#",
+    "host_status": "False",
     "demo_ip": "43.247.157.20"
 }
 }

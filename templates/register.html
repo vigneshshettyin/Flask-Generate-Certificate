@@ -26,7 +26,6 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin-2.css') }}" rel="stylesheet">
-
 </head>
 
 <body class="bg-gradient-primary">
@@ -60,6 +59,7 @@
                                 <div class="form-group">
                                     <input type="email" name="email" class="form-control form-control-user" id="exampleInputEmail"
                                         placeholder="Email Address" required>
+                                    <div class="emailFeedBackArea invalid-feedback" style="display:none"></div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
@@ -71,7 +71,10 @@
                                             id="exampleRepeatPassword" placeholder="Repeat Password" required>
                                     </div>
                                 </div>
-                                <input type="submit" class="btn btn-primary btn-user btn-block">
+                                <div class="row col-md-12">
+                                    <div class="passwordFeedBackArea invalid-feedback" style="display:none"></div>
+                                </div>
+                                <input type="submit" id="registerBtn" class="btn btn-primary btn-user btn-block">
                                 <hr>
                                 <a href="#" class="btn btn-google btn-user btn-block">
                                     <i class="fab fa-google fa-fw"></i> Register with Google
@@ -104,6 +107,7 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+    <script src="{{url_for('static', filename='js/register.js') }}"></script>
 
 </body>
 

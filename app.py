@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, flash, url_for
+from flask import Flask, render_template, redirect, request, flash, url_for, jsonify
 from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import sha256_crypt
@@ -6,10 +6,12 @@ from password_generator import PasswordGenerator
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from datetime import datetime
-import json, requests, psycopg2, random, string, pytz
+import json as json_lib
+import requests, psycopg2, random, string, pytz, re
 
 with open('import.json', 'r') as c:
-    json = json.load(c)["jsondata"]
+    json = json_lib.load(c)["jsondata"]
+
 
 app = Flask(__name__)
 
@@ -332,6 +334,29 @@ def loginPage():
             return render_template('login.html', json=json)
     else:
         return render_template('login.html', json=json)
+
+@app.route('/validate/email', methods=['POST'])
+def email_validation():
+    data = json_lib.loads(request.data)
+    email = data['email']
+    pattern = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    if Users.query.filter_by(email=email).first():
+        return jsonify(email_error = 'You are already registered. Please login to continue.', status=409)
+    elif not bool(re.match(pattern,email)):
+        return jsonify(email_error = 'Please enter a valid email address.')
+    return jsonify(email_valid= True)
+
+
+@app.route('/validate/password', methods=['POST'])
+def validate_password():
+    data = json_lib.loads(request.data)
+    password = data["password"]
+    pattern = '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[$#@!%^&*()])(?=\S+$).{8,30}$'
+    if bool(re.match(pattern, password)):
+        return jsonify(password_valid = True)
+    else:
+        return jsonify(password_error='Password must be 8-30 characters long and must contain atleast one uppercase letter, one lowercase letter, one number(0-9) and one special character(@,#,$,%,&,_)')    
+
 
 @app.route('/register',methods = ['GET', 'POST'])
 def register_page():

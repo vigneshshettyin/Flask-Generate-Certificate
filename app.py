@@ -355,8 +355,18 @@ def validate_password():
     if bool(re.match(pattern, password)):
         return jsonify(password_valid = True)
     else:
-        return jsonify(password_error='Password must be 8-30 characters long and must contain atleast one uppercase letter, one lowercase letter, one number(0-9) and one special character(@,#,$,%,&,_)')    
+        return jsonify(password_error='Password must be 8-30 characters long and must contain atleast one uppercase letter, one lowercase letter, one number(0-9) and one special character(@,#,$,%,&,_)')  
 
+
+@app.route('/match/passwords', methods = ["POST"])
+def match_passwords():
+    data = json_lib.loads(request.data)
+    password1 = data['password']
+    password2 = data['password2']
+    if str(password1) == str(password2):
+        return jsonify(password_match = True)
+    else:
+        return jsonify(password_mismatch= 'Password and Confirm Password do not match.')
 
 @app.route('/register',methods = ['GET', 'POST'])
 def register_page():
@@ -366,37 +376,28 @@ def register_page():
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
-        password2 = request.form.get('password2')
-        if(password!=password2):
-            flash("Password unmatched!", "danger")
-            return render_template('register.html', json=json)
-        else:
-            password = sha256_crypt.hash(password)
-            response = Users.query.filter_by(email=email).first()
-            if(response==None):
-                entry = Users(name=name, email=email, password=password,lastlogin=time, createddate=time, status=0, orgid=1)
-                db.session.add(entry)
-                db.session.commit()
-                flash("Now contact your organization head for account activation!", "success")
-                subject = "Welcome aboard " + name + "!"
-                content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, '''+str(name)+'''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Now contact your organization head for your account activation. Once activated click on link below to login.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
-                content2 = json["site_url"]+'''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-                content = content1 +content2
-                message = Mail(
-                    from_email=('register-user@cgv.in.net', 'Register Bot CGV'),
-                    to_emails=email,
-                    subject=subject,
-                    html_content=content)
-                try:
-                    sg = SendGridAPIClient(json['sendgridapi'])
-                    response = sg.send(message)
-                except Exception as e:
-                    print("Error!")
-                    flash("Error while sending mail!", "danger")
-            else:
-                flash("User exist!", "danger")
-                return render_template('register.html', json=json)
-
+        
+        password = sha256_crypt.hash(password)
+        
+        entry = Users(name=name, email=email, password=password,lastlogin=time,createddate=time, status=0, orgid=1)
+        db.session.add(entry)
+        db.session.commit()
+        flash("Now contact your organization head for account activation!", "success")
+        subject = "Welcome aboard " + name + "!"
+        content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, '''+str(name)+'''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Now contact your organization head for your account activation. Once activated click on link below to login.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
+        content2 = json["site_url"]+'''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+        content = content1 +content2
+        message = Mail(
+            from_email=('register-user@cgv.in.net', 'Register Bot CGV'),
+            to_emails=email,
+            subject=subject,
+            html_content=content)
+        try:
+            sg = SendGridAPIClient(json['sendgridapi'])
+            response = sg.send(message)
+        except Exception as e:
+            print("Error!")
+            flash("Error while sending mail!", "danger")
     return render_template('register.html', json=json)
 
 @app.route('/dashboard')

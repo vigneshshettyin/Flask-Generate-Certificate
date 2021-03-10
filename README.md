@@ -29,7 +29,7 @@ $ git clone https://github.com/vigneshshettyin/Flask-Generate-Certificate.git
 $ cd Flask-Generate-Certificate
 
 # Install Requirements
-$ pip3 install requirements.txt
+$ pip install -r requirements.txt
 
 #Start development server
  http://127.0.0.1

@@ -29,7 +29,7 @@ $ git clone https://github.com/vigneshshettyin/Flask-Generate-Certificate.git
 $ cd Flask-Generate-Certificate
 
 # Install Requirements
-$ pip3 install requirements.txt
+$ pip install -r requirements.txt
 
 #Start development server
  http://127.0.0.1
@@ -64,6 +64,12 @@ We highly recommend to read through the:<br>
 
 ## Illustrations
 - [UnDraw](https://undraw.co/illustrations)
+
+
+## Open Source Events Project is associated with:
+<img align="right" src="static\images\events.png" width = "100" height = "80"><b>GirlScript Summer of Code</b>
+
+- GirlScript Summer of Code is the 3 month long Open Source program  conducted by GirlScript Foundation, started in 2018, with an aim to help beginners get started with Open Source Development while encouraging diversity.
 
 ## License 📄
 

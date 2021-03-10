@@ -367,8 +367,7 @@ def razorpay_handler():
         db.session.add(new_txn)
         db.session.commit()
         return jsonify(success= True)
-    else:
-        return jsonify(success=False)
+    return jsonify(success=False)
 
 @app.route("/payment-failure/", methods=["GET", "POST"])
 def failed_payment():

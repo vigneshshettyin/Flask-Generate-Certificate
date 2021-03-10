@@ -1,15 +1,17 @@
 {
   "jsondata": {
-  "favTitle": "CGV : Largest Online Verification Network",
-  "favDescription": "",
-  "copyrightMessage": "CGV",
-  "devImgName": "",
-  "databaseUri": "@",
+    "favTitle": "CGV : Largest Online Verification Network",
+    "favDescription": "",
+    "copyrightMessage": "CGV",
+    "devImgName": "",
+    "databaseUri": "@",
     "sendgridapi": "@",
     "admin_email": "vigneshshetty.in@gmail.com",
     "site_url": "cgvcertify.herokuapp.com",
     "pdfapi": "@",
     "host_status": "True",
-    "demo_ip": "43.247.157.20"
-}
+    "demo_ip": "43.247.157.20",
+    "razorpay_key_id": "@",
+    "razorpay_key_secret": "@"
+  }
 }

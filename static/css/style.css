@@ -1180,6 +1180,30 @@ section {
   background: #D68423;
 }
 
+
+.payButton {
+	background-color:#F9A826;
+	border-radius:28px;
+	border:1px solid #ffaa22;
+	display:inline-block;
+	cursor:pointer;
+	color: white;
+	font-family:Trebuchet MS;
+	font-size:17px;
+	font-weight:bold;
+	padding:16px 36px;
+	text-decoration:none;
+}
+.payButton:hover {
+	background-color:#D68423;
+  color: white;
+}
+.payButton:active {
+	position:relative;
+	top:1px;
+}
+
+
 /* Frequently Asked Questions Section
 --------------------------------*/
 #faq {

@@ -7,7 +7,11 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from datetime import datetime
 import json as json_lib
-import requests, psycopg2, random, string, pytz, re
+import requests
+import random 
+import string 
+import pytz
+import re
 
 with open('import.json', 'r') as c:
     json = json_lib.load(c)["jsondata"]
@@ -340,10 +344,11 @@ def email_validation():
     data = json_lib.loads(request.data)
     email = data['email']
     pattern = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+
     if Users.query.filter_by(email=email).first():
         return jsonify(email_error = 'You are already registered. Please login to continue.', status=409)
-    elif not bool(re.match(pattern,email)):
-        return jsonify(email_error = 'Please enter a valid email address.')
+    if not bool(re.match(pattern, email)):
+        return jsonify(email_error='Please enter a valid email address.')
     return jsonify(email_valid= True)
 
 
@@ -354,8 +359,7 @@ def validate_password():
     pattern = '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[$#@!%^&*()])(?=\S+$).{8,30}$'
     if bool(re.match(pattern, password)):
         return jsonify(password_valid = True)
-    else:
-        return jsonify(password_error='Password must be 8-30 characters long and must contain atleast one uppercase letter, one lowercase letter, one number(0-9) and one special character(@,#,$,%,&,_)')  
+    return jsonify(password_error='Password must be 8-30 characters long and must contain atleast one uppercase letter, one lowercase letter, one number(0-9) and one special character(@,#,$,%,&,_)')  
 
 
 @app.route('/match/passwords', methods = ["POST"])
@@ -365,8 +369,7 @@ def match_passwords():
     password2 = data['password2']
     if str(password1) == str(password2):
         return jsonify(password_match = True)
-    else:
-        return jsonify(password_mismatch= 'Password and Confirm Password do not match.')
+    return jsonify(password_mismatch= 'Password and Confirm Password do not match.')
 
 @app.route('/register',methods = ['GET', 'POST'])
 def register_page():

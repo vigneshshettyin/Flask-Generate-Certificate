@@ -418,7 +418,7 @@
                   <li class="list-group-item">No Subdomain</li>
                   <li class="list-group-item">Only email support</li>
                 </ul>
-                <form style="background-color: white" ><script src="https://checkout.razorpay.com/v1/payment-button.js" data-payment_button_id="pl_FlfTuoRM1odogw"> </script> </form>
+                <a href="#" class="payButton" data-toggle="modal" data-dismiss="modal" id="basic">Pay</a>
               </div>
             </div>
           </div>
@@ -440,7 +440,7 @@
                   <li class="list-group-item">24/7 Support System</li>
                 </ul>
                 <!-- <a href="#" class="btn">Choose Plan</a> -->
-                <form style="background-color: white" ><script src="https://checkout.razorpay.com/v1/payment-button.js" data-payment_button_id="pl_FlfZ71eojFfS7K"> </script> </form>
+                <a href="#" class="payButton" data-toggle="modal" data-dismiss="modal" id="regular">Pay</a>
               </div>
             </div>
           </div>
@@ -452,7 +452,7 @@
                 <h3><span class="currency">₹</span>300<span class="period">/month</span></h3>
               </div>
               <div class="card-block">
-                <h4 class="card-title">
+                <h4 class="card-title" >
                   Premium Plan
                 </h4>
                 <ul class="list-group">
@@ -461,7 +461,7 @@
                   <li class="list-group-item">Private Domain</li>
                   <li class="list-group-item">24/7 Support System</li>
                 </ul>
-                <form style="background-color: white" ><script src="https://checkout.razorpay.com/v1/payment-button.js" data-payment_button_id="pl_FlfdPPBTmttPRs"> </script> </form>
+                <a href="#" class="payButton" data-toggle="modal" data-dismiss="modal" id="premium">Pay</a>
               </div>
             </div>
           </div>
@@ -470,6 +470,46 @@
       </div>
 
     </section><!-- End Pricing Section -->
+
+    <!-- Pay Modal Start -->
+    <div class="modal fade" id="modalPayment" tabindex="-1" style="margin-top: 170px;" role="dialog" aria-labelledby="modalPaymentLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalPaymentLabel"><strong>Payment Information</strong></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form">
+          <form action="/pay" id="paymentForm" aria-label="" method="post" role="form" >
+            <div class="form-group">
+              <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" required/>
+            </div>
+            <div class="form-group">
+              <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" required/>
+            </div>
+            <div class="form-group">
+              <input type="phone" class="form-control" name="phone" id="phone" placeholder="Phone" data-rule="minlen:4" required/>
+            </div>
+            <div class="form-group">
+              <label for="plan">Plan Name</label>
+              <input type="text" name="plan" class="form-control" id="plan" placeholder="Your Plan" required readonly/>
+            </div>
+
+            <div class="text-center mt-3">
+              <button style="background-color: #F9A826;" class="btn btn-primary" type="submit" title="Pay with Razorpay" id="cnfPay">Pay with Razorpay</button>
+            </div>
+            
+          </form>
+  
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Pay Modal End -->
 
     <section id="projectdemo" class="pricing section-bg wow fadeInUp">
 
@@ -551,4 +591,5 @@
   </div>
 </div>
 <!-- End Feedback  -->
+
 {% endblock %}

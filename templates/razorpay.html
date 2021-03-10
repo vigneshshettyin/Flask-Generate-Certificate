@@ -1,0 +1,123 @@
+
+<link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+<div class="container mt-5 pt-5" style="min-height:90vh;">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+    var options = {
+        "key": "{{context.rzp_id}}", // Enter the Key ID generated from the Dashboard
+        "amount": "{{context.payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "{{context.currency}}",
+        "name": "CGV",
+        "description": "Plan Transaction",
+        "image": "{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}",
+        "order_id": "{{context.payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "handler": function (response){
+            $.ajax({
+                url:  "/razorpay-handler/",
+              type: 'POST',
+              data: {
+                server_order: '{{context.payment.id}}',
+                payment_id: response.razorpay_payment_id,
+                order_id: response.razorpay_order_id,
+                sign: response.razorpay_signature,
+                name: '{{context.name}}',
+                phone: '{{context.phone}}',
+                email: '{{context.email}}',
+                amount: "{{context.payment.amount}}",
+                currency: "{{context.currency}}",
+              },
+              success: function(data){
+                  var v = data;
+                  if (data.success == true){
+                      Swal.fire({
+                        icon: 'success',
+                        title: 'Hurray...!',
+                        text: 'Payment Success!',
+                        footer: '<a href="/">Return to Homepage</a>'
+                        });
+                  }
+                  else{
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                        footer: '<a href="/">Return to Homepage</a>'
+                        });
+
+                  }
+              },
+            });
+        },
+        "modal": {
+            "ondismiss": function(){
+                console.log('Checkout form closed');
+                window.location.replace('/');
+        }
+    },
+        "prefill": {
+            "name": "{{context.name}}",
+            "email": "{{context.email}}",
+            "contact": "{{context.phone}}"
+        },
+        "notes": {
+            "address": "Mangalore, Karnataka, India"
+        },
+        "theme": {
+            "color": "#F9A826"
+        }
+
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+        $.ajax({
+            url:  "/payment-failure/",
+          type: 'POST',
+          data: {
+            server_order: '{{context.payment.id}}',
+            payment_id: response.error.metadata.payment_id,
+            order_id: response.error.metadata.order_id,
+            reason: response.error.reason,
+            step: response.error.step,
+            source: response.error.source,
+            description: response.error.description,
+            code: response.error.code,
+            name: '{{context.name}}',
+            phone: '{{context.phone}}',
+            email: '{{context.email}}',
+            amount: "{{context.payment.amount}}",
+            currency: "{{context.currency}}",
+          },
+          success: function(data){
+              var v = data;
+              if (data.success == true){
+                  Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Payment failed',
+                        footer: '<a href="/">Return to Homepage</a>'
+                        });
+              }
+              else{
+                  Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Payment was unsuccessful!',
+                        footer: '<a href="/">Return to Registration Page</a>'
+                        });
+              }
+          },
+        });
+    });
+    window.addEventListener('load', function(e) {
+        rzp1.open();
+        e.preventDefault();
+    });
+    </script>
+</div>

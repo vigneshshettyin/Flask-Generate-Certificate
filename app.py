@@ -12,6 +12,9 @@ import random
 import string 
 import pytz
 import re
+import razorpay
+import hmac
+import hashlib
 
 with open('import.json', 'r') as c:
     json = json_lib.load(c)["jsondata"]
@@ -26,6 +29,16 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'loginPage'
 login_manager.login_message_category = 'info'
+
+RAZORPAY_KEY_ID = json["razorpay_key_id"]
+RAZORPAY_KEY_SECRET = json["razorpay_key_secret"]
+
+
+IST = pytz.timezone('Asia/Kolkata')
+x = datetime.now(IST)
+time = x.strftime("%c")
+host = bool(json["host_status"])
+ipc = json["demo_ip"]
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -96,11 +109,22 @@ class Feedback(db.Model):
     city = db.Column(db.String(20), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
-IST = pytz.timezone('Asia/Kolkata')
-x = datetime.now(IST)
-time = x.strftime("%c")
-host=bool(json["host_status"])
-ipc = json["demo_ip"]
+class Transactions(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(127), nullable=False)
+    email = db.Column(db.String(127), nullable=False)
+    phone = db.Column(db.String(15), nullable=False)
+    order_id = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.String(50), nullable=False)
+    currency = db.Column(db.String(50), nullable=False)
+    payment_id = db.Column(db.String(127), nullable=False)
+    response_msg = db.Column(db.Text(), nullable=False)
+    status = db.Column(db.String(25), nullable=False)
+    error_code = db.Column(db.String(127), nullable=True)
+    error_source = db.Column(db.String(127), nullable=True)
+    txn_timestamp = db.Column(db.DateTime(), default=datetime.now(IST), nullable=False)
+
+
 
 # @app.route('/test')
 # def test_page():
@@ -292,6 +316,81 @@ def certificate_generated_string(number):
         return render_template('certificate.html', postc=postc, posto=posto, json=json, style=style)
     else:
         return redirect('/')
+
+# Payment Views
+@app.route("/pay", methods=["GET","POST"])
+def pay_now():
+    print(request.form)
+    name = request.form.get("name")
+    email = request.form.get("email")
+    phone = request.form.get("phone")
+    plan = request.form.get("plan")
+    plan_info = {
+        "Basic Plan": 100,
+        "Regular Plan": 200,
+        "Premium Plan": 300
+    }
+    order_amount = plan_info[plan] * 100
+    order_currency = 'INR'
+    client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
+    order = client.order.create({'amount': order_amount, 'currency': order_currency,'payment_capture': '1'})
+    context = {
+        "payment": order,
+        "name": name,
+        "phone": phone,
+        "email": email,
+        "rzp_id": RAZORPAY_KEY_ID,
+        "currency": order_currency
+    }
+    return render_template("razorpay.html", context=context)
+
+
+@app.route("/razorpay-handler/", methods=["GET","POST"])
+def razorpay_handler():
+    # from front end
+    payment_id = request.form.get('payment_id')
+    order_id = request.form.get('order_id')
+    sign = request.form.get('sign')
+    server_order = request.form.get('server_order')
+    name = request.form.get('name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    amount = int(request.form.get('amount'))//100
+    currency = request.form.get('currency')
+    # genrate signature
+    secret_key = bytes(RAZORPAY_KEY_SECRET, 'utf-8')
+    generated_signature = hmac.new(secret_key, bytes(server_order + "|" + payment_id, 'utf-8'), hashlib.sha256).hexdigest()
+    # checking authentic source
+    if generated_signature == sign:
+        print("payment Successfully done")
+        new_txn = Transactions(name=name,email=email,phone=phone,order_id=order_id,amount=amount,currency=currency,payment_id=payment_id,response_msg=sign,status="SUCCESS")
+        db.session.add(new_txn)
+        db.session.commit()
+        return jsonify(success= True)
+    return jsonify(success=False)
+
+@app.route("/payment-failure/", methods=["GET", "POST"])
+def failed_payment():
+
+    # from front end
+    payment_id = request.form.get('payment_id')
+    order_id = request.form.get('order_id')
+    server_order = request.form.get('server_order')
+    reason = request.form.get('reason')
+    step = request.form.get('step')
+    source = request.form.get('source')
+    description = request.form.get('description')
+    code = request.form.get('code')
+    name = request.form.get('name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    amount = int(request.form.get('amount'))//100
+    currency = request.form.get('currency')
+    new_txn = Transactions(name=name, email=email, phone=phone, order_id=order_id, amount=amount, currency=currency, payment_id=payment_id,error_source=source, error_code=code, response_msg="Step : "+step+", Reason : "+reason+", Desc: "+description, status="FAILURE")
+    db.session.add(new_txn)
+    db.session.commit()
+    return jsonify(success= True)
+
 
 @app.route('/login', methods = ['GET', 'POST'])
 def loginPage():

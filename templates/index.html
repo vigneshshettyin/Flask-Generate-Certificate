@@ -163,7 +163,7 @@
           <p>Our Mentor team include experienced tech experts</p>
         </div>
 
-        <div class="row">
+        <div class="row d-flex justify-content-center">
 
 
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
@@ -238,126 +238,31 @@
           <!-- ======= Team Section ======= -->
     <section id="team" class="team section-bg">
       <div class="container" data-aos="fade-up">
-        <div class="section-header">
+        <div class="section-header pb-3">
           <h3>Contributors</h3>
         </div>
 
-        <div class="row">
+        <div class="row d-flex justify-content-center">
 
-{#            Start a loop#}
-
+          {% for t,d in team.items() %}
+            
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
             <div class="member">
-              <img src="https://cdn.discordapp.com/attachments/708550144827719811/819272897780645978/github-logo.png" class="img-fluid" alt="#">
+              <img src="{{ d.image }}" class="img-fluid" alt="#">
               <div class="member-info">
                 <div class="member-info-content">
-                  <h4>Name</h4>
+                  <h4>{{d.name}}</h4>
                   <div class="social">
-                    <a href="https://github.com/<username>"><i class="fa fa-github"></i></a>
+                    <a href="https://github.com/{{d.username}}"><i class="fa fa-github"></i></a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          
+          {% endfor %}
+          
 
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <img src="https://cdn.discordapp.com/attachments/708550144827719811/819272897780645978/github-logo.png" class="img-fluid" alt="#">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Name</h4>
-                  <div class="social">
-                    <a href="https://github.com/<username>"><i class="fa fa-github"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <img src="https://cdn.discordapp.com/attachments/708550144827719811/819272897780645978/github-logo.png" class="img-fluid" alt="#">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Name</h4>
-                  <div class="social">
-                    <a href="https://github.com/<username>"><i class="fa fa-github"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <img src="https://cdn.discordapp.com/attachments/708550144827719811/819272897780645978/github-logo.png" class="img-fluid" alt="#">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Name</h4>
-                  <div class="social">
-                    <a href="https://github.com/<username>"><i class="fa fa-github"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <img src="https://cdn.discordapp.com/attachments/708550144827719811/819272897780645978/github-logo.png" class="img-fluid" alt="#">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Name</h4>
-                  <div class="social">
-                    <a href="https://github.com/<username>"><i class="fa fa-github"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <img src="https://cdn.discordapp.com/attachments/708550144827719811/819272897780645978/github-logo.png" class="img-fluid" alt="#">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Name</h4>
-                  <div class="social">
-                    <a href="https://github.com/<username>"><i class="fa fa-github"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <img src="https://cdn.discordapp.com/attachments/708550144827719811/819272897780645978/github-logo.png" class="img-fluid" alt="#">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Name</h4>
-                  <div class="social">
-                    <a href="https://github.com/<username>"><i class="fa fa-github"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-            <div class="member">
-              <img src="https://cdn.discordapp.com/attachments/708550144827719811/819272897780645978/github-logo.png" class="img-fluid" alt="#">
-              <div class="member-info">
-                <div class="member-info-content">
-                  <h4>Name</h4>
-                  <div class="social">
-                    <a href="https://github.com/<username>"><i class="fa fa-github"></i></a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-{#            end loop#}
 
         </div>
 

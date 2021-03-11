@@ -129,12 +129,12 @@ class Transactions(db.Model):
     txn_timestamp = db.Column(db.DateTime(), default=datetime.now(IST), nullable=False)
 
 
-# @app.route('/test')
-# def test_page():
-#     entry = Organization(name="Vignesh Shetty", email='vigneshshetty.in@gmail.com', subname="Backend Technologies", phone="6362490109", date=time)
-#     db.session.add(entry)
-#     db.session.commit()
-#     return redirect(url_for('loginPage'))
+@app.route('/test')
+def test_page():
+    entry = Organization(name="Vignesh Shetty", email='vigneshshetty.in@gmail.com', subname="Backend Technologies", phone="6362490109", date=time)
+    db.session.add(entry)
+    db.session.commit()
+    return redirect(url_for('loginPage'))
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot_password_page():
@@ -454,8 +454,10 @@ def loginPage():
             updateloginTime = Users.query.filter_by(email=email).first()
             updateloginTime.lastlogin = time
             db.session.commit()
+            # Some error here
             if (host == True):
-                ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+                # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+                ip_address = ipc
             else:
                 ip_address = ipc;
             url = requests.get("http://ip-api.com/json/{}".format(ip_address))
@@ -533,7 +535,7 @@ def register_page():
 
         password = sha256_crypt.hash(password)
 
-        entry = Users(name=name, email=email, password=password, lastlogin=time, createddate=time, status=0, orgid=1)
+        entry = Users(name=name, email=email, password=password, lastlogin=time, createddate=time, status=1, orgid=1)
         db.session.add(entry)
         db.session.commit()
         flash("Now contact your organization head for account activation!", "success")

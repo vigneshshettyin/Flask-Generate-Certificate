@@ -44,17 +44,6 @@ ipc = json["demo_ip"]
 def load_user(user_id):
     return Users.query.get(user_id)
 
-class Organization(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    subname = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    phone = db.Column(db.String(50), nullable=False)
-    date = db.Column(db.String(50), nullable=False)
-    users = db.relationship('Users', cascade = "all,delete", backref='user')
-    certificates = db.relationship('Certificate', cascade = "all,delete", backref='student')
-
-
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -63,9 +52,19 @@ class Users(db.Model, UserMixin):
     status = db.Column(db.Integer, nullable=False)
     lastlogin = db.Column(db.String(50), nullable=False)
     createddate = db.Column(db.String(50), nullable=False)
-    orgid = db.Column(db.Integer, db.ForeignKey('organization.id'))
+    groups = db.relationship('Groups',cascade = "all,delete", backref='groups')
     certificate = db.relationship('Certificate',cascade = "all,delete", backref='certificate')
 
+class Groups(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    subname = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    phone = db.Column(db.String(50), nullable=False)
+    date = db.Column(db.String(50), nullable=False)
+    users = db.relationship('Users', cascade = "all,delete", backref='user')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    certificates = db.relationship('Certificate', cascade = "all,delete", backref='student')
 
 class Certificate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -75,8 +74,8 @@ class Certificate(db.Model):
     coursename = db.Column(db.String(500), nullable=False)
     dateupdate = db.Column(db.String(50), nullable=False)
     createddate = db.Column(db.String(50), nullable=False)
-    orgid = db.Column(db.Integer, db.ForeignKey('organization.id'))
-    userid = db.Column(db.Integer, db.ForeignKey('users.id'))
+    group_id = db.Column(db.Integer, db.ForeignKey('Groups.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class Newsletter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -123,8 +122,6 @@ class Transactions(db.Model):
     error_code = db.Column(db.String(127), nullable=True)
     error_source = db.Column(db.String(127), nullable=True)
     txn_timestamp = db.Column(db.DateTime(), default=datetime.now(IST), nullable=False)
-
-
 
 # @app.route('/test')
 # def test_page():
@@ -275,7 +272,7 @@ def certificate_verify():
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
         if(postc!=None):
-            posto = Organization.query.filter_by(id=postc.orgid).first()
+            posto = Groups.query.filter_by(id=postc.group_id).first()
             flash("Certificate Number Valid!", "success")
             return render_template('verify2.html', postc=postc, posto=posto, json=json, ip=ip_address)
         elif(postc==None):
@@ -292,7 +289,7 @@ def certificate_generate():
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
         if(postc!=None):
-            posto = Organization.query.filter_by(id=postc.orgid).first()
+            posto = Groups.query.filter_by(id=postc.group_id).first()
             return render_template('certificate.html', postc=postc, posto=posto, json=json, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
@@ -302,7 +299,7 @@ def certificate_generate():
 def certificate_generate_string(number):
     postc = Certificate.query.filter_by(number=number).first()
     if(postc!=None):
-        posto = Organization.query.filter_by(id=postc.orgid).first()
+        posto = Groups.query.filter_by(id=postc.group_id).first()
         return render_template('certificate.html', postc=postc, posto=posto, json=json)
     else:
         return redirect('/')
@@ -311,7 +308,7 @@ def certificate_generate_string(number):
 def certificate_generated_string(number):
     postc = Certificate.query.filter_by(number=number).first()
     if(postc!=None):
-        posto = Organization.query.filter_by(id=postc.orgid).first()
+        posto = Groups.query.filter_by(id=postc.group_id).first()
         style="display: none;"
         return render_template('certificate.html', postc=postc, posto=posto, json=json, style=style)
     else:
@@ -402,6 +399,7 @@ def loginPage():
         password = request.form.get('password')
         remember = request.form.get('remember')
         response = Users.query.filter_by(email=email).first()
+        # change it in production
         if((response != None) and ( response.email == email ) and ( sha256_crypt.verify(password, response.password )==1) and (response.status==1)):
             updateloginTime = Users.query.filter_by(email=email).first()
             updateloginTime.lastlogin = time
@@ -481,7 +479,7 @@ def register_page():
         
         password = sha256_crypt.hash(password)
         
-        entry = Users(name=name, email=email, password=password,lastlogin=time,createddate=time, status=0, orgid=1)
+        entry = Users(name=name, email=email, password=password,lastlogin=time,createddate=time, status=1)
         db.session.add(entry)
         db.session.commit()
         flash("Now contact your organization head for account activation!", "success")
@@ -514,7 +512,7 @@ def dashboard_page():
 @app.route("/view/org", methods = ['GET', 'POST'])
 @login_required
 def view_org_page():
-        post=Organization.query.order_by(Organization.id).all()
+        post=Groups.query.order_by(Groups.id).all()
         return render_template('org_table.html', post=post, json=json, c_user_name= current_user.name)
 
 @app.route("/view/users", methods = ['GET', 'POST'])
@@ -565,15 +563,15 @@ def edit_certificates_page(id):
                 number = ''.join(random.choice(letters) for i in range(4))
                 number = 'CGV'+name[0:4].upper()+number
                 coursename = request.form.get('coursename')
-                userid = current_user.id
+                user_id = current_user.id
                 email = request.form.get('email')
-                orgid = current_user.orgid
+                group_id = current_user.group_id
                 dateupdate = time
                 createddate = time
                 if id=='0':
                     postcheck = Certificate.query.filter_by(number=number).first()
                     if(postcheck==None):
-                        post = Certificate(name=name,number=number, email=email,coursename=coursename, userid=userid, orgid=orgid, dateupdate=dateupdate, createddate=createddate)
+                        post = Certificate(name=name,number=number, email=email,coursename=coursename, user_id=user_id, group_id=group_id, dateupdate=dateupdate, createddate=createddate)
                         db.session.add(post)
                         db.session.commit()
                         subject = "Certificate Generated With Certificate Number : "+str(number)
@@ -600,16 +598,18 @@ def edit_certificates_page(id):
                     post.name = name
                     post.coursename = coursename
                     post.email = email
-                    post.userid = current_user.id
-                    post.orgid = current_user.orgid
+                    post.user_id = current_user.id
+                    post.group_id = current_user.group_id
                     post.dateupdate = time
                     db.session.commit()
                     flash("Certificate edited successfully!", "success")
                     return redirect('/edit/certificates/'+id)
-            posto = Organization.query.filter_by().all()
+            posto = Groups.query.filter_by().all()
             postu = Users.query.filter_by().all()
             post = Certificate.query.filter_by(id=id).first()
             return render_template('add_edit_certificate.html', json=json, id=id, post=post, posto=posto, postu=postu, c_user_name= current_user.name)
+
+# changes to be done
 
 @app.route("/edit/users/<string:id>", methods = ['GET', 'POST'])
 @login_required

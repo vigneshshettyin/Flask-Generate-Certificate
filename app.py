@@ -205,9 +205,9 @@ def get_contributors_data():
     response = requests.get("https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/commits")
     json_data = response.json()
     unique_contributors = {}
+    mentors = ['vigneshshettyin', 'APratham', 'rex_divakar', 'shades-7']
     for d in json_data:
-        print()
-        if d["author"]["login"] not in unique_contributors.keys():
+        if d["author"]["login"] not in unique_contributors.keys() and d["author"]["login"] not in mentors:
             new_data = {
                 "username": d["author"]["login"],
                 "image": d["author"]["avatar_url"],

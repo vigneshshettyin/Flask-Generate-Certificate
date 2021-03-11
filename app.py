@@ -193,9 +193,31 @@ def mail_page():
                 flash("Error while sending mail!", "danger")
         return render_template('mail.html', json=json, c_user_name= current_user.name)
 
+def get_user_name(username):
+    response = requests.get(f"https://api.github.com/users/{username}")
+    json_data = response.json()
+    return json_data['name']
+
+def get_contributors_data():
+    response = requests.get("https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/commits")
+    json_data = response.json()
+    unique_contributors = {}
+    mentors = ['vigneshshettyin', 'APratham', 'rex_divakar', 'shades-7']
+    for d in json_data:
+        if d["author"]["login"] not in unique_contributors.keys() and d["author"]["login"] not in mentors:
+            new_data = {
+                "username": d["author"]["login"],
+                "image": d["author"]["avatar_url"],
+                "profile_url": d["author"]["html_url"],
+                "name": get_user_name(d["author"]["login"])
+            }
+            unique_contributors[d["author"]["login"]] = new_data
+    return unique_contributors
+
 @app.route('/')
 def home_page():
-    return render_template('index.html', json=json)
+    team = get_contributors_data()
+    return render_template('index.html', json=json, team=team)
 
 @app.route('/contact', methods = ['GET', 'POST'])
 def contact_page():

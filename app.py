@@ -683,7 +683,7 @@ def edit_users_page(id):
                         db.session.commit()
                         flash("User edited successfully!", "success")
                         return redirect('/edit/users/'+id)
-            posto = Organization.query.filter_by().all()
+            posto = Groups.query.filter_by().all()
             post = Users.query.filter_by(id=id).first()
             return render_template('add_edit_users.html', json=json, id=id, post=post, posto=posto, c_user_name= current_user.name)
 
@@ -714,7 +714,7 @@ def edit_org_page(id):
                 phone = request.form.get('phone')
                 date = time
                 if id=='0':
-                    post = Organization(name=name, subname=subname, email=email, phone=phone ,date=date)
+                    post = Groups(name=name, subname=subname, email=email, phone=phone ,date=date)
                     db.session.add(post)
                     db.session.commit()
                     flash("Organization added Successfully!", "success")
@@ -733,7 +733,7 @@ def edit_org_page(id):
                     except Exception as e:
                         print(e.message)
                 else:
-                    post = Organization.query.filter_by(id=id).first()
+                    post = Groups.query.filter_by(id=id).first()
                     if(post.email==json["admin_email"]):
                         flash("Default organization can't be edited!", "warning")
                     else:
@@ -745,13 +745,13 @@ def edit_org_page(id):
                         db.session.commit()
                         flash("Organization edited Successfully!", "success")
                     return redirect('/edit/org/'+id)
-            post = Organization.query.filter_by(id=id).first()
+            post = Groups.query.filter_by(id=id).first()
             return render_template('add_edit_org.html', json=json, post=post, id=id, c_user_name= current_user.name)
 
 @app.route("/delete/org/<string:id>", methods = ['GET', 'POST'])
 @login_required
 def delete_org_page(id):
-        delete_org_page = Organization.query.filter_by(id=id).first()
+        delete_org_page = Groups.query.filter_by(id=id).first()
         if(delete_org_page.email==json["admin_email"]):
             flash("Default organization can't be deleted!", "danger")
         else:

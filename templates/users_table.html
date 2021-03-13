@@ -34,6 +34,8 @@
                                             <th>Email</th>
                                             <th>Status</th>
                                             <th>Activate / Deactivate</th>
+                                            <th>Staff</th>
+                                            <th>Admin</th>
                                             <th>Date</th>
                                             <th>Edit</th>
                                             <th>Delete</th>
@@ -48,6 +50,16 @@
                                             <td>{{ post.email }}</td>
                                             <td>{{ post.status }}</td>
                                             <td><a href="/activate/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
+                                            {% if post.is_staff %}
+                                                <td><a href="/permissions/staff/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
+                                            {% else %}
+                                                <td><a href="/permissions/staff/users/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-times"></i></a></td>
+                                            {% endif %}
+                                            {% if post.is_admin %}
+                                                <td><a href="/permissions/admin/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
+                                            {% else %}
+                                                <td><a href="/permissions/admin/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
+                                            {% endif %}
                                             <td>{{ post.lastlogin }}</td>
                                             <td><a href="/edit/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-edit"></i></a></td>
                                             <td><a href="/delete/users/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>

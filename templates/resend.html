@@ -6,12 +6,17 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <!-- Favicons -->
-  <link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
-  <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
-    <title>Forgot Password : {{ json["favTitle"] }}</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Resend Link : {{ json["favTitle"] }}</title>
     <meta name="title" content="CGV : Online Certificate Verification System">
 	<meta name="description" content="A Startup Company based in India, that offers Full-Stack Web Development, User Interface Design, etc at a very reasonable cost. Contact us at contact@vigneshshetty.in">
+
+
+          <!-- Favicons -->
+  <link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
+  <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
 
     <!-- Custom fonts for this template-->
     <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
@@ -37,13 +42,11 @@
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">
-                            <div class="col-lg-6 d-none d-lg-block bg-password-image"></div>
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-2">Forgot Your Password?</h1>
-                                        <p class="mb-4">We get it, stuff happens. Just enter your email address below
-                                            and we'll send you a new password!</p>
+                                        <h1 class="h4 text-gray-900 mb-4">Resend Activation Link</h1>
                                     </div>
                                     {% with messages = get_flashed_messages(with_categories=true) %}
                           {% if messages %}
@@ -54,21 +57,24 @@
                         {% endfor %}
                        {% endif %}
                       {% endwith %}
-                                    <form class="user" action="/forgot" method="post">
+
+                                    <form class="user" method="post" action="/resend-link/">
                                         <div class="form-group">
                                             <input type="email" name="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
                                                 placeholder="Enter Email Address..." required>
-                                                <div class="emailFeedBackArea invalid-feedback" style="display:none"></div>
-                                        </div>
-                                        <input type="submit" id="loginBtn"  class="btn btn-primary btn-user btn-block">
+                                            <div class="emailFeedBackArea invalid-feedback" style="display:none"></div>
+                                            </div>
+                                        
+                                        <input id="resendBtn" class="btn btn-primary btn-user btn-block" value="Send" type="submit">
+                                        
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="/register">Create an Account!</a>
+                                        <a class="small" href="/forgot">Forgot Password?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="/login">Already have an account? Login!</a>
+                                        <a class="small" href="/register">Create an Account!</a>
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +97,8 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
-    <script src="{{url_for('static', filename='js/login.js') }}"></script>
+    <script src="{{url_for('static', filename='js/resend-link.js') }}"></script>
+
 </body>
 
 </html>

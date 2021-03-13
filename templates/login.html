@@ -63,6 +63,7 @@
                                             <input type="email" name="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
                                                 placeholder="Enter Email Address..." required>
+                                            <div class="emailFeedBackArea invalid-feedback" style="display:none"></div>
                                         </div>
                                         <div class="form-group">
                                             <input type="password" name="password" class="form-control form-control-user"
@@ -75,7 +76,7 @@
                                                     Me</label>
                                             </div>
                                         </div>
-                                        <input class="btn btn-primary btn-user btn-block" type="submit">
+                                        <input id="loginBtn" class="btn btn-primary btn-user btn-block" type="submit">
                                         </a>
                                         <hr>
                                         <a href="index.html" class="btn btn-google btn-user btn-block">
@@ -91,6 +92,9 @@
                                     </div>
                                     <div class="text-center">
                                         <a class="small" href="/register">Create an Account!</a>
+                                    </div>
+                                    <div class="text-center">
+                                        <a class="small" href="/resend-link/">Send Activation Link Again</a>
                                     </div>
                                 </div>
                             </div>
@@ -113,6 +117,7 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
+    <script src="{{url_for('static', filename='js/login.js') }}"></script>
 
 </body>
 

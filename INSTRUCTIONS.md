@@ -1,4 +1,4 @@
-## GIT AND GITHUB
+#### GIT AND GITHUB
 ***
 Before continuing we want to clarify the difference between Git and Github. Git is a version control system(VCS) which is a tool to manage the history of our Source Code. GitHub is a hosting service for Git projects.
 
@@ -89,3 +89,11 @@ Remember your upstream base branch should be master and source should be your fe
 Awesome! You have made your first contribution. If you have any doubts please let me know in the comments.
 
 #### BE OPEN!
+
+There are templates created by us to ease some of your work and for a structured documentation 
+
+#### Issue Templates - [Click Here](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues/new/choose)
+
+
+### Pull Request Templates-[Click Here](.github/pull_request_template.md)
+

@@ -22,6 +22,11 @@ emailField.addEventListener("keyup", (e) => {
           emailField.classList.add("is-invalid");
           emailFeedBackArea.style.display = "block";
           emailFeedBackArea.innerHTML = `<p class="text-center">${data.email_error}</p>`;
+        } else if (data.email_pattern_error) {
+          regitserBtn.disabled = true;
+          emailField.classList.add("is-invalid");
+          emailFeedBackArea.style.display = "block";
+          emailFeedBackArea.innerHTML = `<p class="text-center">${data.email_pattern_error}</p>`;
         } else {
           regitserBtn.removeAttribute("disabled");
         }

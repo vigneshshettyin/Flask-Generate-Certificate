@@ -15,6 +15,8 @@ import re
 import razorpay
 import hmac
 import hashlib
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+
 
 with open('import.json', 'r') as c:
     json = json_lib.load(c)["jsondata"]
@@ -24,6 +26,10 @@ app = Flask(__name__)
 app.secret_key = "jdjsdjJJJJjhi*(%#@-CGV-PORTAL-VERIFY-@)(&$%wer387jjhdsujs28729&&*(*&"
 app.config['SQLALCHEMY_DATABASE_URI'] = json['databaseUri']
 db = SQLAlchemy(app)
+
+# serializer for registration
+s = URLSafeTimedSerializer(app.secret_key)
+
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'loginPage'
@@ -52,7 +58,8 @@ class Organization(db.Model):
     phone = db.Column(db.String(50), nullable=False)
     date = db.Column(db.String(50), nullable=False)
     users = db.relationship('Users', cascade="all,delete", backref='user')
-    certificates = db.relationship('Certificate', cascade="all,delete", backref='student')
+    certificates = db.relationship(
+        'Certificate', cascade="all,delete", backref='student')
 
 
 class Users(db.Model, UserMixin):
@@ -62,9 +69,13 @@ class Users(db.Model, UserMixin):
     password = db.Column(db.String(500), nullable=False)
     status = db.Column(db.Integer, nullable=False)
     lastlogin = db.Column(db.String(50), nullable=False)
+    is_staff = db.Column(db.Boolean, default=False, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
     createddate = db.Column(db.String(50), nullable=False)
-    orgid = db.Column(db.Integer, db.ForeignKey('organization.id'))
-    certificate = db.relationship('Certificate', cascade="all,delete", backref='certificate')
+    orgid = db.Column(db.Integer, db.ForeignKey(
+        'organization.id'), nullable=True)
+    certificate = db.relationship(
+        'Certificate', cascade="all,delete", backref='certificate')
 
 
 class Certificate(db.Model):
@@ -126,22 +137,25 @@ class Transactions(db.Model):
     status = db.Column(db.String(25), nullable=False)
     error_code = db.Column(db.String(127), nullable=True)
     error_source = db.Column(db.String(127), nullable=True)
-    txn_timestamp = db.Column(db.DateTime(), default=datetime.now(IST), nullable=False)
+    txn_timestamp = db.Column(
+        db.DateTime(), default=datetime.now(IST), nullable=False)
 
 
 @app.route('/test')
 def test_page():
-    entry = Organization(name="Vignesh Shetty", email='vigneshshetty.in@gmail.com', subname="Backend Technologies", phone="6362490109", date=time)
+    entry = Organization(name="Vignesh Shetty", email='vigneshshetty.in@gmail.com',
+                         subname="Backend Technologies", phone="6362490109", date=time)
     db.session.add(entry)
     db.session.commit()
     return redirect(url_for('loginPage'))
+
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot_password_page():
     if (request.method == 'POST'):
         email = request.form.get('email')
         post = Users.query.filter_by(email=email).first()
-        name = post.name;
+        name = post.name
         if (post != None):
             if (post.email == json["admin_email"]):
                 flash("You can't reset password of administrator!", "danger")
@@ -156,17 +170,19 @@ def forgot_password_page():
                     name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><center><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Password : ''' + str(
                     passwordemial) + '''</p><center><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
                 content2 = json[
-                               "site_url"] + '''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+                    "site_url"] + '''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
                 content = content1 + content2
                 message = Mail(
-                    from_email=('forgot-password@cgv.in.net', 'Security Bot CGV'),
+                    from_email=('forgot-password@cgv.in.net',
+                                'Security Bot CGV'),
                     to_emails=email,
                     subject=subject,
                     html_content=content)
                 try:
                     sg = SendGridAPIClient(json['sendgridapi'])
                     response = sg.send(message)
-                    flash("You will receive a mail shortly. Password rested successfully!", "success")
+                    flash(
+                        "You will receive a mail shortly. Password rested successfully!", "success")
                 except Exception as e:
                     print(e.message)
         elif (post == None):
@@ -211,7 +227,8 @@ def get_user_name(username):
 
 
 def get_contributors_data():
-    response = requests.get("https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/commits")
+    response = requests.get(
+        "https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/commits")
     json_data = response.json()
     unique_contributors = {}
     mentors = ['vigneshshettyin', 'APratham', 'rex_divakar', 'shades-7']
@@ -243,7 +260,7 @@ def contact_page():
         if (host == True):
             ip_address = request.environ['HTTP_X_FORWARDED_FOR']
         else:
-            ip_address = ipc;
+            ip_address = ipc
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
         city = j["city"]
@@ -267,7 +284,7 @@ def feedback_page():
         if (host == True):
             ip_address = request.environ['HTTP_X_FORWARDED_FOR']
         else:
-            ip_address = ipc;
+            ip_address = ipc
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
         city = j["city"]
@@ -287,14 +304,15 @@ def newsletter_page():
         if (host == True):
             ip_address = request.environ['HTTP_X_FORWARDED_FOR']
         else:
-            ip_address = ipc;
+            ip_address = ipc
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
         city = j["city"]
         country = j["country"]
         post = Newsletter.query.filter_by(email=email).first()
         if (post == None):
-            entry = Newsletter(ip=ip_address, city=city, country=country, date=time, email=email)
+            entry = Newsletter(ip=ip_address, city=city,
+                               country=country, date=time, email=email)
             db.session.add(entry)
             db.session.commit()
             flash("Thank you for subscribing!", "success")
@@ -308,7 +326,7 @@ def certificate_verify():
     if (host == True):
         ip_address = request.environ['HTTP_X_FORWARDED_FOR']
     else:
-        ip_address = ipc;
+        ip_address = ipc
     if (request.method == 'POST'):
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
@@ -326,7 +344,7 @@ def certificate_generate():
     if (host == True):
         ip_address = request.environ['HTTP_X_FORWARDED_FOR']
     else:
-        ip_address = ipc;
+        ip_address = ipc
     if (request.method == 'POST'):
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
@@ -375,7 +393,8 @@ def pay_now():
     order_amount = plan_info[plan] * 100
     order_currency = 'INR'
     client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
-    order = client.order.create({'amount': order_amount, 'currency': order_currency, 'payment_capture': '1'})
+    order = client.order.create(
+        {'amount': order_amount, 'currency': order_currency, 'payment_capture': '1'})
     context = {
         "payment": order,
         "name": name,
@@ -449,7 +468,7 @@ def loginPage():
         password = request.form.get('password')
         remember = request.form.get('remember')
         response = Users.query.filter_by(email=email).first()
-        if ((response != None) and (response.email == email) and (
+        if ((response != None) and (response.status == 1) and (response.email == email) and (
                 sha256_crypt.verify(password, response.password) == 1) and (response.status == 1)):
             updateloginTime = Users.query.filter_by(email=email).first()
             updateloginTime.lastlogin = time
@@ -459,7 +478,7 @@ def loginPage():
                 # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
                 ip_address = ipc
             else:
-                ip_address = ipc;
+                ip_address = ipc
             url = requests.get("http://ip-api.com/json/{}".format(ip_address))
             j = url.json()
             city = j["city"]
@@ -469,7 +488,8 @@ def loginPage():
                 country) + '''<br><br>Time : ''' + str(time) + '''<br><br>IP : ''' + str(ip_address)
             html_text2 = '''<br><p>Tip: To keep your account secured, please contact us to update your email id. Ignore if it’s already updated.</p></div><br><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
             html_final = html_final + html_text2
-            subject = " New device login from " + str(city) + ", " + str(country) + " detected."
+            subject = " New device login from " + \
+                str(city) + ", " + str(country) + " detected."
             message = Mail(
                 from_email=('login-alert@cgv.in.net', 'Security Bot CGV'),
                 to_emails=email,
@@ -495,11 +515,14 @@ def email_validation():
     data = json_lib.loads(request.data)
     email = data['email']
     pattern = '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    user = Users.query.filter_by(email=email).first()
 
-    if Users.query.filter_by(email=email).first():
+    if user and user.status == 0:
+        return jsonify(account_inactive=True)
+    if user:
         return jsonify(email_error='You are already registered. Please login to continue.', status=409)
     if not bool(re.match(pattern, email)):
-        return jsonify(email_error='Please enter a valid email address.')
+        return jsonify(email_pattern_error='Please enter a valid email address.')
     return jsonify(email_valid=True)
 
 
@@ -524,6 +547,32 @@ def match_passwords():
     return jsonify(password_mismatch='Password and Confirm Password do not match.')
 
 
+def send_activation_email(name, email):
+    token = s.dumps(email, salt='cgv-email-confirm')
+    print(token)
+    if app.debug:
+        link = f"http://127.0.0.1:5000/confirm-email/{token}"
+    else:
+        link = f"{json['site_url']}/confirm-email/{token}"
+    print(link)
+    subject = "Welcome aboard " + name + "!"
+    content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
+        name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Thanks for signing up. Please use the link below to activate your account.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + link + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Activate Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+    content = content1
+    message = Mail(
+        from_email=('register-user@cgv.in.net', 'Register Bot CGV'),
+        to_emails=email,
+        subject=subject,
+        html_content=content)
+    try:
+        sg = SendGridAPIClient(json['sendgridapi'])
+        response = sg.send(message)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
     if current_user.is_authenticated:
@@ -532,31 +581,84 @@ def register_page():
         name = request.form.get('name')
         email = request.form.get('email')
         password = request.form.get('password')
-
         password = sha256_crypt.hash(password)
-
-        entry = Users(name=name, email=email, password=password, lastlogin=time, createddate=time, status=1, orgid=1)
+        entry = Users(name=name, email=email, password=password,
+                      lastlogin=time, createddate=time, status=0)
         db.session.add(entry)
         db.session.commit()
-        flash("Now contact your organization head for account activation!", "success")
-        subject = "Welcome aboard " + name + "!"
-        content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-            name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Now contact your organization head for your account activation. Once activated click on link below to login.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
-        content2 = json[
-                       "site_url"] + '''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-        content = content1 + content2
-        message = Mail(
-            from_email=('register-user@cgv.in.net', 'Register Bot CGV'),
-            to_emails=email,
-            subject=subject,
-            html_content=content)
-        try:
-            sg = SendGridAPIClient(json['sendgridapi'])
-            response = sg.send(message)
-        except Exception as e:
-            print("Error!")
-            flash("Error while sending mail!", "danger")
+        if send_activation_email(name, email):
+            flash(
+                f"We've sent an account activation link on {email}", "success")
+        else:
+            flash("Error while sending account activation email!", "danger")
+            return render_template('resend.html',json=json)
     return render_template('register.html', json=json)
+
+@app.route('/resend-link/', methods=['GET','POST'])
+def resend_email():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard_page'))
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = Users.query.filter_by(email=email).first()
+        if user:
+            if user.status == 1:
+                flash('Your account is already activated. Please login', 'danger')
+                return redirect(url_for('resend_email'))
+            name = user.name
+            if send_activation_email(name, email):
+                flash(
+                    f"We've sent an account activation link on {email}", "success")
+            else:
+                flash("Error while sending account activation email!", "danger")
+        else:
+            flash('You are not registered yet.','danger')
+            return redirect(url_for('resend_email'))
+    return render_template("resend.html", json=json)
+
+@app.route('/confirm-email/<token>', methods=['GET'])
+def confirm_email(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard_page'))
+    try:
+        email = s.loads(token, salt="cgv-email-confirm", max_age=1800)
+    except SignatureExpired:
+        flash("Sorry, link has been expired.")
+        return render_template('login.html', json=json)
+    user = Users.query.filter_by(email=email).first()
+    user.status = 1
+    user.lastlogin = time
+    db.session.commit()
+    # Some error here
+    if host:
+        # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        ip_address = ipc
+    else:
+        ip_address = ipc
+    url = requests.get("http://ip-api.com/json/{}".format(ip_address))
+    j = url.json()
+    city = j["city"]
+    country = j["country"]
+    html_text1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Login Alert</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">Is that you?</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">We noticed you logged in to your CGV account from a new device and a new location.</p> <br><div style="background:#f6f7f8;border-radius:3px"> <br> City : '''
+    html_final = html_text1 + str(city) + '''<br><br> Country : ''' + str(
+        country) + '''<br><br>Time : ''' + str(time) + '''<br><br>IP : ''' + str(ip_address)
+    html_text2 = '''<br><p>Tip: To keep your account secured, please contact us to update your email id. Ignore if it’s already updated.</p></div><br><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+    html_final = html_final + html_text2
+    subject = " New device login from " + \
+        str(city) + ", " + str(country) + " detected."
+    message = Mail(
+        from_email=('login-alert@cgv.in.net', 'Security Bot CGV'),
+        to_emails=email,
+        subject=subject,
+        html_content=html_final)
+    try:
+        sg = SendGridAPIClient(json['sendgridapi'])
+        responsemail = sg.send(message)
+    except Exception as e:
+        print(e)
+    login_user(user)
+    next_page = request.args.get('next')
+    return redirect(next_page) if next_page else redirect(url_for('dashboard_page'))
 
 
 @app.route('/dashboard')
@@ -566,6 +668,7 @@ def dashboard_page():
     postct = len(Contact.query.order_by(Contact.id).all())
     postf = len(Feedback.query.order_by(Feedback.id).all())
     postn = len(Newsletter.query.order_by(Newsletter.id).all())
+    print(current_user.email)
     return render_template('dashboard.html', json=json, postc=postc, postct=postct, postf=postf, postn=postn,
                            c_user_name=current_user.name)
 
@@ -643,19 +746,21 @@ def edit_certificates_page(id):
                                    orgid=orgid, dateupdate=dateupdate, createddate=createddate)
                 db.session.add(post)
                 db.session.commit()
-                subject = "Certificate Generated With Certificate Number : " + str(number)
+                subject = "Certificate Generated With Certificate Number : " + \
+                    str(number)
                 content1 = '''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Certificate Download</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
                     name)
                 content2 = '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p>Congratulations! Your certificate has been issued successfully.</p><p>Certificate Number : ''' + str(
                     number)
                 content3 = '''</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="https://''' + \
                            json["site_url"] + '''/certify/''' + str(
-                    number) + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> Download Certificate Here!</a><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + \
-                           json[
+                               number) + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> Download Certificate Here!</a><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + \
+                    json[
                                "site_url"] + '''/certificate/verify" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> E-Verify Certificate Here!</a></p> <br> <br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
                 content = content1 + content2 + content3
                 message = Mail(
-                    from_email=('certificate-generate@cgv.in.net', 'Certificate Generate Bot CGV'),
+                    from_email=('certificate-generate@cgv.in.net',
+                                'Certificate Generate Bot CGV'),
                     to_emails=email,
                     subject=subject,
                     html_content=content)
@@ -708,10 +813,11 @@ def edit_users_page(id):
                 content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
                     name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Now contact your organization head for your account activation. Once activated click on link below to login.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
                 content2 = json[
-                               "site_url"] + '''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+                    "site_url"] + '''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
                 content = content1 + content2
                 message = Mail(
-                    from_email=('register-user@cgv.in.net', 'Register Bot CGV'),
+                    from_email=('register-user@cgv.in.net',
+                                'Register Bot CGV'),
                     to_emails=email,
                     subject=subject,
                     html_content=content)
@@ -763,6 +869,30 @@ def activate_users(id):
         return redirect(url_for('view_users_page'))
 
 
+@app.route("/permissions/<string:perm>/users/<string:id>", methods=['GET', 'POST'])
+@login_required
+def change_permissions(perm, id):
+    user = Users.query.filter_by(id=id).first()
+    if current_user.is_admin:
+        if current_user.id != user.id:
+            if perm == 'staff':
+                if user.is_staff:
+                    user.is_staff = False
+                else:
+                    user.is_staff = True
+            elif perm == 'admin':
+                if user.is_admin:
+                    user.is_admin = False
+                else:
+                    user.is_admin = True
+            db.session.commit()
+        else:
+            flash("You cannot change your own permission", "danger")
+    else:
+        flash("You are not authorised to change permissions", "danger")
+    return redirect(url_for('view_users_page'))
+
+
 @app.route("/edit/org/<string:id>", methods=['GET', 'POST'])
 @login_required
 def edit_org_page(id):
@@ -773,7 +903,8 @@ def edit_org_page(id):
         phone = request.form.get('phone')
         date = time
         if id == '0':
-            post = Organization(name=name, subname=subname, email=email, phone=phone, date=date)
+            post = Organization(name=name, subname=subname,
+                                email=email, phone=phone, date=date)
             db.session.add(post)
             db.session.commit()
             flash("Organization added Successfully!", "success")
@@ -781,10 +912,11 @@ def edit_org_page(id):
             content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
                 name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">New organization created successfully! Now create user and activate user to generate certificates.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
             content2 = json[
-                           "site_url"] + '''/register" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Create User Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+                "site_url"] + '''/register" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Create User Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
             content = content1 + content2
             message = Mail(
-                from_email=('new-organization@cgv.in.net', 'Organization Bot CGV'),
+                from_email=('new-organization@cgv.in.net',
+                            'Organization Bot CGV'),
                 to_emails=email,
                 subject=subject,
                 html_content=content)

@@ -96,8 +96,10 @@
                   <span class="bold block"></span>
                   <span class="bold block">Certificate No. # {{ postc.number}}</span>
                 </div>
-                <center><form style="{{ style }}" action="http://api.pdflayer.com/api/convert?access_key={{ json["pdfapi"] }}&document_url=https://{{ json["site_url"] }}/certifyd/{{ postc.number }}&page_size=A4&margin_top=&margin_bottom=&margin_left=&margin_right=" method="post">
-  <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span> Download Certificate</button>
+                {% set qr_image = 'qr_codes/' + qr_code %}
+                  <center><img src="{{ url_for('static',filename=qr_image)}}" alt="QR Code" style="width: 100px; height:100px;"></center>
+                <center><form style="{{ style }}" action="http://api.pdflayer.com/api/convert?access_key={{ json["pdfapi"] }}&document_url=https://{{ json["site_url"] }}/certifyd/{{ postc.number }}&page_size=A4&margin_top=&margin_bottom=&margin_left=&margin_right=" method="post"></form>
+  <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt" onclick="window.print();></span> Download Certificate</button>
                 </form></center>
                 <!-- AddToAny BEGIN -->
 <br><div style="{{ style }}"><center>

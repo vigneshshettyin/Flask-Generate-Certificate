@@ -16,6 +16,7 @@ import razorpay
 import hmac
 import hashlib
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+import qrcode
 
 
 with open('import.json', 'r') as c:
@@ -77,6 +78,12 @@ class Users(db.Model, UserMixin):
     certificate = db.relationship(
         'Certificate', cascade="all,delete", backref='certificate')
 
+
+class QRCode(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    certificate_num = db.Column(db.String(50), nullable=False)
+    link = db.Column(db.String(200), nullable=False)
+    qr_code = db.Column(db.String(100), nullable=True)
 
 class Certificate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -341,16 +348,20 @@ def certificate_verify():
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])
 def certificate_generate():
-    if (host == True):
-        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-    else:
-        ip_address = ipc
+    # if (host == True):
+    #     ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+    # else:
+    #     ip_address = ipc
+    ip_address = ipc
     if (request.method == 'POST'):
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
         if (postc != None):
             posto = Organization.query.filter_by(id=postc.orgid).first()
-            return render_template('certificate.html', postc=postc, posto=posto, json=json, ip=ip_address)
+            qr_code = QRCode.query.filter_by(
+                certificate_num=certificateno).first()
+            img_name = f"{qr_code.certificate_num}.png"
+            return render_template('certificate.html', postc=postc,qr_code=img_name, posto=posto, json=json, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('generate.html', json=json, ip=ip_address)
@@ -361,7 +372,9 @@ def certificate_generate_string(number):
     postc = Certificate.query.filter_by(number=number).first()
     if (postc != None):
         posto = Organization.query.filter_by(id=postc.orgid).first()
-        return render_template('certificate.html', postc=postc, posto=posto, json=json)
+        qr_code = QRCode.query.filter_by(certificate_num=number).first()
+        img_name = f"{qr_code.certificate_num}.png"
+        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json)
     else:
         return redirect('/')
 
@@ -372,7 +385,9 @@ def certificate_generated_string(number):
     if (postc != None):
         posto = Organization.query.filter_by(id=postc.orgid).first()
         style = "display: none;"
-        return render_template('certificate.html', postc=postc, posto=posto, json=json, style=style)
+        qr_code = QRCode.query.filter_by(certificate_num=number).first()
+        img_name = f"{qr_code.certificate_num}.png"
+        return render_template('certificate.html', postc=postc, posto=posto,qr_code=img_name, json=json, style=style)
     else:
         return redirect('/')
 
@@ -676,14 +691,17 @@ def dashboard_page():
 @app.route("/view/org", methods=['GET', 'POST'])
 @login_required
 def view_org_page():
-    post = Organization.query.order_by(Organization.id).all()
-    return render_template('org_table.html', post=post, json=json, c_user_name=current_user.name)
+    if current_user.is_staff or current_user.is_admin:
+        post = Organization.query.order_by(Organization.id).all()
+        return render_template('org_table.html', post=post, json=json, c_user_name=current_user.name)
+    else:
+        return render_template('block.html', json=json, c_user_name=current_user.name)
 
 
 @app.route("/view/users", methods=['GET', 'POST'])
 @login_required
 def view_users_page():
-    if (current_user.email == json["admin_email"]):
+    if current_user.is_admin or current_user.is_staff:
         post = Users.query.order_by(Users.id).all()
         return render_template('users_table.html', post=post, json=json, c_user_name=current_user.name)
     else:
@@ -745,6 +763,18 @@ def edit_certificates_page(id):
                 post = Certificate(name=name, number=number, email=email, coursename=coursename, userid=userid,
                                    orgid=orgid, dateupdate=dateupdate, createddate=createddate)
                 db.session.add(post)
+                # Create QR Code for this certificate
+                link = f'{json["site_url"]}/certify/{number}'
+                new_qr = QRCode(certificate_num=number,link=link)
+                qr_image = qrcode.QRCode(version=1,box_size=10,border=5)
+                qr_image.add_data(link)
+                qr_image.make(fit=True)
+                img = qr_image.make_image(fill='black', back_color='white')
+                print(img)
+                imgname = f"{number}.png"
+                img.save("static/qr_codes/"+imgname)
+                new_qr.qr_code = f"qr_codes/{imgname}"
+                db.session.add(new_qr)
                 db.session.commit()
                 subject = "Certificate Generated With Certificate Number : " + \
                     str(number)

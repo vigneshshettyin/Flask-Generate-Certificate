@@ -228,19 +228,19 @@ def get_user_name(username):
 
 def get_contributors_data():
     response = requests.get(
-        "https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/commits")
+        "https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/contributors?per_page=1000")
     json_data = response.json()
     unique_contributors = {}
     mentors = ['vigneshshettyin', 'APratham', 'rex_divakar', 'shades-7']
     for d in json_data:
-        if d["author"]["login"] not in unique_contributors.keys() and d["author"]["login"] not in mentors:
+        if d["login"] not in unique_contributors.keys() and d["login"] not in mentors:
             new_data = {
-                "username": d["author"]["login"],
-                "image": d["author"]["avatar_url"],
-                "profile_url": d["author"]["html_url"],
-                "name": get_user_name(d["author"]["login"])
+                "username": d["login"],
+                "image": d["avatar_url"],
+                "profile_url": d["html_url"],
+                "name": get_user_name(d["login"])
             }
-            unique_contributors[d["author"]["login"]] = new_data
+            unique_contributors[d["login"]] = new_data
     return unique_contributors
 
 

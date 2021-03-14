@@ -12,7 +12,7 @@ idna==2.10
 itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
-mysqlclient @ file:///D:/Quarantine/GSSOC/Flask-Generate-Certificate/mysqlclient-1.4.6-cp39-cp39-win_amd64.whl
+mysqlclient==2.0.1
 passlib==1.7.4
 Pillow==8.1.2
 psycopg2==2.8.6

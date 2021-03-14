@@ -147,16 +147,6 @@ class Transactions(db.Model):
     txn_timestamp = db.Column(
         db.DateTime(), default=datetime.now(IST), nullable=False)
 
-
-@app.route('/test')
-def test_page():
-    entry = Organization(name="Vignesh Shetty", email='vigneshshetty.in@gmail.com',
-                         subname="Backend Technologies", phone="6362490109", date=time)
-    db.session.add(entry)
-    db.session.commit()
-    return redirect(url_for('loginPage'))
-
-
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot_password_page():
     if (request.method == 'POST'):
@@ -331,7 +321,8 @@ def newsletter_page():
 @app.route("/certificate/verify", methods=['GET', 'POST'])
 def certificate_verify():
     if (host == True):
-        ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        ip_address = ipc
     else:
         ip_address = ipc
     if (request.method == 'POST'):

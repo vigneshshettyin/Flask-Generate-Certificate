@@ -676,14 +676,17 @@ def dashboard_page():
 @app.route("/view/org", methods=['GET', 'POST'])
 @login_required
 def view_org_page():
-    post = Organization.query.order_by(Organization.id).all()
-    return render_template('org_table.html', post=post, json=json, c_user_name=current_user.name)
+    if current_user.is_staff or current_user.is_admin:
+        post = Organization.query.order_by(Organization.id).all()
+        return render_template('org_table.html', post=post, json=json, c_user_name=current_user.name)
+    else:
+        return render_template('block.html', json=json, c_user_name=current_user.name)
 
 
 @app.route("/view/users", methods=['GET', 'POST'])
 @login_required
 def view_users_page():
-    if (current_user.email == json["admin_email"]):
+    if current_user.is_admin or current_user.is_staff:
         post = Users.query.order_by(Users.id).all()
         return render_template('users_table.html', post=post, json=json, c_user_name=current_user.name)
     else:

@@ -50,6 +50,10 @@ $ pip3 install -r requirements.txt
  ```shell
 $ python3 app.py
 ```
+  or
+```shell
+$ flask run
+```
 
 Now open your favorite browser and go to http://127.0.0.1:5000/
 You will find the application running there.

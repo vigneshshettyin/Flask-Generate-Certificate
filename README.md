@@ -27,23 +27,34 @@ If you created something awesome and want to contribute then feel free to open P
 <img alt="CSS3" src="https://img.shields.io/badge/css3%20-%231572B6.svg?&style=for-the-badge&logo=css3&logoColor=white"/> 	<img alt="HTML5" src="https://img.shields.io/badge/html5%20-%23E34F26.svg?&style=for-the-badge&logo=html5&logoColor=white"/> <img alt="Python" src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white"/> <img alt="JavaScript" src="https://img.shields.io/badge/javascript%20-%23323330.svg?&style=for-the-badge&logo=javascript&logoColor=%23F7DF1E"/>
 
 
-## Getting Started 🚀
+# Getting Started 🚀
 
 ## How To Use 🔧
 
-```bash
-# Clone this repository
+**1.** Clone this repository to your local drive
+ ```shell
 $ git clone https://github.com/vigneshshettyin/Flask-Generate-Certificate.git
-
-# Go into the repository
-$ cd Flask-Generate-Certificate
-
-# Install Requirements
-$ pip3 install -r requirements.txt
-
-#Start development server
- http://127.0.0.1
 ```
+
+**2.** Change directory into the cloned repository  
+ ```shell
+$ cd Flask-Generate-Certificate
+```
+
+**3.** Install requirements from requirements.txt  
+ ```shell
+$ pip3 install -r requirements.txt
+```
+
+**4.** Run the development server
+ ```shell
+$ python3 app.py
+```
+
+Now open your favorite browser and go to http://127.0.0.1:5000/
+You will find the application running there.
+
+
 ## Live Deployment 📦 
 
 Click Here to view the deployment!

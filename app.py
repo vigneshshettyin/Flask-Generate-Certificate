@@ -17,7 +17,7 @@ import hmac
 import hashlib
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import qrcode
-
+from pprint import pprint
 
 with open('import.json', 'r') as c:
     json = json_lib.load(c)["jsondata"]
@@ -218,14 +218,20 @@ def mail_page():
 
 
 def get_user_name(username):
-    response = requests.get(f"https://api.github.com/users/{username}")
+    headers = {
+        'Authorization': f'{json["github_api_token"]}'
+    }
+    response = requests.get(f"https://api.github.com/users/{username}", headers=headers)
     json_data = response.json()
     return json_data['name']
 
 
 def get_contributors_data():
+    headers = {
+        'Authorization': f'{json["github_api_token"]}'
+    }
     response = requests.get(
-        "https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/contributors?per_page=1000")
+        "https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/contributors?per_page=1000", headers=headers)
     json_data = response.json()
     unique_contributors = {}
     mentors = ['vigneshshettyin', 'APratham', 'rex_divakar', 'shades-7']

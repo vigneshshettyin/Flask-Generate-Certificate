@@ -12,6 +12,7 @@
     "host_status": "False",
     "demo_ip": "43.247.157.20",
     "razorpay_key_id": "@",
-    "razorpay_key_secret": "@"
+    "razorpay_key_secret": "@",
+    "github_api_token": "@"
   }
 }

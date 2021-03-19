@@ -21,7 +21,7 @@ from pprint import pprint
 
 # work done by arpit 
 #start
-import re
+
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 def check(email):  
     if(re.search(regex,email)):  

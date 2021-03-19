@@ -19,6 +19,17 @@ from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import qrcode
 from pprint import pprint
 
+# work done by arpit 
+#start
+import re
+regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+def check(email):  
+    if(re.search(regex,email)):  
+        return True  
+          
+    else:  
+        return False
+#end
 with open('import.json', 'r') as c:
     json = json_lib.load(c)["jsondata"]
 
@@ -264,6 +275,26 @@ def contact_page():
             ip_address = request.environ['HTTP_X_FORWARDED_FOR']
         else:
             ip_address = ipc
+        # ip_address = ipc
+
+        #name validation it must be greater than than 2 letters and less than 40 letters
+        if len(name)>=2 and len(name)<=40:
+            pass
+        else:
+            flash("Please Enter Your Name Correctly!! ","danger")
+            return redirect("/#footer")
+        #email validation
+        if check(email) == True:
+            pass
+        else:
+            flash("Email is not Correct Please Check it and Try It once again!!","danger")
+            return redirect('/#footer')
+        # number validation
+        if len(phone)>=8 and len(phone) <=13:
+            pass
+        else:
+            flash("Phone Number is not Correct Please Check it and Try It once again!!","danger")
+            return redirect('/#footer')
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
         city = j["city"]

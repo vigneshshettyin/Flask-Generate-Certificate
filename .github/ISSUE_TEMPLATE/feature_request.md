@@ -24,8 +24,8 @@ A clear and concise description of how this feature will be useful for our  othe
 Example how to mark a checkbox:-
 - [x] Part of this program.
 -->
-[] GSSOC21
-[] Any other
+- [] GSSOC21
+- [] Any other
 
 ### Additional context
 Add any other context or screenshots about the feature request here.

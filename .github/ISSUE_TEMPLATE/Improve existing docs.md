@@ -17,8 +17,8 @@ assignees: ''
 Example how to mark a checkbox:-
 - [x] Part of this program.
 -->
-[] GSSOC21
-[] Any other
+- [] GSSOC21
+- [] Any other
 
 ### Additional information
 

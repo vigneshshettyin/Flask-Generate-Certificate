@@ -1,9 +1,9 @@
 <div align="center">
-<img src="https://raw.githubusercontent.com/vigneshshettyin/Flask-Generate-Certificate/main/static/images/logo.png" alt="Logo" width=150 height=150>
+<img src="https://raw.githubusercontent.com/vigneshshettyin/Flask-Generate-Certificate/main/static/images/logo.png" alt="Logo" width=100 height=100>
 </div>
 
-# Certificate Generation and Verification System
-🚀Certificate Generation and Verification System project aims in developing a computerized system to maintain and generate the certificate. It has admin login through which the admin can monitor the whole system .It also has a facility where user after logging in their account can monitor and generate certificate to their particular user. Admin will manage user logins, will have option to deactivate any user. Every time any changes is done an automated email will be sent depending on the update. Overall this project is being developed to help the users in the best way possible and also to reduce the human efforts.
+# 🚀 Certificate Generation and Verification System
+Certificate Generation and Verification System project aims in developing a computerized system to maintain and generate the certificate. It has an admin login through which the admin can monitor the whole system. It also has a facility where users after logging in to their account can monitor and generate a certificate for their particular user. Admin will manage user logins, will have the option to deactivate any user. Every time any changes are done an automated email will be sent depending on the update. Overall this project is being developed to help the users in the best way possible and also to reduce human efforts.
 <br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)

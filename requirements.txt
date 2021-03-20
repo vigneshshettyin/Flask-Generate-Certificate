@@ -10,7 +10,7 @@ Flask-SQLAlchemy==2.4.4
 gunicorn==19.9.0
 idna==2.10
 itsdangerous==1.1.0
-Jinja2==2.11.2
+jinja2>=2.11.3
 MarkupSafe==1.1.1
 mysqlclient==2.0.1
 passlib==1.7.4

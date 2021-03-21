@@ -19,13 +19,17 @@ from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import qrcode
 from pprint import pprint
 
-# work done by arpit 
-#start
+# work done by arpit
+# start
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-def check(email):  
-    return re.search(regex,email)
-#end
+
+
+def check(email):
+    return re.search(regex, email)
+
+
+# end
 with open('import.json', 'r') as c:
     json = json_lib.load(c)["jsondata"]
 
@@ -92,6 +96,7 @@ class QRCode(db.Model):
     link = db.Column(db.String(200), nullable=False)
     qr_code = db.Column(db.String(100), nullable=True)
 
+
 class Certificate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String(50), nullable=False)
@@ -153,6 +158,7 @@ class Transactions(db.Model):
     error_source = db.Column(db.String(127), nullable=True)
     txn_timestamp = db.Column(
         db.DateTime(), default=datetime.now(IST), nullable=False)
+
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot_password_page():
@@ -228,7 +234,8 @@ def get_user_name(username):
     headers = {
         'Authorization': f'{json["github_api_token"]}'
     }
-    response = requests.get(f"https://api.github.com/users/{username}", headers=headers)
+    response = requests.get(
+        f"https://api.github.com/users/{username}", headers=headers)
     json_data = response.json()
     return json_data['name']
 
@@ -273,23 +280,25 @@ def contact_page():
             ip_address = ipc
         # ip_address = ipc
 
-        #name validation it must be greater than than 2 letters and less than 40 letters
-        if len(name)>=2 and len(name)<=40:
+        # name validation it must be greater than than 2 letters and less than 40 letters
+        if len(name) >= 2 and len(name) <= 40:
             pass
         else:
-            flash("Please Enter Your Name Correctly!! ","danger")
+            flash("Please Enter Your Name Correctly!! ", "danger")
             return redirect("/#footer")
-        #email validation
+        # email validation
         if check(email):
             pass
         else:
-            flash("Email is not Correct Please Check it and Try It once again!!","danger")
+            flash(
+                "Email is not Correct Please Check it and Try It once again!!", "danger")
             return redirect('/#footer')
         # number validation
-        if len(phone)>=8 and len(phone) <=13:
+        if len(phone) >= 8 and len(phone) <= 13:
             pass
         else:
-            flash("Phone Number is not Correct Please Check it and Try It once again!!","danger")
+            flash(
+                "Phone Number is not Correct Please Check it and Try It once again!!", "danger")
             return redirect('/#footer')
         url = requests.get("http://ip-api.com/json/{}".format(ip_address))
         j = url.json()
@@ -385,7 +394,7 @@ def certificate_generate():
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_name = f"{qr_code.certificate_num}.png"
-            return render_template('certificate.html', postc=postc,qr_code=img_name, posto=posto, json=json, ip=ip_address)
+            return render_template('certificate.html', postc=postc, qr_code=img_name, posto=posto, json=json, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('generate.html', json=json, ip=ip_address)
@@ -411,7 +420,7 @@ def certificate_generated_string(number):
         style = "display: none;"
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_name = f"{qr_code.certificate_num}.png"
-        return render_template('certificate.html', postc=postc, posto=posto,qr_code=img_name, json=json, style=style)
+        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, style=style)
     else:
         return redirect('/')
 
@@ -630,10 +639,11 @@ def register_page():
                 f"We've sent an account activation link on {email}", "success")
         else:
             flash("Error while sending account activation email!", "danger")
-            return render_template('resend.html',json=json)
+            return render_template('resend.html', json=json)
     return render_template('register.html', json=json)
 
-@app.route('/resend-link/', methods=['GET','POST'])
+
+@app.route('/resend-link/', methods=['GET', 'POST'])
 def resend_email():
     if current_user.is_authenticated:
         return redirect(url_for('dashboard_page'))
@@ -651,9 +661,10 @@ def resend_email():
             else:
                 flash("Error while sending account activation email!", "danger")
         else:
-            flash('You are not registered yet.','danger')
+            flash('You are not registered yet.', 'danger')
             return redirect(url_for('resend_email'))
     return render_template("resend.html", json=json)
+
 
 @app.route('/confirm-email/<token>', methods=['GET'])
 def confirm_email(token):
@@ -789,8 +800,8 @@ def edit_certificates_page(id):
                 db.session.add(post)
                 # Create QR Code for this certificate
                 link = f'{json["site_url"]}/certify/{number}'
-                new_qr = QRCode(certificate_num=number,link=link)
-                qr_image = qrcode.QRCode(version=1,box_size=10,border=5)
+                new_qr = QRCode(certificate_num=number, link=link)
+                qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
                 qr_image.add_data(link)
                 qr_image.make(fit=True)
                 img = qr_image.make_image(fill='black', back_color='white')
@@ -1077,4 +1088,5 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
+s

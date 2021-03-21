@@ -31,6 +31,10 @@ If you created something awesome and want to contribute then feel free to open P
 
 ## How To Use 🔧
 
+There are two ways of using the project:
+
+## 1. Conventional Way
+
 **1.** Clone this repository to your local drive
  ```shell
 $ git clone https://github.com/vigneshshettyin/Flask-Generate-Certificate.git
@@ -58,7 +62,17 @@ $ flask run
 Now open your favorite browser and go to http://127.0.0.1:5000/
 You will find the application running there.
 
+## 2. Using Docker
 
+* Install [Docker](https://docs.docker.com/engine/install/), from the given link.
+
+* Once Docker is installed, use the following two commands to run the app in the root dicrectory:
+  * `docker-compose build` , This command will build the project
+  * `COMPOSE_HTTP_TIMEOUT=200 docker-compose up`, This command will run the container.
+  
+* You can open the project on `localhost:5000` on the machine.
+
+Note: If you are using docker-desktop on Windows Or WSL2 i.e Windows Subsystem For Linux, you can use the GUI Options to run the containers 
 ## Live Deployment 📦 
 
 Click Here to view the deployment!

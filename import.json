@@ -13,6 +13,6 @@
     "demo_ip": "43.247.157.20",
     "razorpay_key_id": "@",
     "razorpay_key_secret": "@",
-    "github_api_token": "@"
+    "contributors_api": "https://githubcapi.herokuapp.com/get-contributors-data/"
   }
 }

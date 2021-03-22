@@ -230,40 +230,10 @@ def mail_page():
     return render_template('mail.html', json=json, c_user_name=current_user.name)
 
 
-def get_user_name(username):
-    headers = {
-        'Authorization': f'{json["github_api_token"]}'
-    }
-    response = requests.get(
-        f"https://api.github.com/users/{username}", headers=headers)
-    json_data = response.json()
-    return json_data['name']
-
-
-def get_contributors_data():
-    headers = {
-        'Authorization': f'{json["github_api_token"]}'
-    }
-    response = requests.get(
-        "https://api.github.com/repos/vigneshshettyin/Flask-Generate-Certificate/contributors?per_page=1000", headers=headers)
-    json_data = response.json()
-    unique_contributors = {}
-    mentors = ['vigneshshettyin', 'APratham', 'rex_divakar', 'shades-7']
-    for d in json_data:
-        if d["login"] not in unique_contributors.keys() and d["login"] not in mentors:
-            new_data = {
-                "username": d["login"],
-                "image": d["avatar_url"],
-                "profile_url": d["html_url"],
-                "name": get_user_name(d["login"])
-            }
-            unique_contributors[d["login"]] = new_data
-    return unique_contributors
-
-
 @app.route('/')
 def home_page():
-    team = get_contributors_data()
+    response = requests.get(json["contributors_api"])
+    team = response.json()
     return render_template('index.html', json=json, team=team)
 
 

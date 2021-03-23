@@ -47,16 +47,25 @@ $ git clone https://github.com/vigneshshettyin/Flask-Generate-Certificate.git
 $ cd Flask-Generate-Certificate
 ```
 
-**3.** Install requirements from requirements.txt  
+**3.** Setup virtual environment
+ ```shell
+$ py -m venv env
+$ .\env\Scripts\activate
+```
+
+**4.** Install requirements from requirements.txt  
  ```shell
 $ pip3 install -r requirements.txt
 ```
 
-**4.** Run the development server
+**5.** Setup SQLite
  ```shell
-$ python3 app.py
+$ py
+>> from app import db
+>> db.create_all()
 ```
-  or
+
+**6.** Run the development server
 ```shell
 $ flask run
 ```
@@ -74,7 +83,7 @@ You will find the application running there.
   
 * You can open the project on `localhost:5000` on the machine.
 
-Note: If you are using docker-desktop on Windows Or WSL2 i.e Windows Subsystem For Linux, you can use the GUI Options to run the containers 
+Note: If you are using docker-desktop on Windows Or WSL2 i.e Windows Subsystem For Linux, you can use the GUI Options to run the containers
 ## Live Deployment 📦 
 
 Click Here to view the deployment!
@@ -84,11 +93,11 @@ Click Here to view the deployment!
 <br>
 When you are done with the setup, you should host your website online.
 We highly recommend to read through the:<br>
-- [Deploying on Heroku](https://stackabuse.com/deploying-a-flask-application-to-heroku/).<br>
-- [Deploying on AWS](https://www.serverless.com/blog/flask-python-rest-api-serverless-lambda-dynamodb).<br>
-- [Deploying on Azure](https://medium.com/@nikovrdoljak/deploy-your-flask-app-on-azure-in-3-easy-steps-b2fe388a589e).<br>
-- [Deploying on Google Cloud](https://medium.com/@dmahugh_70618/deploying-a-flask-app-to-google-app-engine-faa883b5ffab).<br>
-- [Deploying on Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-app-using-gunicorn-to-app-platform).<br>
+- [Deploying on Heroku](#).<br>
+- [Deploying on AWS](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/Documentation/aws.mdb).<br>
+- [Deploying on Azure](#).<br>
+- [Deploying on Google Cloud](#).<br>
+- [Deploying on Digital Ocean](#).<br>
 
 ## Mockup & Demo 🛠️
 

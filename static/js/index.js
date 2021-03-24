@@ -11,5 +11,16 @@ $(".payButton").click(function () {
 
 $("#cnfPay").click(function () {
   /* when the pay button in the modal is clicked, submit the form */
-  $("#paymentForm").submit();
+  if (
+    $.trim($("#name").val()) === "" ||
+    $.trim($("#email").val()) === "" ||
+    $.trim($("#phone").val()) === ""
+  ) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "One or more fields are missing.",
+    });
+    return false;
+  }
 });

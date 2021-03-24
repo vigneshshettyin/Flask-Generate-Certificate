@@ -58,12 +58,24 @@ $ .\env\Scripts\activate
 $ pip3 install -r requirements.txt
 ```
 
-**5.** Setup SQLite
- ```shell
-$ py
->> from app import db
->> db.create_all()
-```
+**5.** Setup Database
+
+* To initialise a new database
+  ```
+    python manage.py db init 
+  ```
+* To migrate changes in the database
+  ```
+  python manage.py db migrate
+  ```
+* To update the database with the new migrations
+  ```
+  python manage.py db upgrade
+  ```
+* To degrade the database
+  ```
+  python manage.py db downgrade
+  ```
 
 **6.** Run the development server
 ```shell

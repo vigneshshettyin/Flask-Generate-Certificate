@@ -76,6 +76,7 @@ $ pip3 install -r requirements.txt
   ```
   python manage.py db downgrade
   ```
+**Note** : Users need to run the upgrade command only during the project setup since the initial migrations have already been done. It just need to be applied using the `python manage.py db upgrade` command.
 
 **6.** Run the development server
 ```shell

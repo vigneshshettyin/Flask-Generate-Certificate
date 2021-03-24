@@ -4,6 +4,7 @@
     "favDescription": "",
     "copyrightMessage": "CGV",
     "devImgName": "",
+    "app_settings": "config.DevelopmentConfig",
     "databaseUri": "sqlite:///cgv.db",
     "sendgridapi": "@",
     "admin_email": "vigneshshetty.in@gmail.com",

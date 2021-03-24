@@ -1,7 +1,7 @@
 import os
 from oauthlib.oauth2 import WebApplicationClient
 from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort
-from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import sha256_crypt
 from password_generator import PasswordGenerator

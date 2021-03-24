@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>401 : CGV : Online Certificate Verification System </title>
+  <link href="{{ url_for('static', filename='css/404.css') }}" rel="stylesheet">
+     <!-- Favicons -->
+  <link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
+  <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div class="box">
+  <div class="box__ghost">
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    <div class="symbol"></div>
+    
+    <div class="box__ghost-container">
+      <div class="box__ghost-eyes">
+        <div class="box__eye-left"></div>
+        <div class="box__eye-right"></div>
+      </div>
+      <div class="box__ghost-bottom">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+    <div class="box__ghost-shadow"></div>
+  </div>
+  
+  <div class="box__description">
+    <div class="box__description-container">
+      <div class="box__description-title">Whoops!</div>
+      <div class="box__description-text">It seems like you're not authorized to access this page.</div>
+    </div>
+    
+    <a href="https://cgvcertify.herokuapp.com" target="_blank" class="box__button">Go back</a>
+    
+  </div>
+  
+</div>
+<!-- partial -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src="{{ url_for('static', filename='js/404.js') }}"></script>
+
+</body>
+</html>

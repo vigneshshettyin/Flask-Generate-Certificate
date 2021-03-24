@@ -1,4 +1,6 @@
-from flask import Flask, render_template, redirect, request, flash, url_for, jsonify
+import os
+from oauthlib.oauth2 import WebApplicationClient
+from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort
 from flask_login import LoginManager, UserMixin, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import sha256_crypt
@@ -39,6 +41,8 @@ app.secret_key = "jdjsdjJJJJjhi*(%#@-CGV-PORTAL-VERIFY-@)(&$%wer387jjhdsujs28729
 app.config['SQLALCHEMY_DATABASE_URI'] = json['databaseUri']
 db = SQLAlchemy(app)
 
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 # serializer for registration
 s = URLSafeTimedSerializer(app.secret_key)
 
@@ -49,6 +53,13 @@ login_manager.login_message_category = 'info'
 
 RAZORPAY_KEY_ID = json["razorpay_key_id"]
 RAZORPAY_KEY_SECRET = json["razorpay_key_secret"]
+
+# Google Login Credentials
+GOOGLE_CLIENT_ID = json["google_client_id"]
+GOOGLE_CLIENT_SECRET = json["google_client_secret"]
+GOOGLE_DISCOVERY_URL = (
+    "https://accounts.google.com/.well-known/openid-configuration"
+)
 
 IST = pytz.timezone('Asia/Kolkata')
 x = datetime.now(IST)
@@ -79,6 +90,7 @@ class Users(db.Model, UserMixin):
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(500), nullable=False)
+    profile_image = db.Column(db.String(500), nullable=True)
     status = db.Column(db.Integer, nullable=False)
     lastlogin = db.Column(db.String(50), nullable=False)
     is_staff = db.Column(db.Boolean, default=False, nullable=False)
@@ -88,6 +100,7 @@ class Users(db.Model, UserMixin):
         'organization.id'), nullable=True)
     certificate = db.relationship(
         'Certificate', cascade="all,delete", backref='certificate')
+
 
 
 class QRCode(db.Model):
@@ -159,6 +172,12 @@ class Transactions(db.Model):
     txn_timestamp = db.Column(
         db.DateTime(), default=datetime.now(IST), nullable=False)
 
+
+
+# For Gravatar
+def avatar(email, size):
+    digest = hashlib.md5(email.lower().encode('utf-8')).hexdigest()
+    return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot_password_page():
@@ -485,6 +504,7 @@ def loginPage():
         email = request.form.get('email')
         password = request.form.get('password')
         remember = request.form.get('remember')
+        print(remember)
         response = Users.query.filter_by(email=email).first()
         if ((response != None) and (response.status == 1) and (response.email == email) and (
                 sha256_crypt.verify(password, response.password) == 1) and (response.status == 1)):
@@ -600,7 +620,8 @@ def register_page():
         email = request.form.get('email')
         password = request.form.get('password')
         password = sha256_crypt.hash(password)
-        entry = Users(name=name, email=email, password=password,
+        profile_image = avatar(email, 128)
+        entry = Users(name=name, email=email, password=password, profile_image=profile_image,
                       lastlogin=time, createddate=time, status=0)
         db.session.add(entry)
         db.session.commit()
@@ -690,7 +711,7 @@ def dashboard_page():
     postn = len(Newsletter.query.order_by(Newsletter.id).all())
     print(current_user.email)
     return render_template('dashboard.html', json=json, postc=postc, postct=postct, postf=postf, postn=postn,
-                           c_user_name=current_user.name)
+                           c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/view/org", methods=['GET', 'POST'])
@@ -1052,9 +1073,102 @@ def logout():
     return redirect(url_for('loginPage'))
 
 
+# Google Login Starts Here
+
+# OAuth 2 client setup
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
+
+def get_google_provider_cfg():
+    return requests.get(GOOGLE_DISCOVERY_URL).json()
+
+# Google Login Route
+@app.route('/login/google')
+def google_login():
+    # Find out what URL to hit for Google login
+    google_provider_cfg = get_google_provider_cfg()
+    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+
+    # Use library to construct the request for Google login and provide
+    # scopes that let us retrieve user's profile from Google
+
+    print(f"I am base url {request.base_url}")
+
+    request_uri = client.prepare_request_uri(
+        authorization_endpoint,
+        redirect_uri=request.base_url + "/callback",
+        scope=["openid", "email", "profile"],
+    )
+    return redirect(request_uri)
+
+@app.route('/login/google/callback')
+def google_login_callback():
+    # Get authorization code Google sent back to us
+    code = request.args.get("code")
+
+    # Find out what URL to hit to get tokens that allow us to ask for
+    # things on behalf of a user
+    google_provider_cfg = get_google_provider_cfg()
+    token_endpoint = google_provider_cfg["token_endpoint"]
+
+    token_url, headers, body = client.prepare_token_request(
+        token_endpoint,
+        authorization_response=request.url,
+        redirect_url=request.base_url,
+        code=code
+    )
+    token_response = requests.post(
+        token_url,
+        headers=headers,
+        data=body,
+        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+    )
+
+    # Parse the tokens!
+    client.parse_request_body_response(json_lib.dumps(token_response.json()))
+
+    # Now that we have tokens, let's find and hit the URL
+    # from Google that gives us the user's profile information,
+    # including their Google profile image and email
+    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
+    uri, headers, body = client.add_token(userinfo_endpoint)
+    userinfo_response = requests.get(uri, headers=headers, data=body)
+
+    # You want to make sure their email is verified.
+    # The user authenticated with Google, authorized your
+    # app, and now we've verified their email through Google!
+    if userinfo_response.json().get("email_verified"):
+        users_email = userinfo_response.json()["email"]
+        picture = userinfo_response.json()["picture"]
+        users_name = userinfo_response.json()["name"]
+    else:
+        abort(401)
+    pwo = PasswordGenerator()
+    pwd = pwo.generate()
+    password = sha256_crypt.hash(pwd)
+    # Create a user in your db with the information provided
+    # by Google
+
+    # Doesn't exist? Add it to the database.
+    if not Users.query.filter_by(email=users_email).first():
+        entry = Users(name=users_name, email=users_email, password=password,profile_image=picture, lastlogin=time, createddate=time, status=1)
+        db.session.add(entry)
+        db.session.commit()
+
+    # Begin user session by logging the user in
+    
+    user = Users.query.filter_by(email=users_email).first()
+    login_user(user)
+
+    # Send user back to homepage
+    return redirect(url_for("dashboard_page"))
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+@app.errorhandler(401)
+def user_not_authorized(e):
+    return render_template('401.html'), 401
 
 
 if __name__ == '__main__':

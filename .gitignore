@@ -126,3 +126,6 @@ dmypy.json
 
 # Wheel files
 *.whl
+
+# Database
+*.db

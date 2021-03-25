@@ -4,6 +4,7 @@
     "favDescription": "",
     "copyrightMessage": "CGV",
     "devImgName": "",
+    "app_settings": "config.DevelopmentConfig",
     "databaseUri": "sqlite:///cgv.db",
     "sendgridapi": "@",
     "admin_email": "vigneshshetty.in@gmail.com",
@@ -13,6 +14,8 @@
     "demo_ip": "43.247.157.20",
     "razorpay_key_id": "@",
     "razorpay_key_secret": "@",
-    "github_api_token": "@"
+    "contributors_api": "https://githubcapi.herokuapp.com/get-contributors-data/",
+    "google_client_id": "@",
+    "google_client_secret": "@"
   }
 }

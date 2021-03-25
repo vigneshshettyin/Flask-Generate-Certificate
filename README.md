@@ -6,14 +6,16 @@
 Certificate Generation and Verification System project aims in developing a computerized system to maintain and generate the certificate. It has an admin login through which the admin can monitor the whole system. It also has a facility where users after logging in to their account can monitor and generate a certificate for their particular user. Admin will manage user logins, will have the option to deactivate any user. Every time any changes are done an automated email will be sent depending on the update. Overall this project is being developed to help the users in the best way possible and also to reduce human efforts.
 <br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)
-[![Forks](https://img.shields.io/github/forks/vigneshshettyin/Online-Certificate-Generation-Verification.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/network/members)
-[![Stargazers](https://img.shields.io/github/stars/vigneshshettyin/Flask-Generate-Certificate.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificater/stargazers)
+
+[![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/vigneshshettyin/Flask-Generate-Certificate)
+[![GitHub forks](https://img.shields.io/github/forks/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/network/)
+[![GitHub stars](https://img.shields.io/github/stars/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/stargazers/)
 [![Issues](https://img.shields.io/github/issues/vigneshshettyin/Flask-Generate-Certificate.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)
 [![MPL-2.0 License](https://img.shields.io/github/license/vigneshshettyin/Flask-Generate-Certificate.svg?style=flat-square)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/master/LICENSE)
-[![CodeFactor](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate/badge)](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate)
-![GitHub watchers](https://img.shields.io/github/watchers/vigneshshettyin/Flask-Generate-Certificate)
+<!--[![CodeFactor](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate/badge)](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate)-->
+[![GitHub watchers](https://img.shields.io/github/watchers/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/watchers/)
 ![GitHub contributors](https://img.shields.io/github/contributors/vigneshshettyin/Flask-Generate-Certificate)
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
 
 Feel free to use it as-is or customize it as much as you want.
@@ -24,12 +26,16 @@ But if you want to **Contribute** and make this much better for other developer 
 If you created something awesome and want to contribute then feel free to open Please don't hesitate to open an [Pull Request](https://github.com/vigneshshettyin/Flask-Generate-Certificate/pulls).
 
 ## Tech Stack:
-<img alt="CSS3" src="https://img.shields.io/badge/css3%20-%231572B6.svg?&style=for-the-badge&logo=css3&logoColor=white"/> 	<img alt="HTML5" src="https://img.shields.io/badge/html5%20-%23E34F26.svg?&style=for-the-badge&logo=html5&logoColor=white"/> <img alt="Python" src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white"/> <img alt="JavaScript" src="https://img.shields.io/badge/javascript%20-%23323330.svg?&style=for-the-badge&logo=javascript&logoColor=%23F7DF1E"/>
+<img alt="CSS3" src="https://img.shields.io/badge/css3%20-%231572B6.svg?&style=for-the-badge&logo=css3&logoColor=white"/> 	<img alt="HTML5" src="https://img.shields.io/badge/html5%20-%23E34F26.svg?&style=for-the-badge&logo=html5&logoColor=white"/> <img alt="Python" src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white"/> <img alt="JavaScript" src="https://img.shields.io/badge/javascript%20-%23323330.svg?&style=for-the-badge&logo=javascript&logoColor=%23F7DF1E"/> <img alt="Bootstrap" src="https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white"/> <img alt="jQuery" src="https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white"/> <img alt="Flask" src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"/> <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"/> <img alt="SQLite" src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white"/> <img alt="Heroku" src="https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white"/>
 
 
 # Getting Started 🚀
 
 ## How To Use 🔧
+
+There are two ways of using the project:
+
+## 1. Conventional Way
 
 **1.** Clone this repository to your local drive
  ```shell
@@ -41,16 +47,38 @@ $ git clone https://github.com/vigneshshettyin/Flask-Generate-Certificate.git
 $ cd Flask-Generate-Certificate
 ```
 
-**3.** Install requirements from requirements.txt  
+**3.** Setup virtual environment
+ ```shell
+$ py -m venv env
+$ .\env\Scripts\activate
+```
+
+**4.** Install requirements from requirements.txt  
  ```shell
 $ pip3 install -r requirements.txt
 ```
 
-**4.** Run the development server
- ```shell
-$ python3 app.py
-```
-  or
+**5.** Setup Database
+
+* To initialise a new database
+  ```
+    python manage.py db init 
+  ```
+* To migrate changes in the database
+  ```
+  python manage.py db migrate
+  ```
+* To update the database with the new migrations
+  ```
+  python manage.py db upgrade
+  ```
+* To degrade the database
+  ```
+  python manage.py db downgrade
+  ```
+**Note** : Users need to run the upgrade command only during the project setup since the initial migrations have already been done. It just need to be applied using the `python manage.py db upgrade` command.
+
+**6.** Run the development server
 ```shell
 $ flask run
 ```
@@ -58,7 +86,17 @@ $ flask run
 Now open your favorite browser and go to http://127.0.0.1:5000/
 You will find the application running there.
 
+## 2. Using Docker
 
+* Install [Docker](https://docs.docker.com/engine/install/), from the given link.
+
+* Once Docker is installed, use the following two commands to run the app in the root dicrectory:
+  * `docker-compose build` , This command will build the project
+  * `COMPOSE_HTTP_TIMEOUT=200 docker-compose up`, This command will run the container.
+  
+* You can open the project on `localhost:5000` on the machine.
+
+Note: If you are using docker-desktop on Windows Or WSL2 i.e Windows Subsystem For Linux, you can use the GUI Options to run the containers
 ## Live Deployment 📦 
 
 Click Here to view the deployment!
@@ -68,11 +106,11 @@ Click Here to view the deployment!
 <br>
 When you are done with the setup, you should host your website online.
 We highly recommend to read through the:<br>
-- [Deploying on Heroku](https://stackabuse.com/deploying-a-flask-application-to-heroku/).<br>
-- [Deploying on AWS](https://www.serverless.com/blog/flask-python-rest-api-serverless-lambda-dynamodb).<br>
-- [Deploying on Azure](https://medium.com/@nikovrdoljak/deploy-your-flask-app-on-azure-in-3-easy-steps-b2fe388a589e).<br>
-- [Deploying on Google Cloud](https://medium.com/@dmahugh_70618/deploying-a-flask-app-to-google-app-engine-faa883b5ffab).<br>
-- [Deploying on Digital Ocean](https://www.digitalocean.com/community/tutorials/how-to-deploy-a-flask-app-using-gunicorn-to-app-platform).<br>
+- [Deploying on Heroku](#).<br>
+- [Deploying on AWS](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/Documentation/aws.md).<br>
+- [Deploying on Azure](#).<br>
+- [Deploying on Google Cloud](#).<br>
+- [Deploying on Digital Ocean](#).<br>
 
 ## Mockup & Demo 🛠️
 
@@ -111,5 +149,19 @@ If you can help us with these. Please don't hesitate to open a [Pull Request](ht
   <img src="https://contributors-img.web.app/image?repo=vigneshshettyin/Flask-Generate-Certificate" />
 </a>
 
+## Show some ❤️ by starring the repository
 
+<table><tr><td valign="top" width="50%">
+ 
+ 
+[![Forkers repo roster for @vigneshshettyin/Flask-Generate-Certificate](https://reporoster.com/forks/vigneshshettyin/Flask-Generate-Certificate)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/network/members)
+
+
+</td><td valign="top" width="50%">
+ 
+ 
+[![Stargazers repo roster for @vigneshshettyin/Flask-Generate-Certificate](https://reporoster.com/stars/vigneshshettyin/Flask-Generate-Certificate)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/stargazers)
+
+
+</td></tr></table>  
 

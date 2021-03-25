@@ -76,9 +76,9 @@
 
 
   </style>
-</head>
+  </head>
 
-<body>
+<body>  
 
 
 {% block body %}  {% endblock %}
@@ -237,7 +237,7 @@
   })();
   </script>
   <!--End of Tawk.to Script-->
-
+  
   <script>
     var message="Right Click Disabled!";
 
@@ -276,7 +276,8 @@
     });
   </script>
 
-
+  
+  <script src="{{ url_for('static', filename='js/myjs.js') }}"></script>
 </body>
 
 </html>

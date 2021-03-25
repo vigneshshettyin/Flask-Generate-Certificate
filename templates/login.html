@@ -26,11 +26,28 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin-2.css') }}" rel="stylesheet">
-
+    
+    <style>
+        .dark-mode , .dark-mode .row , .dark-mode .text-center a
+        {
+            background-color:black;
+    background-image: linear-gradient(
+180deg
+, black 10%, black 100%);
+    background-size: cover;
+    color:#fff;
+        }
+        .dark-mode .text-gray-900
+        {
+            background-color:black;
+            color:#fff !important;
+        }
+    </style>
 </head>
 
 <body class="bg-gradient-primary">
-
+    
+    <a href="# "class="toggle" id="toggle" style="visibility:hidden" onclick="myfun()">Toggle Mode</a>
     <div class="container">
 
         <!-- Outer Row -->
@@ -119,6 +136,8 @@
     <script src="{{ url_for('static', filename='js/sb-admin-2.min.js') }}"></script>
     <script src="{{url_for('static', filename='js/login.js') }}"></script>
 
+    <!-- js for dark mode -->
+    <script src="{{ url_for('static', filename='js/myjs.js') }}"></script>
 </body>
 
 </html>

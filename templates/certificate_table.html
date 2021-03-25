@@ -17,7 +17,7 @@
                         {% endfor %}
                        {% endif %}
                       {% endwith %}
-                        <a href="/edit/certificates/0" class="btn btn-primary btn-icon-split">
+                        <a class="btn btn-primary btn-icon-split" id="add_certificate" onclick="addCertificate({{grp_id}})" style="cursor: pointer">
                                         <span class="icon text-white-50">
                                            <i class="fa fa-plus" aria-hidden="true"></i>
                                         </span>
@@ -46,9 +46,9 @@
                                             <td>{{ post.name}}</td>
                                             <td>{{ post.number }}</td>
                                             <td>{{ post.coursename }}</td>
-                                            <td>{{ post.dateupdate }}</td>
-                                            <td><a href="/edit/certificates/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-edit"></i></a></td>
-                                            <td><a href="/delete/certificates/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
+                                            <td>{{ post.last_update }}</td>
+                                            <td><a onclick="editCertificate('{{grp_id}}','{{post.id}}')" class="btn btn-success btn-circle" id="edit_certificate" style="cursor: pointer"><i class="fas fa-edit"></i></a></td>
+                                            <td><a href="/delete/{{ grp_id }}/certificates/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
                                         </tr>
 
 {#                                    end loop#}

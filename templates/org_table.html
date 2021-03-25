@@ -16,14 +16,6 @@
                         {% endfor %}
                        {% endif %}
                       {% endwith %}
-                        <div class="card-header py-3">
-                        <a href="/edit/org/0" class="btn btn-success btn-icon-split">
-                                        <span class="icon text-white-50">
-                                           <i class="fa fa-plus" aria-hidden="true"></i>
-                                        </span>
-                                        <span class="text">Add Organization</span>
-                  </a>
-                        </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -44,13 +36,13 @@
 {% for post in post %}
                                         <tr>
                                             <td>{{ post.id}}</td>
-                                            <td>{{ post.name}}</td>
+                                            <td><a href="{{ url_for('view_certificate_page', grp_id=post.id) }}">{{ post.name}}</a></td>
                                             <td>{{ post.subname}}</td>
                                             <td>{{ post.email }}</td>
                                             <td>{{ post.phone }}</td>
                                             <td>{{ post.date }}</td>
-                                            <td><a href="/edit/org/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-edit"></i></a></td>
-                                            <td><a href="/delete/org/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
+                                            <td><a style="cursor: pointer;" class="btn btn-success btn-circle editGrpBtn" data-post-id="{{post.id}}" onclick="editGrp('{{post.id}}')"><i class="fas fa-edit"></i></a></td>
+                                            <td><a href="/delete/group/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
                                         </tr>
 
 {#                                    end loop#}

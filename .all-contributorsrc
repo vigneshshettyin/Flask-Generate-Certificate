@@ -51,6 +51,26 @@
         "code",
         "design"
       ]
+    },
+    {
+      "login": "shades-7",
+      "name": "Saloni Gupta",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58786336?v=4",
+      "profile": "https://github.com/shades-7",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "vigneshshettyin",
+      "name": "Vignesh Shetty",
+      "avatar_url": "https://avatars.githubusercontent.com/u/77713888?v=4",
+      "profile": "https://www.vigneshshetty.in",
+      "contributions": [
+        "code",
+        "design"
+      ]
     }
   ],
   "repoType": "github",

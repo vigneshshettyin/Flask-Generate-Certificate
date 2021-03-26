@@ -93,8 +93,12 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
-
-
+<table>
+  <tr>
+    <td align="center"><a href="http://ashutoshkrris.tk"><img src="https://avatars.githubusercontent.com/u/47353498?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ashutosh Krishna</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=ashutoshkrris" title="Code">💻</a></td>
+    <td align="center"><a href="https://aayush-hub.github.io/Sketch-site/"><img src="https://avatars.githubusercontent.com/u/65889104?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aayush Garg</b></sub></a><br /><a href="#design-Aayush-hub" title="Design">🎨</a></td>
+  </tr>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->

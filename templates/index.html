@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top header-transparent">
     <div class="container d-flex align-items-center">
@@ -30,6 +30,7 @@
           <li><a href="#footer">CONTACT US</a></li>
           <li><a href="https://cgvs.tawk.help/">HELPDESK</a></li>
           <li ><a href="/login"><i class="fa fa-sign-in" aria-hidden="true"></i> LOGIN</a></li>
+          <li ><button class="toggle" id="toggle" onclick="myfun()">Toggle Mode</button></li>
         </ul>
       </nav><!-- .main-nav-->
 
@@ -41,7 +42,7 @@
     <div class="container d-flex h-100">
       <div class="row justify-content-center align-self-center" data-aos="fade-up">
         <div class="col-md-6 intro-info order-md-first order-last" data-aos="zoom-in" data-aos-delay="100">
-         <h2 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;"><span>India’s </span>largest online verification network</h2> 
+         <h2 style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;"><span>India’s </span>largest online verification network</h2>
           <div>
             <a href="#why-us" class="btn-get-started scrollto">Get Started</a>
             <a href="#footer" class="btn-get-started scrollto" style="margin-top: 5px;">Contact Us</a>
@@ -136,7 +137,7 @@
       </div>
     </section><!-- End Services Section -->
 
-   
+
 
     <!-- ======= Call To Action Section ======= -->
     <section id="call-to-action" class="call-to-action">
@@ -245,7 +246,7 @@
         <div class="row d-flex justify-content-center">
 
           {% for t,d in team.items() %}
-            
+
           <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
             <div class="member">
               <img src="{{ d.image }}" class="img-fluid" alt="#">
@@ -259,7 +260,7 @@
               </div>
             </div>
           </div>
-          
+
           {% endfor %}
 
 
@@ -406,9 +407,9 @@
             <div class="text-center mt-3">
               <button style="background-color: #F9A826; border-color: #F9A826;" class="btn btn-primary" type="submit" title="Pay with Razorpay" id="cnfPay">Pay with Razorpay</button>
             </div>
-            
+
           </form>
-  
+
         </div>
       </div>
     </div>
@@ -485,11 +486,11 @@
             </div>
 
             <div class="text-center"><button style="background-color: #F9A826;" class="btn btn-primary" type="submit" title="Send Feedback">Send Feedback</button></div>
-            
+
             <br>
             <br>
           </form>
-  
+
         </div>
       </div>
     </div>

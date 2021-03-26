@@ -175,6 +175,32 @@ def avatar(email, size):
     return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
 
+def send_password_reset_email(name, email):
+    token = s.dumps(email, salt='cgv-password-reset')
+    print(token)
+    if app.debug:
+        link = f"http://127.0.0.1:5000/reset-password/{token}"
+    else:
+        link = f"{json['site_url']}/reset-password/{token}"
+    print(link)
+    subject = "Password Reset Link | CGV"
+    content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
+        name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">We get it, stuff happens. Please use the link below to reset your password.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + link + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Reset Password Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+    content = content1
+    message = Mail(
+        from_email=('forgot-password@cgv.in.net', 'Password Bot CGV'),
+        to_emails=email,
+        subject=subject,
+        html_content=content)
+    try:
+        sg = SendGridAPIClient(json['sendgridapi'])
+        response = sg.send(message)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot_password_page():
     if (request.method == 'POST'):
@@ -185,36 +211,40 @@ def forgot_password_page():
             if (post.email == json["admin_email"]):
                 flash("You can't reset password of administrator!", "danger")
             else:
-                pwo = PasswordGenerator()
-                password = pwo.generate()
-                passwordemial = password
-                post.password = sha256_crypt.hash(password)
-                db.session.commit()
-                subject = "New password generated at " + time
-                content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-                    name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><center><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Password : ''' + str(
-                    passwordemial) + '''</p><center><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
-                content2 = json[
-                    "site_url"] + '''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-                content = content1 + content2
-                message = Mail(
-                    from_email=('forgot-password@cgv.in.net',
-                                'Security Bot CGV'),
-                    to_emails=email,
-                    subject=subject,
-                    html_content=content)
-                try:
-                    sg = SendGridAPIClient(json['sendgridapi'])
-                    response = sg.send(message)
-                    flash(
-                        "You will receive a mail shortly. Password rested successfully!", "success")
-                except Exception as e:
-                    print(e.message)
+                if send_password_reset_email(name,email):
+                    flash(f"We've sent a password reset link on {email}", "success")
+                else:
+                    flash("Error while sending password reset email!", "danger")
         elif (post == None):
             flash("We didn't find your account!", "danger")
-            return render_template('forgot-password.html', json=json)
+            return render_template('forgot-password.html', json=json, verified=False)
 
-    return render_template('forgot-password.html', json=json)
+    return render_template('forgot-password.html', json=json, verified=False)
+
+@app.route('/reset-password/<token>', methods=['GET','POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard_page'))
+    if request.method == 'POST':
+        password = request.form.get('password')
+        password = sha256_crypt.hash(password)
+        email = s.loads(token, salt="cgv-password-reset")
+        user = Users.query.filter_by(email=email).first()
+        user.password = password
+        db.session.commit()
+        flash('Password changed successfully.', 'success')
+        return redirect(url_for('loginPage'))
+    try:
+        email = s.loads(token, salt="cgv-password-reset", max_age=1800)
+    except SignatureExpired:
+        flash("Sorry, link has been expired.", "error")
+        return render_template('forgot-password.html', json=json, verified=False)
+    except Exception:
+        flash("Sorry, Invalid token.", "error")
+        return render_template('forgot-password.html', json=json, verified=False)
+    user = Users.query.filter_by(email=email).first()
+    first_name = user.name.split(" ")[0]
+    return render_template("forgot-password.html",json=json, name=first_name, token=token, verified=True)
 
 
 @app.route('/view/mail', methods=['GET', 'POST'])
@@ -706,7 +736,7 @@ def dashboard_page():
     postf = len(Feedback.query.order_by(Feedback.id).all())
     postn = len(Newsletter.query.order_by(Newsletter.id).all())
     print(current_user.name)
-    return render_template('dashboard.html', json=json, postc=postc, postct=postct, postf=postf, postn=postn, user=current_user)
+    return render_template('dashboard.html', json=json, postc=postc, postct=postct, postf=postf, postn=postn, user=current_user, )
 
 
 @app.route("/view/groups", methods=['GET', 'POST'])
@@ -1144,4 +1174,4 @@ def user_not_authorized(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run()

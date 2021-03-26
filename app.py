@@ -1144,4 +1144,4 @@ def user_not_authorized(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

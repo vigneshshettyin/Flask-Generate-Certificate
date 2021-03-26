@@ -3,6 +3,15 @@ body {
   color: #444;
   font-family: "Open Sans", sans-serif;
 }
+.dark-mode {
+  background-color: black;
+  color: white;
+}
+  .toggle
+  {
+    z-index:10000;
+    position:absolute;
+  }
 
 a {
   color: #F9A826;
@@ -140,6 +149,11 @@ h1, h2, h3, h4, h5, h6 {
   transition: 0.3s;
 }
 
+.dark-mode #topbar .social-links a
+{
+  background-color: black;
+  color:#fff;
+}
 #topbar .social-links a:hover {
   color: #F9A826;
 }
@@ -167,6 +181,11 @@ h1, h2, h3, h4, h5, h6 {
   top: 0;
   background: #fff;
   box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.3);
+}
+.dark-mode #header.header-scrolled
+{
+  background: black;
+  color: #fff;
 }
 
 #header .logo {
@@ -228,6 +247,10 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Open Sans", sans-serif;
   text-transform: uppercase;
   font-weight: 600;
+}
+.dark-mode .main-nav a
+{
+  color: #fff;
 }
 
 .main-nav a:hover, .main-nav .active > a, .main-nav li:hover > a {
@@ -411,6 +434,11 @@ h1, h2, h3, h4, h5, h6 {
   background: #f5f8fd ;
   background-size: cover;
 }
+.dark-mode #hero
+{
+  background-color: black;
+  color:#fff;
+}
 
 @media (max-width: 767px) {
   #hero {
@@ -443,6 +471,11 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 40px;
   font-size: 48px;
   font-weight: 700;
+}
+.dark-mode #hero .intro-info h2
+{
+  background-color: black;
+  color:#fff;
 }
 
 #hero .intro-info h2 span {
@@ -493,6 +526,11 @@ section {
   font-family: "Montserrat", sans-serif;
 }
 
+.dark-mode .section-header h3
+{
+  background-color: black;
+  color:#fff;
+}
 .section-header p {
   text-align: center;
   margin: auto;
@@ -500,6 +538,10 @@ section {
   padding-bottom: 60px;
   color: #535074;
   width: 50%;
+}
+.dark-mode .section-header p {
+  background:black;
+  color: #fff;
 }
 
 @media (max-width: 767px) {
@@ -512,6 +554,11 @@ section {
 --------------------------------*/
 .section-bg {
   background: #f5f8fd;
+}
+.dark-mode .section-bg
+{
+  background-color: black;
+  color: #fff;
 }
 
 /* About Us Section
@@ -679,11 +726,21 @@ section {
   color: #413e66;
   margin-bottom: 5px;
 }
+.dark-mode #why-us .why-us-content .features h4
+{
+  background-color: black;
+  color:#fff;
+}
 
 #why-us .why-us-content .features p {
   font-size: 16px;
   margin-left: 56px;
   color: #555186;
+}
+.dark-mode #why-us .why-us-content .features p
+{
+  background-color: black;
+  color:#fff;
 }
 
 #why-us .counters {
@@ -1405,10 +1462,20 @@ section {
   font-size: 14px;
   background: #fff;
 }
+.dark-mode #footer ,.dark-mode #footer .copyright
+{
+  background-color: black;
+  color:#fff;
+}
 
 #footer .footer-top {
   padding: 60px 0 30px 0;
   background: #f5f8fd;
+}
+.dark-mode #footer .footer-top
+{
+  background:black;
+  color:#fff;
 }
 
 #footer .footer-top .footer-info {
@@ -1427,12 +1494,22 @@ section {
   text-transform: uppercase;
 }
 
+.dark-mode #footer .footer-top .footer-info h3
+{
+  background-color: black;
+  color:#fff;
+}
 #footer .footer-top .footer-info p {
   font-size: 13px;
   line-height: 24px;
   margin-bottom: 0;
   font-family: "Montserrat", sans-serif;
   color: #535074;
+}
+.dark-mode #footer .footer-top .footer-info p , .dark-mode #footer .footer-top h4
+{
+  background-color: black;
+  color:#fff;
 }
 
 #footer .footer-top .social-links a {
@@ -1490,6 +1567,11 @@ section {
 
 #footer .footer-top .footer-links ul a {
   color: #696592;
+}
+.dark-mode #footer .footer-top .footer-links ul a
+{
+  background-color: black;
+  color:#fff;
 }
 
 #footer .footer-top .footer-links ul a:hover {
@@ -1651,4 +1733,18 @@ section {
 
 #footer .credits a:hover {
   color: #D68423;
+}
+
+.form
+{
+  padding-bottom: 10px;
+}
+.form p
+{
+  padding:1px 10px;
+}
+.dark-mode .form
+{
+  background-color: #fff;
+  color: black;
 }

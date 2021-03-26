@@ -23,6 +23,20 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "APratham",
+      "name": "Antariksh Pratham",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33273990?v=4",
+      "profile": "https://github.com/APratham",
+      "contributions": [
+        "code",
+        "design",
+        "ideas",
+        "maintenance",
+        "mentoring",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

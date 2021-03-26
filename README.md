@@ -88,17 +88,9 @@ If you can help us with these. Please don't hesitate to open a [Pull Request](ht
 
 ## Contributors ✨
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=vigneshshettyin/Flask-Generate-Certificate" />
+</a>
 
 <!--## Cool Developers🚧
 

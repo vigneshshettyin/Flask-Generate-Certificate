@@ -1,40 +1,27 @@
+import hashlib
+import hmac
+import json as json_lib
 import os
-from oauthlib.oauth2 import WebApplicationClient
-from flask import (
-    Flask,
-    render_template,
-    redirect,
-    request,
-    flash,
-    url_for,
-    jsonify,
-    abort,
-)
-from flask_login import (
-    LoginManager,
-    current_user,
-    login_user,
-    logout_user,
-    login_required,
-)
+import random
+import re
+import string
+from datetime import datetime
+
+import pytz
+import qrcode
+import razorpay
+import requests
+from flask import (Flask, abort, flash, jsonify, redirect, render_template,
+                   request, url_for)
+from flask_login import (LoginManager, UserMixin, current_user, login_required,
+                         login_user, logout_user)
 from flask_sqlalchemy import SQLAlchemy
+from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+from oauthlib.oauth2 import WebApplicationClient
 from passlib.hash import sha256_crypt
 from password_generator import PasswordGenerator
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-from datetime import datetime
-import json as json_lib
-import requests
-import random
-import string
-import pytz
-import re
-import razorpay
-import hmac
-import hashlib
-from itsdangerous import SignatureExpired, URLSafeTimedSerializer
-import qrcode
-from flask_login import UserMixin
 
 # work done by arpit
 # start

@@ -88,28 +88,9 @@ If you can help us with these. Please don't hesitate to open a [Pull Request](ht
 
 ## Contributors ✨
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="http://ashutoshkrris.tk"><img src="https://avatars.githubusercontent.com/u/47353498?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ashutosh Krishna</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=ashutoshkrris" title="Code">💻</a> <a href="#design-ashutoshkrris" title="Design">🎨</a> <a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues?q=author%3Aashutoshkrris" title="Bug reports">🐛</a> <a href="#data-ashutoshkrris" title="Data">🔣</a> <a href="#userTesting-ashutoshkrris" title="User Testing">📓</a></td>
-    <td align="center"><a href="https://aayush-hub.github.io/Sketch-site/"><img src="https://avatars.githubusercontent.com/u/65889104?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aayush Garg</b></sub></a><br /><a href="#design-Aayush-hub" title="Design">🎨</a></td>
-    <td align="center"><a href="https://github.com/APratham"><img src="https://avatars.githubusercontent.com/u/33273990?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Antariksh Pratham</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=APratham" title="Code">💻</a> <a href="#design-APratham" title="Design">🎨</a> <a href="#ideas-APratham" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-APratham" title="Maintenance">🚧</a> <a href="#mentoring-APratham" title="Mentoring">🧑‍🏫</a> <a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=APratham" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/arpit456jain"><img src="https://avatars.githubusercontent.com/u/55352601?v=4?s=100" width="100px;" alt=""/><br /><sub><b>111arpit1</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=arpit456jain" title="Code">💻</a> <a href="#design-arpit456jain" title="Design">🎨</a></td>
-    <td align="center"><a href="https://github.com/shades-7"><img src="https://avatars.githubusercontent.com/u/58786336?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Saloni Gupta</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=shades-7" title="Code">💻</a> <a href="#design-shades-7" title="Design">🎨</a></td>
-    <td align="center"><a href="https://www.vigneshshetty.in"><img src="https://avatars.githubusercontent.com/u/77713888?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Vignesh Shetty</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=vigneshshettyin" title="Code">💻</a> <a href="#design-vigneshshettyin" title="Design">🎨</a></td>
-
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=vigneshshettyin/Flask-Generate-Certificate" />
+</a>
 
 <!--## Cool Developers🚧
 

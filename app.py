@@ -74,18 +74,6 @@ def load_user(user_id):
     return Users.query.get(user_id)
 
 
-class Organization(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    subname = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    phone = db.Column(db.String(50), nullable=False)
-    date = db.Column(db.String(50), nullable=False)
-    users = db.relationship('Users', cascade="all,delete", backref='user')
-    certificates = db.relationship(
-        'Certificate', cascade="all,delete", backref='student')
-
-
 class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
@@ -93,21 +81,21 @@ class Users(db.Model, UserMixin):
     password = db.Column(db.String(500), nullable=False)
     profile_image = db.Column(db.String(500), nullable=True)
     status = db.Column(db.Integer, nullable=False)
-    lastlogin = db.Column(db.String(50), nullable=False)
     is_staff = db.Column(db.Boolean, default=False, nullable=False)
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
-    createddate = db.Column(db.String(50), nullable=False)
-    orgid = db.Column(db.Integer, db.ForeignKey(
-        'organization.id'), nullable=True)
-    certificate = db.relationship(
-        'Certificate', cascade="all,delete", backref='certificate')
+    last_login = db.Column(db.String(50), nullable=False)
+    group = db.relationship('Group', cascade="all,delete", backref='group')
 
 
-class QRCode(db.Model):
+class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    certificate_num = db.Column(db.String(50), nullable=False)
-    link = db.Column(db.String(200), nullable=False)
-    qr_code = db.Column(db.String(100), nullable=True)
+    name = db.Column(db.String(50), nullable=False)
+    subname = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    phone = db.Column(db.String(50), nullable=False)
+    date = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    certificates = db.relationship(
+        'Certificate', cascade="all,delete", backref='certificates')
 
 
 class Certificate(db.Model):
@@ -116,10 +104,18 @@ class Certificate(db.Model):
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     coursename = db.Column(db.String(500), nullable=False)
-    dateupdate = db.Column(db.String(50), nullable=False)
-    createddate = db.Column(db.String(50), nullable=False)
-    orgid = db.Column(db.Integer, db.ForeignKey('organization.id'))
-    userid = db.Column(db.Integer, db.ForeignKey('users.id'))
+    last_update = db.Column(db.String(50), nullable=False)
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    qrcode = db.relationship('QRCode', cascade="all,delete", backref='qrcode')
+
+
+class QRCode(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    certificate_num = db.Column(db.String(50), nullable=False)
+    link = db.Column(db.String(200), nullable=False)
+    qr_code = db.Column(db.String(100), nullable=True)
+    certificate_id = db.Column(db.Integer, db.ForeignKey('certificate.id'))
 
 
 class Newsletter(db.Model):
@@ -173,11 +169,11 @@ class Transactions(db.Model):
         db.DateTime(), default=datetime.now(IST), nullable=False)
 
 
-
 # For Gravatar
 def avatar(email, size):
     digest = hashlib.md5(email.lower().encode('utf-8')).hexdigest()
     return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
+
 
 @app.route('/forgot', methods=['GET', 'POST'])
 def forgot_password_page():
@@ -246,7 +242,7 @@ def mail_page():
         except Exception as e:
             print("Error")
             flash("Error while sending mail!", "danger")
-    return render_template('mail.html', json=json, c_user_name=current_user.name)
+    return render_template('mail.html', json=json, c_user_name=current_user.name, user=current_user)
 
 
 @app.route('/')
@@ -357,10 +353,10 @@ def certificate_verify():
     else:
         ip_address = ipc
     if (request.method == 'POST'):
-        certificateno = request.form.get('certificateno')
-        postc = Certificate.query.filter_by(number=certificateno).first()
+        certificate_no = request.form.get('certificateno')
+        postc = Certificate.query.filter_by(number=certificate_no).first()
         if (postc != None):
-            posto = Organization.query.filter_by(id=postc.orgid).first()
+            posto = Group.query.filter_by(id=postc.group_id).first()
             flash("Certificate Number Valid!", "success")
             return render_template('verify2.html', postc=postc, posto=posto, json=json, ip=ip_address)
         elif (postc == None):
@@ -379,7 +375,7 @@ def certificate_generate():
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
         if (postc != None):
-            posto = Organization.query.filter_by(id=postc.orgid).first()
+            posto = Group.query.filter_by(id=postc.group_id).first()
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_name = f"{qr_code.certificate_num}.png"
@@ -393,7 +389,7 @@ def certificate_generate():
 def certificate_generate_string(number):
     postc = Certificate.query.filter_by(number=number).first()
     if (postc != None):
-        posto = Organization.query.filter_by(id=postc.orgid).first()
+        posto = Group.query.filter_by(id=postc.group_id).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_name = f"{qr_code.certificate_num}.png"
         return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json)
@@ -405,7 +401,7 @@ def certificate_generate_string(number):
 def certificate_generated_string(number):
     postc = Certificate.query.filter_by(number=number).first()
     if (postc != None):
-        posto = Organization.query.filter_by(id=postc.orgid).first()
+        posto = Group.query.filter_by(id=postc.group_id).first()
         style = "display: none;"
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_name = f"{qr_code.certificate_num}.png"
@@ -509,7 +505,7 @@ def loginPage():
         if ((response != None) and (response.status == 1) and (response.email == email) and (
                 sha256_crypt.verify(password, response.password) == 1) and (response.status == 1)):
             updateloginTime = Users.query.filter_by(email=email).first()
-            updateloginTime.lastlogin = time
+            updateloginTime.last_login = time
             db.session.commit()
             # Some error here
             if (host == True):
@@ -622,7 +618,7 @@ def register_page():
         password = sha256_crypt.hash(password)
         profile_image = avatar(email, 128)
         entry = Users(name=name, email=email, password=password, profile_image=profile_image,
-                      lastlogin=time, createddate=time, status=0)
+                      last_login=time, status=0, is_staff=1)
         db.session.add(entry)
         db.session.commit()
         if send_activation_email(name, email):
@@ -709,205 +705,160 @@ def dashboard_page():
     postct = len(Contact.query.order_by(Contact.id).all())
     postf = len(Feedback.query.order_by(Feedback.id).all())
     postn = len(Newsletter.query.order_by(Newsletter.id).all())
-    print(current_user.email)
-    return render_template('dashboard.html', json=json, postc=postc, postct=postct, postf=postf, postn=postn,
-                           c_user_name=current_user.name, user=current_user)
+    print(current_user.name)
+    return render_template('dashboard.html', json=json, postc=postc, postct=postct, postf=postf, postn=postn, user=current_user)
 
 
-@app.route("/view/org", methods=['GET', 'POST'])
+@app.route("/view/groups", methods=['GET', 'POST'])
 @login_required
 def view_org_page():
-    if current_user.is_staff or current_user.is_admin:
-        post = Organization.query.order_by(Organization.id).all()
-        return render_template('org_table.html', post=post, json=json, c_user_name=current_user.name)
+    if current_user.is_staff:
+        post = Group.query.order_by(Group.id).all()
+        return render_template('org_table.html', post=post, json=json, user=current_user)
     else:
-        return render_template('block.html', json=json, c_user_name=current_user.name)
+        return render_template('block.html', json=json, user=current_user)
 
 
 @app.route("/view/users", methods=['GET', 'POST'])
 @login_required
 def view_users_page():
-    if current_user.is_admin or current_user.is_staff:
+    if current_user.is_staff:
         post = Users.query.order_by(Users.id).all()
-        return render_template('users_table.html', post=post, json=json, c_user_name=current_user.name)
+        return render_template('users_table.html', post=post, json=json, user=current_user)
     else:
-        return render_template('block.html', json=json, c_user_name=current_user.name)
+        return render_template('block.html', json=json, user=current_user)
 
 
-@app.route("/view/certificates", methods=['GET', 'POST'])
+@app.route("/view/<string:grp_id>/certificates", methods=['GET', 'POST'])
 @login_required
-def view_certificate_page():
-    post = Certificate.query.order_by(Certificate.id).all()
-    return render_template('certificate_table.html', post=post, json=json, c_user_name=current_user.name)
+def view_certificate_page(grp_id):
+    post = Certificate.query.filter_by(
+        group_id=grp_id).order_by(Certificate.id)
+    return render_template('certificate_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user, grp_id=grp_id)
 
 
 @app.route("/view/contacts", methods=['GET', 'POST'])
 @login_required
 def view_contacts_page():
     post = Contact.query.order_by(Contact.id).all()
-    return render_template('contact_table.html', post=post, json=json, c_user_name=current_user.name)
+    return render_template('contact_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/view/feedbacks", methods=['GET', 'POST'])
 @login_required
 def view_feedbacks_page():
     post = Feedback.query.order_by(Feedback.id).all()
-    return render_template('feedback_table.html', post=post, json=json, c_user_name=current_user.name)
+    return render_template('feedback_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/view/newsletters", methods=['GET', 'POST'])
 @login_required
 def view_newsletters_page():
     post = Newsletter.query.order_by(Newsletter.id).all()
-    return render_template('newsletter_table.html', post=post, json=json, c_user_name=current_user.name)
+    return render_template('newsletter_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/view/messages/<string:id>", methods=['GET'])
 @login_required
 def view_message_page(id):
     post = Contact.query.filter_by(id=id).first()
-    return render_template('view_message.html', post=post, json=json, c_user_name=current_user.name)
+    return render_template('view_message.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
 
 
-@app.route("/edit/certificates/<string:id>", methods=['GET', 'POST'])
+@app.route("/edit/<string:grp_id>/certificates/<string:id>", methods=['GET', 'POST'])
 @login_required
-def edit_certificates_page(id):
+def edit_certificates_page(grp_id, id):
     if request.method == 'POST':
-        name = request.form.get('name')
+        data = json_lib.loads(request.data)
+        name = data["name"]
+        coursename = data["course"]
+        email = data["email"]
         letters = string.ascii_letters
         number = ''.join(random.choice(letters) for i in range(4))
         number = 'CGV' + name[0:4].upper() + number
-        coursename = request.form.get('coursename')
         userid = current_user.id
-        email = request.form.get('email')
-        orgid = current_user.orgid
-        dateupdate = time
-        createddate = time
+        last_update = time
         if id == '0':
-            postcheck = Certificate.query.filter_by(number=number).first()
+            postcheck = Certificate.query.filter_by(
+                email=email, coursename=coursename).first()
             if (postcheck == None):
-                post = Certificate(name=name, number=number, email=email, coursename=coursename, userid=userid,
-                                   orgid=orgid, dateupdate=dateupdate, createddate=createddate)
-                db.session.add(post)
-                # Create QR Code for this certificate
-                link = f'{json["site_url"]}/certify/{number}'
-                new_qr = QRCode(certificate_num=number, link=link)
-                qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
-                qr_image.add_data(link)
-                qr_image.make(fit=True)
-                img = qr_image.make_image(fill='black', back_color='white')
-                print(img)
-                imgname = f"{number}.png"
-                img.save("static/qr_codes/"+imgname)
-                new_qr.qr_code = f"qr_codes/{imgname}"
-                db.session.add(new_qr)
-                db.session.commit()
-                subject = "Certificate Generated With Certificate Number : " + \
-                    str(number)
-                content1 = '''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Certificate Download</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-                    name)
-                content2 = '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p>Congratulations! Your certificate has been issued successfully.</p><p>Certificate Number : ''' + str(
-                    number)
-                content3 = '''</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="https://''' + \
-                           json["site_url"] + '''/certify/''' + str(
-                               number) + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> Download Certificate Here!</a><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + \
-                    json[
-                               "site_url"] + '''/certificate/verify" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> E-Verify Certificate Here!</a></p> <br> <br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-                content = content1 + content2 + content3
-                message = Mail(
-                    from_email=('certificate-generate@cgv.in.net',
-                                'Certificate Generate Bot CGV'),
-                    to_emails=email,
-                    subject=subject,
-                    html_content=content)
                 try:
-                    sg = SendGridAPIClient(json['sendgridapi'])
-                    response = sg.send(message)
+                    post = Certificate(name=name, number=number, email=email, coursename=coursename, user_id=userid,
+                                       group_id=grp_id, last_update=last_update)
+                    db.session.add(post)
+                    # Create QR Code for this certificate
+                    link = f'{json["site_url"]}/certify/{number}'
+                    new_qr = QRCode(certificate_num=number, link=link)
+                    qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
+                    qr_image.add_data(link)
+                    qr_image.make(fit=True)
+                    img = qr_image.make_image(fill='black', back_color='white')
+                    imgname = f"{number}.png"
+                    try:
+                        os.mkdir("static/qr_codes")
+                    except Exception:
+                        pass
+                    img.save("static/qr_codes/"+imgname)
+                    new_qr.qr_code = f"qr_codes/{imgname}"
+                    db.session.add(new_qr)
+                    db.session.commit()
+                    subject = "Certificate Generated With Certificate Number : " + \
+                        str(number)
+                    content1 = '''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Certificate Download</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
+                        name)
+                    content2 = '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p>Congratulations! Your certificate has been issued successfully.</p><p>Certificate Number : ''' + str(
+                        number)
+                    content3 = '''</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="https://''' + \
+                        json["site_url"] + '''/certify/''' + str(
+                            number) + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> Download Certificate Here!</a><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + \
+                        json[
+                            "site_url"] + '''/certificate/verify" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> E-Verify Certificate Here!</a></p> <br> <br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+                    content = content1 + content2 + content3
+                    message = Mail(
+                        from_email=('certificate-generate@cgv.in.net',
+                                    'Certificate Generate Bot CGV'),
+                        to_emails=email,
+                        subject=subject,
+                        html_content=content)
+                    try:
+                        sg = SendGridAPIClient(json['sendgridapi'])
+                        response = sg.send(message)
+                    except Exception as e:
+                        print("Error!")
+                        flash("Error while sending mail!", "danger")
+                    return jsonify(certificate_success=True)
                 except Exception as e:
-                    print("Error!")
-                    flash("Error while sending mail!", "danger")
-                flash("Certificate added successfully!", "success")
+                    print(e)
+                    return jsonify(certificate_error=True)
             else:
-                flash("Certificate already exist!", "danger")
+                return jsonify(certificate_duplicate=True)
         else:
-            post = Certificate.query.filter_by(id=id).first()
-            post.name = name
-            post.coursename = coursename
-            post.email = email
-            post.userid = current_user.id
-            post.orgid = current_user.orgid
-            post.dateupdate = time
-            db.session.commit()
-            flash("Certificate edited successfully!", "success")
-            return redirect('/edit/certificates/' + id)
-    posto = Organization.query.filter_by().all()
-    postu = Users.query.filter_by().all()
-    post = Certificate.query.filter_by(id=id).first()
-    return render_template('add_edit_certificate.html', json=json, id=id, post=post, posto=posto, postu=postu,
-                           c_user_name=current_user.name)
-
-
-@app.route("/edit/users/<string:id>", methods=['GET', 'POST'])
-@login_required
-def edit_users_page(id):
-    if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        password = sha256_crypt.hash(request.form.get('password'))
-        status = request.form.get('status')
-        orgid = request.form.get('orgid')
-        lastlogin = time
-        createddate = time
-        if id == '0':
-            postvalidate = Users.query.filter_by(email=email).first()
-            if (postvalidate == None):
-                post = Users(name=name, email=email, password=password, status=status, orgid=orgid, lastlogin=lastlogin,
-                             createddate=createddate)
-                db.session.add(post)
-                db.session.commit()
-                subject = "Welcome aboard " + name + "!"
-                content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-                    name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Now contact your organization head for your account activation. Once activated click on link below to login.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
-                content2 = json[
-                    "site_url"] + '''/login" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Login Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-                content = content1 + content2
-                message = Mail(
-                    from_email=('register-user@cgv.in.net',
-                                'Register Bot CGV'),
-                    to_emails=email,
-                    subject=subject,
-                    html_content=content)
-                try:
-                    sg = SendGridAPIClient(json['sendgridapi'])
-                    response = sg.send(message)
-                except Exception as e:
-                    print("Error!")
-                    flash("Error while sending mail!", "danger")
-                flash("User added successfully!", "success")
-            else:
-                flash("User exist!", "danger")
-        else:
-            post = Users.query.filter_by(id=id).first()
-            if (post.email == json['admin_email']):
-                flash("You can't edit admin user details!", "danger")
-                return redirect('/view/users')
-            else:
+            try:
+                post = Certificate.query.filter_by(id=id).first()
                 post.name = name
+                post.coursename = coursename
                 post.email = email
-                post.password = password
-                post.status = status
-                post.orgid = orgid
-                post.lasylogin = time
+                post.user_id = current_user.id
+                post.group_id = grp_id
+                post.last_update = time
                 db.session.commit()
-                flash("User edited successfully!", "success")
-                return redirect('/edit/users/' + id)
-    posto = Organization.query.filter_by().all()
-    post = Users.query.filter_by(id=id).first()
-    return render_template('add_edit_users.html', json=json, id=id, post=post, posto=posto,
-                           c_user_name=current_user.name)
+                return jsonify(certificate_success=True)
+            except Exception as e:
+                print(e)
+                return jsonify(certificate_error=True)
+    cert = Certificate.query.filter_by(id=id).first()
+    post = {
+        "id": cert.id,
+        "name": cert.name,
+        "coursename": cert.coursename,
+        "email": cert.email,
+        "last_update": cert.last_update,
+        "number": cert.number
+    }
+    return jsonify(json=json, id=id, post=post)
 
 
-@app.route("/activate/users/<string:id>", methods=['GET', 'POST'])
+@app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
 @login_required
 def activate_users(id):
     activate = Users.query.filter_by(id=id).first()
@@ -949,66 +900,80 @@ def change_permissions(perm, id):
     return redirect(url_for('view_users_page'))
 
 
-@app.route("/edit/org/<string:id>", methods=['GET', 'POST'])
+@app.route("/edit/group/<string:id>", methods=['GET', 'POST'])
 @login_required
 def edit_org_page(id):
     if request.method == 'POST':
-        name = request.form.get('name')
-        subname = request.form.get('subname')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
+        data = json_lib.loads(request.data)
+        name = data["name"]
+        dept = data["dept"]
+        email = data["email"]
+        phone = data["phone"]
         date = time
         if id == '0':
-            post = Organization(name=name, subname=subname,
-                                email=email, phone=phone, date=date)
-            db.session.add(post)
-            db.session.commit()
-            flash("Organization added Successfully!", "success")
-            subject = '''Welcome, ''' + str(name) + '''!'''
-            content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-                name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">New organization created successfully! Now create user and activate user to generate certificates.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
-            content2 = json[
-                "site_url"] + '''/register" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Create User Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-            content = content1 + content2
-            message = Mail(
-                from_email=('new-organization@cgv.in.net',
-                            'Organization Bot CGV'),
-                to_emails=email,
-                subject=subject,
-                html_content=content)
+            if Group.query.filter_by(email=email).first():
+                return jsonify(group_duplicate=True)
             try:
-                sg = SendGridAPIClient(json['sendgridapi'])
-                response = sg.send(message)
-            except Exception as e:
-                print(e.message)
+                post = Group(name=name, subname=dept, email=email,
+                             phone=phone, date=date, user_id=current_user.id)
+                db.session.add(post)
+                db.session.commit()
+                subject = '''Welcome, ''' + str(name) + '''!'''
+                content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
+                    name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">New organization created successfully! Now create user and activate user to generate certificates.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
+                content2 = json[
+                    "site_url"] + '''/register" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Create User Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+                content = content1 + content2
+                message = Mail(
+                    from_email=('new-organization@cgv.in.net',
+                                'Organization Bot CGV'),
+                    to_emails=email,
+                    subject=subject,
+                    html_content=content)
+                try:
+                    sg = SendGridAPIClient(json['sendgridapi'])
+                    response = sg.send(message)
+                except Exception as e:
+                    print("Error!")
+                return jsonify(group_success=True)
+            except Exception:
+                return jsonify(group_error=True)
+
         else:
-            post = Organization.query.filter_by(id=id).first()
-            if (post.email == json["admin_email"]):
-                flash("Default organization can't be edited!", "warning")
-            else:
+            try:
+                post = Group.query.filter_by(id=id).first()
                 post.name = name
-                post.subname = subname
+                post.subname = dept
                 post.phone = phone
                 post.email = email
                 post.date = date
+                post.user_id = current_user.id
                 db.session.commit()
-                flash("Organization edited Successfully!", "success")
-            return redirect('/edit/org/' + id)
-    post = Organization.query.filter_by(id=id).first()
-    return render_template('add_edit_org.html', json=json, post=post, id=id, c_user_name=current_user.name)
+                return jsonify(group_success=True)
+            except Exception:
+                return jsonify(group_error=True)
+    grp = Group.query.filter_by(id=id).first()
+    post = {
+        "id": grp.id,
+        "name": grp.name,
+        "subname": grp.subname,
+        "email": grp.email,
+        "phone": grp.phone
+    }
+    return jsonify(json=json, id=id, post=post)
 
 
-@app.route("/delete/org/<string:id>", methods=['GET', 'POST'])
+@app.route("/delete/group/<string:id>", methods=['GET', 'POST'])
 @login_required
 def delete_org_page(id):
-    delete_org_page = Organization.query.filter_by(id=id).first()
+    delete_org_page = Group.query.filter_by(id=id).first()
     if (delete_org_page.email == json["admin_email"]):
         flash("Default organization can't be deleted!", "danger")
     else:
         db.session.delete(delete_org_page)
         db.session.commit()
         flash("Organization deleted successfully!", "success")
-    return redirect('/view/org')
+    return redirect('/view/groups')
 
 
 @app.route("/delete/users/<string:id>", methods=['GET', 'POST'])
@@ -1025,14 +990,14 @@ def delete_users_page(id):
     return redirect('/view/users')
 
 
-@app.route("/delete/certificates/<string:id>", methods=['GET', 'POST'])
+@app.route("/delete/<string:grp_id>/certificates/<string:id>", methods=['GET', 'POST'])
 @login_required
-def delete_certificates_page(id):
+def delete_certificates_page(grp_id, id):
     delete_certificates_page = Certificate.query.filter_by(id=id).first()
     db.session.delete(delete_certificates_page)
     db.session.commit()
     flash("Certificate deleted successfully!", "success")
-    return redirect('/view/certificates')
+    return redirect(f'/view/{grp_id}/certificates')
 
 
 @app.route("/delete/contact/<string:id>", methods=['GET', 'POST'])
@@ -1078,10 +1043,13 @@ def logout():
 # OAuth 2 client setup
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
+
 def get_google_provider_cfg():
     return requests.get(GOOGLE_DISCOVERY_URL).json()
 
 # Google Login Route
+
+
 @app.route('/login/google')
 def google_login():
     # Find out what URL to hit for Google login
@@ -1099,6 +1067,7 @@ def google_login():
         scope=["openid", "email", "profile"],
     )
     return redirect(request_uri)
+
 
 @app.route('/login/google/callback')
 def google_login_callback():
@@ -1150,21 +1119,24 @@ def google_login_callback():
 
     # Doesn't exist? Add it to the database.
     if not Users.query.filter_by(email=users_email).first():
-        entry = Users(name=users_name, email=users_email, password=password,profile_image=picture, lastlogin=time, createddate=time, status=1)
+        entry = Users(name=users_name, email=users_email, password=password,
+                      profile_image=picture, lastlogin=time, createddate=time, status=1)
         db.session.add(entry)
         db.session.commit()
 
     # Begin user session by logging the user in
-    
+
     user = Users.query.filter_by(email=users_email).first()
     login_user(user)
 
     # Send user back to homepage
     return redirect(url_for("dashboard_page"))
 
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
 
 @app.errorhandler(401)
 def user_not_authorized(e):
@@ -1172,4 +1144,4 @@ def user_not_authorized(e):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(debug=True)

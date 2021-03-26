@@ -11,12 +11,23 @@ import pytz
 import qrcode
 import razorpay
 import requests
-from flask import (Flask, abort, flash, jsonify, redirect, render_template,
-                   request, url_for)
-from flask_login import (LoginManager, UserMixin, current_user, login_required,
-                         login_user, logout_user)
+from flask import abort
+from flask import flash
+from flask import Flask
+from flask import jsonify
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask_login import current_user
+from flask_login import login_required
+from flask_login import login_user
+from flask_login import LoginManager
+from flask_login import logout_user
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+from itsdangerous import SignatureExpired
+from itsdangerous import URLSafeTimedSerializer
 from oauthlib.oauth2 import WebApplicationClient
 from passlib.hash import sha256_crypt
 from password_generator import PasswordGenerator

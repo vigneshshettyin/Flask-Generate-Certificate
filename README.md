@@ -97,6 +97,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="http://ashutoshkrris.tk"><img src="https://avatars.githubusercontent.com/u/47353498?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ashutosh Krishna</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=ashutoshkrris" title="Code">💻</a></td>
     <td align="center"><a href="https://aayush-hub.github.io/Sketch-site/"><img src="https://avatars.githubusercontent.com/u/65889104?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aayush Garg</b></sub></a><br /><a href="#design-Aayush-hub" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/APratham"><img src="https://avatars.githubusercontent.com/u/33273990?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Antariksh Pratham</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=APratham" title="Code">💻</a> <a href="#design-APratham" title="Design">🎨</a> <a href="#ideas-APratham" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-APratham" title="Maintenance">🚧</a> <a href="#mentoring-APratham" title="Mentoring">🧑‍🏫</a> <a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=APratham" title="Documentation">📖</a></td>
   </tr>
 </table>
 

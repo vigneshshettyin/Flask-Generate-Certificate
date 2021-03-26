@@ -51,6 +51,16 @@
         "code",
         "design"
       ]
+    },
+    {
+      "login": "A-kriti",
+      "name": "Akriti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/73133055?v=4",
+      "profile": "https://a-kriti.github.io/About/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoType": "github",

@@ -86,11 +86,26 @@ This project is licensed under the MPL-2.0 License. See the [LICENSE](./LICENSE)
 ## For the Future
 If you can help us with these. Please don't hesitate to open a [Pull Request](https://github.com/vigneshshettyin/Flask-Generate-Certificate/pulls).
 
-## Cool Developers🚧
+# Contributors ✨
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+
+
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+
+<!--## Cool Developers🚧
 
 <a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/graphs/contributors">
   <img src="https://contributors-img.web.app/image?repo=vigneshshettyin/Flask-Generate-Certificate" />
-</a>
+</a>-->
 
 ## Show some ❤️ by starring the repository
 

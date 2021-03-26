@@ -78,7 +78,7 @@
   </style>
   </head>
 
-<body>  
+<body>
 
 
 {% block body %}  {% endblock %}
@@ -90,7 +90,7 @@
   <footer id="footer" class="section-bg">
     <div class="footer-top">
       <div class="container">
-      
+
 
 {% with messages = get_flashed_messages(with_categories=true) %}
                           {% if messages %}
@@ -219,7 +219,7 @@
       }
     }
         </script>
-    
+
 
   <!-- Template Main JS File -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
@@ -237,7 +237,7 @@
   })();
   </script>
   <!--End of Tawk.to Script-->
-  
+
   <script>
     var message="Right Click Disabled!";
 
@@ -276,14 +276,8 @@
     });
   </script>
 
-  
+
   <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
 </body>
 
 </html>
-
-
-
-
-
-

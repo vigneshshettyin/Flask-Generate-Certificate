@@ -86,8 +86,26 @@ This project is licensed under the MPL-2.0 License. See the [LICENSE](./LICENSE)
 ## For the Future
 If you can help us with these. Please don't hesitate to open a [Pull Request](https://github.com/vigneshshettyin/Flask-Generate-Certificate/pulls).
 
-# Contributors ✨
+## Contributors ✨
 
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="http://ashutoshkrris.tk"><img src="https://avatars.githubusercontent.com/u/47353498?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ashutosh Krishna</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=ashutoshkrris" title="Code">💻</a></td>
+    <td align="center"><a href="https://aayush-hub.github.io/Sketch-site/"><img src="https://avatars.githubusercontent.com/u/65889104?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aayush Garg</b></sub></a><br /><a href="#design-Aayush-hub" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/APratham"><img src="https://avatars.githubusercontent.com/u/33273990?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Antariksh Pratham</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=APratham" title="Code">💻</a> <a href="#design-APratham" title="Design">🎨</a> <a href="#ideas-APratham" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-APratham" title="Maintenance">🚧</a> <a href="#mentoring-APratham" title="Mentoring">🧑‍🏫</a> <a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=APratham" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/arpit456jain"><img src="https://avatars.githubusercontent.com/u/55352601?v=4?s=100" width="100px;" alt=""/><br /><sub><b>111arpit1</b></sub></a><br /><a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/commits?author=arpit456jain" title="Code">💻</a> <a href="#design-arpit456jain" title="Design">🎨</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 
 <!--## Cool Developers🚧

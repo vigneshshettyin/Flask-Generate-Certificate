@@ -1,20 +1,10 @@
 {
+  "projectName": "Flask-Generate-Certificate",
+  "projectOwner": "vigneshshettyin",
   "files": [
     "README.md"
   ],
   "imageSize": 100,
-  "contributorsPerLine": 7,
-  "contributorsSortAlphabetically": false,
-  "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg?style=flat-square)](#contributors)",
-  "contributorTemplate": "<a href=\"<%= contributor.profile %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name %></b></sub></a>",
-  "types": {
-    "custom": {
-      "symbol": "🔭",
-      "description": "A custom contribution type.",
-      "link": "[<%= symbol %>](<%= url %> \"<%= description %>\"),"
-    }
-  },
-  "skipCi": true,
   "contributors": [
     {
       "login": "ashutoshkrris",
@@ -22,12 +12,49 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/47353498?v=4",
       "profile": "http://ashutoshkrris.tk",
       "contributions": [
-        "code"
+        "code",
+        "design",
+        "bug",
+        "data",
+        "userTesting"
+      ]
+    },
+    {
+      "login": "Aayush-hub",
+      "name": "Aayush Garg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65889104?v=4",
+      "profile": "https://aayush-hub.github.io/Sketch-site/",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "APratham",
+      "name": "Antariksh Pratham",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33273990?v=4",
+      "profile": "https://github.com/APratham",
+      "contributions": [
+        "code",
+        "design",
+        "ideas",
+        "maintenance",
+        "mentoring",
+        "doc"
+      ]
+    },
+    {
+      "login": "arpit456jain",
+      "name": "111arpit1",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55352601?v=4",
+      "profile": "https://github.com/arpit456jain",
+      "contributions": [
+        "code",
+        "design"
       ]
     }
   ],
-  "projectName": "Flask-Generate-Certificate",
-  "projectOwner": "vigneshshettyin",
   "repoType": "github",
-  "repoHost": "https://github.com"
+  "contributorsPerLine": 7,
+  "repoHost": "https://github.com",
+  "skipCi": true
 }

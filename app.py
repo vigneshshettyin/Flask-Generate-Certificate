@@ -188,7 +188,7 @@ def send_password_reset_email(name, email):
         name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">We get it, stuff happens. Please use the link below to reset your password.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + link + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Reset Password Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
     content = content1
     message = Mail(
-        from_email=('pswd.man.mail@gmail.com', 'Register Bot CGV'),
+        from_email=('forgot-password@cgv.in.net', 'Password Bot CGV'),
         to_emails=email,
         subject=subject,
         html_content=content)

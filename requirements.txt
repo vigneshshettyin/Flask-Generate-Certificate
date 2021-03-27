@@ -9,7 +9,7 @@ Flask==1.1.2
 Flask-Login==0.5.0
 Flask-Migrate==2.7.0
 Flask-SQLAlchemy==2.5.1
-gunicorn==19.9.0
+gunicorn==20.0.4
 idna==2.10
 itsdangerous==1.1.0
 Jinja2==2.11.3

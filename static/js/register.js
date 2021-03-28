@@ -1,91 +1,93 @@
-const passwordField = document.querySelector("#exampleInputPassword");
-const password2Field = document.querySelector("#exampleRepeatPassword");
-const emailField = document.querySelector("#exampleInputEmail");
-const passwordFeedBackArea = document.querySelector(".passwordFeedBackArea");
-const emailFeedBackArea = document.querySelector(".emailFeedBackArea");
-const regitserBtn = document.querySelector("#registerBtn");
-
-emailField.addEventListener("keyup", (e) => {
-  const emailVal = e.target.value;
-  emailField.classList.remove("is-invalid");
-  emailFeedBackArea.style.display = "none";
-
-  if (emailVal.length > 0) {
-    fetch("/validate/email", {
-      body: JSON.stringify({ email: emailVal }),
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.email_error) {
-          regitserBtn.disabled = true;
-          emailField.classList.add("is-invalid");
-          emailFeedBackArea.style.display = "block";
-          emailFeedBackArea.innerHTML = `<p class="text-center">${data.email_error}</p>`;
-        } else if (data.email_pattern_error) {
-          regitserBtn.disabled = true;
-          emailField.classList.add("is-invalid");
-          emailFeedBackArea.style.display = "block";
-          emailFeedBackArea.innerHTML = `<p class="text-center">${data.email_pattern_error}</p>`;
-        } else {
-          regitserBtn.removeAttribute("disabled");
-        }
-      });
+var myInput = document.getElementById("psw");
+var myinput2 = document.getElementById("psw2");
+document.getElementById('registerBtn').disabled = true;
+  var letter = document.getElementById("letter");
+  var capital = document.getElementById("capital");
+  var number = document.getElementById("number");
+  var length = document.getElementById("length");
+  var passwordmatch = document.getElementById("passwordmatch");
+  console.log(passwordmatch)
+  // When the user clicks on the password field, show the message box
+  myInput.onfocus = function() {
+    document.getElementById("message").style.visibility = "visible";
   }
-});
-
-passwordField.addEventListener("keyup", (e) => {
-  const passwordVal = e.target.value;
-
-  passwordField.classList.remove("is-invalid");
-  passwordFeedBackArea.style.display = "none";
-
-  if (passwordVal.length > 0) {
-    fetch("/validate/password", {
-      body: JSON.stringify({
-        password: passwordVal,
-      }),
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.password_error) {
-          regitserBtn.disabled = true;
-          passwordField.classList.add("is-invalid");
-          passwordFeedBackArea.style.display = "block";
-          passwordFeedBackArea.innerHTML = `<p class="text-center">${data.password_error}</p>`;
-        } else {
-          regitserBtn.removeAttribute("disabled");
-        }
-      });
+  
+  // When the user clicks outside of the password field, hide the message box
+  myInput.onblur = function() {
+    document.getElementById("message").style.visibility = "hidden";
   }
-});
 
-password2Field.addEventListener("keyup", (e) => {
-  const passwordVal = e.target.value;
-  const password1Val = document.getElementById("exampleInputPassword").value;
+  
 
-  password2Field.classList.remove("is-invalid");
-  passwordFeedBackArea.style.display = "none";
+  // for confirm password
+  
+ // When the user clicks on the password field, show the message box
+ myinput2.onfocus = function() {
+  document.getElementById("message2").style.visibility = "visible";
+}
 
-  if (passwordVal.length > 0) {
-    fetch("/match/passwords", {
-      body: JSON.stringify({
-        password: password1Val,
-        password2: passwordVal,
-      }),
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.password_mismatch) {
-          regitserBtn.disabled = true;
-          password2Field.classList.add("is-invalid");
-          passwordFeedBackArea.style.display = "block";
-          passwordFeedBackArea.innerHTML = `<p class="text-center">${data.password_mismatch}</p>`;
-        } else {
-          regitserBtn.removeAttribute("disabled");
-        }
-      });
+// When the user clicks outside of the password field, hide the message box
+myinput2.onblur = function() {
+  document.getElementById("message2").style.visibility = "hidden";
+}
+
+  
+  // When the user starts to type something inside the password field
+  myInput.onkeyup = function() {
+    document.getElementById('registerBtn').disabled = true;
+    // Validate lowercase letters
+    var lowerCaseLetters = /[a-z]/g;
+    if(myInput.value.match(lowerCaseLetters)) {  
+      letter.classList.remove("invalid");
+      letter.classList.add("valid");
+    } else {
+      letter.classList.remove("valid");
+      letter.classList.add("invalid");
+    }
+    
+    // Validate capital letters
+    var upperCaseLetters = /[A-Z]/g;
+    if(myInput.value.match(upperCaseLetters)) {  
+      capital.classList.remove("invalid");
+      capital.classList.add("valid");
+    } else {
+      capital.classList.remove("valid");
+      capital.classList.add("invalid");
+    }
+  
+    // Validate numbers
+    var numbers = /[0-9]/g;
+    if(myInput.value.match(numbers)) {  
+      number.classList.remove("invalid");
+      number.classList.add("valid");
+    } else {
+      number.classList.remove("valid");
+      number.classList.add("invalid");
+    }
+    
+    // Validate length
+    if(myInput.value.length >= 8) {
+      length.classList.remove("invalid");
+      length.classList.add("valid");
+    } else {
+      length.classList.remove("valid");
+      length.classList.add("invalid");
+    }
   }
-});
+
+  myinput2.onkeyup = function() {
+    console.log(myInput.value,myinput2.value);
+    // validating confirm password
+    if (myInput.value == myinput2.value)
+    {
+        passwordmatch.classList.remove("invalid");
+        passwordmatch.classList.add("valid");
+        document.getElementById('registerBtn').disabled = false;
+    }
+    else
+    {
+        passwordmatch.classList.remove("valid");
+        passwordmatch.classList.add("invalid");
+    }
+  
+  }

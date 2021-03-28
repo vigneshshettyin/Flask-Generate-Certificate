@@ -211,8 +211,9 @@ def forgot_password_page():
             if (post.email == json["admin_email"]):
                 flash("You can't reset password of administrator!", "danger")
             else:
-                if send_password_reset_email(name,email):
-                    flash(f"We've sent a password reset link on {email}", "success")
+                if send_password_reset_email(name, email):
+                    flash(
+                        f"We've sent a password reset link on {email}", "success")
                 else:
                     flash("Error while sending password reset email!", "danger")
         elif (post == None):
@@ -221,7 +222,8 @@ def forgot_password_page():
 
     return render_template('forgot-password.html', json=json, verified=False)
 
-@app.route('/reset-password/<token>', methods=['GET','POST'])
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:
         return redirect(url_for('dashboard_page'))
@@ -244,7 +246,7 @@ def reset_password(token):
         return render_template('forgot-password.html', json=json, verified=False)
     user = Users.query.filter_by(email=email).first()
     first_name = user.name.split(" ")[0]
-    return render_template("forgot-password.html",json=json, name=first_name, token=token, verified=True)
+    return render_template("forgot-password.html", json=json, name=first_name, token=token, verified=True)
 
 
 @app.route('/view/mail', methods=['GET', 'POST'])
@@ -257,9 +259,6 @@ def mail_page():
         toemail = request.form.get('toemail')
         subject = request.form.get('subject')
         content = request.form.get('editordata')
-        html1 = '''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"> <strong><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">India’s Largest Online Verification Network</p></strong><div style="background:#f6f7f8;border-radius:3px">'''
-        html2 = '''</div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-        content = html1 + content + html2
         message = Mail(
             from_email=(fromemail, name),
             to_emails=toemail,
@@ -537,33 +536,6 @@ def loginPage():
             updateloginTime = Users.query.filter_by(email=email).first()
             updateloginTime.last_login = time
             db.session.commit()
-            # Some error here
-            if (host == True):
-                # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-                ip_address = ipc
-            else:
-                ip_address = ipc
-            url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-            j = url.json()
-            city = j["city"]
-            country = j["country"]
-            html_text1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Login Alert</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">Is that you?</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">We noticed you logged in to your CGV account from a new device and a new location.</p> <br><div style="background:#f6f7f8;border-radius:3px"> <br> City : '''
-            html_final = html_text1 + str(city) + '''<br><br> Country : ''' + str(
-                country) + '''<br><br>Time : ''' + str(time) + '''<br><br>IP : ''' + str(ip_address)
-            html_text2 = '''<br><p>Tip: To keep your account secured, please contact us to update your email id. Ignore if it’s already updated.</p></div><br><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-            html_final = html_final + html_text2
-            subject = " New device login from " + \
-                str(city) + ", " + str(country) + " detected."
-            message = Mail(
-                from_email=('login-alert@cgv.in.net', 'Security Bot CGV'),
-                to_emails=email,
-                subject=subject,
-                html_content=html_final)
-            try:
-                sg = SendGridAPIClient(json['sendgridapi'])
-                responsemail = sg.send(message)
-            except Exception as e:
-                print(e)
             login_user(response, remember=remember)
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('dashboard_page'))
@@ -948,23 +920,6 @@ def edit_org_page(id):
                              phone=phone, date=date, user_id=current_user.id)
                 db.session.add(post)
                 db.session.commit()
-                subject = '''Welcome, ''' + str(name) + '''!'''
-                content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-                    name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">New organization created successfully! Now create user and activate user to generate certificates.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="'''
-                content2 = json[
-                    "site_url"] + '''/register" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Create User Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-                content = content1 + content2
-                message = Mail(
-                    from_email=('new-organization@cgv.in.net',
-                                'Organization Bot CGV'),
-                    to_emails=email,
-                    subject=subject,
-                    html_content=content)
-                try:
-                    sg = SendGridAPIClient(json['sendgridapi'])
-                    response = sg.send(message)
-                except Exception as e:
-                    print("Error!")
                 return jsonify(group_success=True)
             except Exception:
                 return jsonify(group_error=True)

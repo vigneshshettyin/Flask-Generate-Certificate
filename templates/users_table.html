@@ -16,14 +16,6 @@
                         {% endfor %}
                        {% endif %}
                       {% endwith %}
-                        <div class="card-header py-3">
-                         <a href="/edit/users/0" class="btn btn-success btn-icon-split">
-                                        <span class="icon text-white-50">
-                                           <i class="fa fa-plus" aria-hidden="true"></i>
-                                        </span>
-                                        <span class="text">Add User</span>
-                  </a>
-                        </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -32,12 +24,9 @@
                                             <th>#</th>
                                             <th>Name</th>
                                             <th>Email</th>
+                                            <th>Date</th>
                                             <th>Status</th>
                                             <th>Activate / Deactivate</th>
-                                            <th>Staff</th>
-                                            <th>Admin</th>
-                                            <th>Date</th>
-                                            <th>Edit</th>
                                             <th>Delete</th>
                                         </tr>
                                     </thead>
@@ -48,20 +37,13 @@
                                             <td>{{ post.id}}</td>
                                             <td>{{ post.name}}</td>
                                             <td>{{ post.email }}</td>
-                                            <td>{{ post.status }}</td>
-                                            <td><a href="/activate/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
-                                            {% if post.is_staff %}
-                                                <td><a href="/permissions/staff/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
-                                            {% else %}
-                                                <td><a href="/permissions/staff/users/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-times"></i></a></td>
-                                            {% endif %}
-                                            {% if post.is_admin %}
-                                                <td><a href="/permissions/admin/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
-                                            {% else %}
-                                                <td><a href="/permissions/admin/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-check"></i></a></td>
-                                            {% endif %}
-                                            <td>{{ post.lastlogin }}</td>
-                                            <td><a href="/edit/users/{{ post.id }}" class="btn btn-success btn-circle"><i class="fas fa-edit"></i></a></td>
+                                            <td>{{ post.last_login }}</td>
+                                             <td class="{{'bg-success' if post.status == 1 else 'bg-danger'}} font-weight-bold text-white">{{"Activated" if post.status == 1 else "Deactivated"}}</td>
+                                            <td class="text-center">
+                                        <a href="/activate/user/{{ post.id }}" class="btn {{'btn-success' if post.status == 0 else 'btn-danger'}} btn-circle">
+                                        <i class="fas {{'fa-check' if post.status == 0 else 'fa-times'}}"></i>
+                                        </a>
+                                            </td>
                                             <td><a href="/delete/users/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
                                         </tr>
 

@@ -140,6 +140,7 @@ strong {
 
 small {
   font-size: 80%;
+  color: yellow;
 }
 
 sub,
@@ -159,7 +160,7 @@ sup {
 }
 
 a {
-  color: #4e73df;
+  color: #ff9800!important;
   text-decoration: none;
   background-color: transparent;
 }

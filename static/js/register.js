@@ -1,91 +1,57 @@
-const passwordField = document.querySelector("#exampleInputPassword");
-const password2Field = document.querySelector("#exampleRepeatPassword");
-const emailField = document.querySelector("#exampleInputEmail");
-const passwordFeedBackArea = document.querySelector(".passwordFeedBackArea");
-const emailFeedBackArea = document.querySelector(".emailFeedBackArea");
-const regitserBtn = document.querySelector("#registerBtn");
-
-emailField.addEventListener("keyup", (e) => {
-  const emailVal = e.target.value;
-  emailField.classList.remove("is-invalid");
-  emailFeedBackArea.style.display = "none";
-
-  if (emailVal.length > 0) {
-    fetch("/validate/email", {
-      body: JSON.stringify({ email: emailVal }),
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.email_error) {
-          regitserBtn.disabled = true;
-          emailField.classList.add("is-invalid");
-          emailFeedBackArea.style.display = "block";
-          emailFeedBackArea.innerHTML = `<p class="text-center">${data.email_error}</p>`;
-        } else if (data.email_pattern_error) {
-          regitserBtn.disabled = true;
-          emailField.classList.add("is-invalid");
-          emailFeedBackArea.style.display = "block";
-          emailFeedBackArea.innerHTML = `<p class="text-center">${data.email_pattern_error}</p>`;
-        } else {
-          regitserBtn.removeAttribute("disabled");
-        }
-      });
+var myInput = document.getElementById("psw");
+  var letter = document.getElementById("letter");
+  var capital = document.getElementById("capital");
+  var number = document.getElementById("number");
+  var length = document.getElementById("length");
+  
+  // When the user clicks on the password field, show the message box
+  myInput.onfocus = function() {
+    document.getElementById("message").style.display = "block";
   }
-});
-
-passwordField.addEventListener("keyup", (e) => {
-  const passwordVal = e.target.value;
-
-  passwordField.classList.remove("is-invalid");
-  passwordFeedBackArea.style.display = "none";
-
-  if (passwordVal.length > 0) {
-    fetch("/validate/password", {
-      body: JSON.stringify({
-        password: passwordVal,
-      }),
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.password_error) {
-          regitserBtn.disabled = true;
-          passwordField.classList.add("is-invalid");
-          passwordFeedBackArea.style.display = "block";
-          passwordFeedBackArea.innerHTML = `<p class="text-center">${data.password_error}</p>`;
-        } else {
-          regitserBtn.removeAttribute("disabled");
-        }
-      });
+  
+  // When the user clicks outside of the password field, hide the message box
+  myInput.onblur = function() {
+    document.getElementById("message").style.display = "none";
   }
-});
-
-password2Field.addEventListener("keyup", (e) => {
-  const passwordVal = e.target.value;
-  const password1Val = document.getElementById("exampleInputPassword").value;
-
-  password2Field.classList.remove("is-invalid");
-  passwordFeedBackArea.style.display = "none";
-
-  if (passwordVal.length > 0) {
-    fetch("/match/passwords", {
-      body: JSON.stringify({
-        password: password1Val,
-        password2: passwordVal,
-      }),
-      method: "POST",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.password_mismatch) {
-          regitserBtn.disabled = true;
-          password2Field.classList.add("is-invalid");
-          passwordFeedBackArea.style.display = "block";
-          passwordFeedBackArea.innerHTML = `<p class="text-center">${data.password_mismatch}</p>`;
-        } else {
-          regitserBtn.removeAttribute("disabled");
-        }
-      });
+  
+  // When the user starts to type something inside the password field
+  myInput.onkeyup = function() {
+    // Validate lowercase letters
+    var lowerCaseLetters = /[a-z]/g;
+    if(myInput.value.match(lowerCaseLetters)) {  
+      letter.classList.remove("invalid");
+      letter.classList.add("valid");
+    } else {
+      letter.classList.remove("valid");
+      letter.classList.add("invalid");
+    }
+    
+    // Validate capital letters
+    var upperCaseLetters = /[A-Z]/g;
+    if(myInput.value.match(upperCaseLetters)) {  
+      capital.classList.remove("invalid");
+      capital.classList.add("valid");
+    } else {
+      capital.classList.remove("valid");
+      capital.classList.add("invalid");
+    }
+  
+    // Validate numbers
+    var numbers = /[0-9]/g;
+    if(myInput.value.match(numbers)) {  
+      number.classList.remove("invalid");
+      number.classList.add("valid");
+    } else {
+      number.classList.remove("valid");
+      number.classList.add("invalid");
+    }
+    
+    // Validate length
+    if(myInput.value.length >= 8) {
+      length.classList.remove("invalid");
+      length.classList.add("valid");
+    } else {
+      length.classList.remove("valid");
+      length.classList.add("invalid");
+    }
   }
-});

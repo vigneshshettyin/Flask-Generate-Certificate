@@ -104,11 +104,9 @@
                 
                 <center><img src="{{ url_for('static',filename=qr_image)}}" alt="QR Code" style="width: 100px; height:100px;"></center>
                 {% endif %}
-                  <center>
-  <a href="/download/{{number}}.pdf"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span> Download Certificate</button></a>
-                </form></center>
                 <!-- AddToAny BEGIN -->
 <br><div style="{{ style }}"><center>
+<a href="/download/{{number}}.pdf"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span> Download Certificate</button></a><br>
 <a href="https://www.addtoany.com/share#url=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;title=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32" height="32" style="background-color:#4169e1"></a>
 <a href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/twitter.svg" width="32" height="32" style="background-color:#4169e1"></a>
 <a href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/linkedin.svg" width="32" height="32" style="background-color:royalblue"></a>

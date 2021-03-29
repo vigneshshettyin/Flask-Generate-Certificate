@@ -6,7 +6,7 @@
     "devImgName": "",
     "app_settings": "config.DevelopmentConfig",
     "databaseUri": "sqlite:///cgv.db",
-    "sendgridapi": "@",
+    "sendgridapi": "",
     "admin_email": "vigneshshetty.in@gmail.com",
     "site_url": "cgvcertify.herokuapp.com",
     "pdfapi": "@",

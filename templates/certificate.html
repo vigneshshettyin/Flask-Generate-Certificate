@@ -92,14 +92,20 @@
                 </div>
                 <div class="col-xs-4 pm-certified col-xs-4 text-center">
                   <span class="pm-credits-text block sans">Certified at</span>
-                  <span class="pm-empty-space block underline">{{ postc.dateupdate}}</span>
+                  <span class="pm-empty-space block underline">{{ postc.last_update}}</span>
                   <span class="bold block"></span>
                   <span class="bold block">Certificate No. # {{ postc.number}}</span>
                 </div>
+                
                 {% set qr_image = 'qr_codes/' + qr_code %}
-                  <center><img src="{{ url_for('static',filename=qr_image)}}" alt="QR Code" style="width: 100px; height:100px;"></center>
-                <center><form style="{{ style }}" action="http://api.pdflayer.com/api/convert?access_key={{ json["pdfapi"] }}&document_url=https://{{ json["site_url"] }}/certifyd/{{ postc.number }}&page_size=A4&margin_top=&margin_bottom=&margin_left=&margin_right=" method="post"></form>
-  <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt" onclick="window.print();></span> Download Certificate</button>
+                {% if pdf %}
+                  <center><img src="{{base_url}}{{ url_for('static',filename=qr_image)}}" alt="QR Code" style="width: 100px; height:100px;"></center>
+                {% else %}
+                
+                <center><img src="{{ url_for('static',filename=qr_image)}}" alt="QR Code" style="width: 100px; height:100px;"></center>
+                {% endif %}
+                  <center>
+  <a href="/download/{{number}}.pdf"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span> Download Certificate</button></a>
                 </form></center>
                 <!-- AddToAny BEGIN -->
 <br><div style="{{ style }}"><center>

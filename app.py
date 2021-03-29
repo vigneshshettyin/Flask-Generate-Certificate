@@ -1,6 +1,7 @@
 import os
+from flask.globals import current_app
 from oauthlib.oauth2 import WebApplicationClient
-from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort
+from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from passlib.hash import sha256_crypt
@@ -413,6 +414,7 @@ def certificate_generate():
             flash("No details found. Contact your organization!", "danger")
     return render_template('generate.html', json=json, ip=ip_address)
 
+import pdfkit
 
 @app.route("/certify/<string:number>", methods=['GET'])
 def certificate_generate_string(number):
@@ -421,9 +423,23 @@ def certificate_generate_string(number):
         posto = Group.query.filter_by(id=postc.group_id).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_name = f"{qr_code.certificate_num}.png"
-        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json)
+        if app.debug:
+            base_url = 'http://127.0.0.1:5000/'
+        else:
+            base_url = json["site_url"]
+        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, number=number, pdf=True, base_url=base_url)
+        try:
+            pdfkit.from_string(rendered_temp, f'{number}.pdf', css='static/css/certificate.css')
+        except OSError:
+            pass
+        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, number=number, pdf=False, base_url=base_url)
     else:
         return redirect('/')
+
+@app.route('/download/<path:filename>', methods=['GET','POST'])
+def download(filename):
+    docs = os.path.join(current_app.root_path)
+    return send_from_directory(directory=docs, filename=filename)
 
 
 @app.route("/certifyd/<string:number>", methods=['GET'])

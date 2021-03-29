@@ -13,7 +13,7 @@ Flask-RESTful==0.3.8
 Flask-Script==2.0.6
 Flask-SQLAlchemy==2.5.1
 greenlet==1.0.0
-idna==2.10
+idna==3.1
 itsdangerous==1.1.0
 Jinja2==2.11.3
 Mako==1.1.4
@@ -22,6 +22,7 @@ marshmallow==3.10.0
 mysqlclient==2.0.3
 oauthlib==3.1.0
 passlib==1.7.4
+pdfkit==0.6.1
 Pillow==8.1.2
 pycodestyle==2.7.0
 python-dateutil==2.8.1

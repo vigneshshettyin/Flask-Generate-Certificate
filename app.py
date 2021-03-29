@@ -22,8 +22,6 @@ from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import qrcode
 from flask_login import UserMixin
 
-# work done by arpit
-# start
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 
@@ -440,6 +438,7 @@ import pdfkit
 def certificate_generate_string(number):
     postc = Certificate.query.filter_by(number=number).first()
     if (postc != None):
+        style = "display: none;"
         posto = Group.query.filter_by(id=postc.group_id).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_name = f"{qr_code.certificate_num}.png"
@@ -447,11 +446,11 @@ def certificate_generate_string(number):
             base_url = 'http://127.0.0.1:5000/'
         else:
             base_url = json["site_url"]
-        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, number=number, pdf=True, base_url=base_url)
+        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, number=number, pdf=True, base_url=base_url, style=style)
         try:
             pdfkit.from_string(rendered_temp, f'{number}.pdf', css='static/css/certificate.css')
         except OSError:
-            pass
+            print(OSError)
         return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, number=number, pdf=False, base_url=base_url)
     else:
         return redirect('/')
@@ -460,19 +459,6 @@ def certificate_generate_string(number):
 def download(filename):
     docs = os.path.join(current_app.root_path)
     return send_from_directory(directory=docs, filename=filename)
-
-
-@app.route("/certifyd/<string:number>", methods=['GET'])
-def certificate_generated_string(number):
-    postc = Certificate.query.filter_by(number=number).first()
-    if (postc != None):
-        posto = Group.query.filter_by(id=postc.group_id).first()
-        style = "display: none;"
-        qr_code = QRCode.query.filter_by(certificate_num=number).first()
-        img_name = f"{qr_code.certificate_num}.png"
-        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, style=style)
-    else:
-        return redirect('/')
 
 
 # Payment Views

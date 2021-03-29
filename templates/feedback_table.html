@@ -7,15 +7,6 @@
                 </div>
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                          {% if messages %}
-                          {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" role="alert">
-                         {{ message}}
-                        </div>
-                        {% endfor %}
-                       {% endif %}
-                      {% endwith %}
                         <div class="card-header py-3">
                         </div>
                         <div class="card-body">
@@ -62,4 +53,30 @@
 
                 </div>
                 <!-- /.container-fluid -->
+                {% with errors = get_flashed_messages(category_filter=["danger"]) %}
+                    {% if errors %}
+                    {% for error in errors %}
+                    <script>
+                        new Notify ({
+                        title: 'Error',
+                        text: `{{error|safe}}`,
+                        status: 'error'
+                        })
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <script>
+                        new Notify ({
+                            title: 'Success',
+                            text: `{{message|safe}}`,
+                            status: 'success'
+                            })
+                        </script>                      
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
             {% endblock %}

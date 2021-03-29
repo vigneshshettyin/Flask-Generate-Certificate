@@ -15,6 +15,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro&display=swap" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/simple-notify.min.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/simple-notify.min.js') }}"></script>
 
   <style>
 
@@ -74,15 +76,6 @@
 
             <br>
             <br>
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                          {% if messages %}
-                          {% for category, message in messages %}
-                        <div style="padding-top: 20px" class="alert alert-{{ category }}" role="alert">
-                        <h4> {{ message}}</h4>
-                        </div>
-                        {% endfor %}
-                       {% endif %}
-                      {% endwith %}
   </form>
 
     </div>
@@ -113,6 +106,32 @@
 <br> IP Address : {{ ip }}</p>
 </div>
 </div>
+{% with errors = get_flashed_messages(category_filter=["danger"]) %}
+                    {% if errors %}
+                    {% for error in errors %}
+                    <script>
+                        new Notify ({
+                        title: 'Error',
+                        text: `{{error|safe}}`,
+                        status: 'error'
+                        })
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <script>
+                        new Notify ({
+                            title: 'Success',
+                            text: `{{message|safe}}`,
+                            status: 'success'
+                            })
+                        </script>                      
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
 </body>
 
 </html>

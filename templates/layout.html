@@ -30,6 +30,8 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin-2.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/simple-notify.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/simple-notify.min.js') }}"></script>
 
 </head>
 
@@ -416,6 +418,32 @@
         $('#summernote').summernote();
     });
   </script>
+  {% with errors = get_flashed_messages(category_filter=["danger"]) %}
+                    {% if errors %}
+                    {% for error in errors %}
+                    <script>
+                        new Notify ({
+                        title: 'Error',
+                        text: `{{error|safe}}`,
+                        status: 'error'
+                        })
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <script>
+                        new Notify ({
+                            title: 'Success',
+                            text: `{{message|safe}}`,
+                            status: 'success'
+                            })
+                        </script>                      
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
 
 </body>
 

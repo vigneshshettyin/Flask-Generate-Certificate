@@ -22,6 +22,7 @@ marshmallow==3.10.0
 mysqlclient==2.0.3
 oauthlib==3.1.0
 passlib==1.7.4
+pdfkit==0.6.1
 Pillow==8.1.2
 pycodestyle==2.7.0
 python-dateutil==2.8.1

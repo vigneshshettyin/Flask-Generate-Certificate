@@ -84,6 +84,12 @@ class Users(db.Model, UserMixin):
     last_login = db.Column(db.String(50), nullable=False)
     group = db.relationship('Group', cascade="all,delete", backref='group')
 
+class Token(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), nullable=False)
+    token_id = db.Column(db.String(200), nullable=False)
+    # U->Used, E->Expired, A->Available
+    status = db.Column(db.String(50), nullable=False, default='A')
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -176,7 +182,9 @@ def avatar(email, size):
 
 def send_password_reset_email(name, email):
     token = s.dumps(email, salt='cgv-password-reset')
-    print(token)
+    new_token = Token(email=email,token_id=token,status='A')
+    db.session.add(new_token)
+    db.session.commit()
     if app.debug:
         link = f"http://127.0.0.1:5000/reset-password/{token}"
     else:
@@ -232,12 +240,17 @@ def reset_password(token):
         email = s.loads(token, salt="cgv-password-reset")
         user = Users.query.filter_by(email=email).first()
         user.password = password
+        db_token = Token.query.filter_by(token_id=token).first()
+        db_token.status = 'U'
         db.session.commit()
         flash('Password changed successfully.', 'success')
         return redirect(url_for('loginPage'))
     try:
         email = s.loads(token, salt="cgv-password-reset", max_age=1800)
     except SignatureExpired:
+        db_token = Token.query.filter_by(token_id=token).first()
+        db_token.status = 'E'
+        db.session.commit()
         flash("Sorry, link has been expired.", "error")
         return render_template('forgot-password.html', json=json, verified=False)
     except Exception:
@@ -245,6 +258,13 @@ def reset_password(token):
         return render_template('forgot-password.html', json=json, verified=False)
     user = Users.query.filter_by(email=email).first()
     first_name = user.name.split(" ")[0]
+    db_token = Token.query.filter_by(token_id=token).first()
+    if db_token.status == 'U':
+        flash("Sorry, link has been already used.", "error")
+        return render_template("forgot-password.html", json=json, name=first_name, token=token, verified=False)
+    elif db_token.status == 'E':
+        flash("Sorry, link has been expired.", "error")
+        return render_template("forgot-password.html", json=json, name=first_name, token=token, verified=False)
     return render_template("forgot-password.html", json=json, name=first_name, token=token, verified=True)
 
 
@@ -587,7 +607,9 @@ def match_passwords():
 
 def send_activation_email(name, email):
     token = s.dumps(email, salt='cgv-email-confirm')
-    print(token)
+    new_token = Token(email=email, token_id=token, status='A')
+    db.session.add(new_token)
+    db.session.commit()
     if app.debug:
         link = f"http://127.0.0.1:5000/confirm-email/{token}"
     else:
@@ -664,10 +686,21 @@ def confirm_email(token):
     try:
         email = s.loads(token, salt="cgv-email-confirm", max_age=1800)
     except SignatureExpired:
+        db_token = Token.query.filter_by(token_id=token).first()
+        db_token.status = 'E'
         flash("Sorry, link has been expired.")
         return render_template('login.html', json=json)
+    db_token = Token.query.filter_by(token_id=token).first()
+    if db_token.status == 'U':
+        flash("Sorry, link has been already used.", "error")
+        return render_template("resend.html", json=json)
+    elif db_token.status == 'E':
+        flash("Sorry, link has been expired.", "error")
+        return render_template("resend.html", json=json)
     user = Users.query.filter_by(email=email).first()
     user.status = 1
+    db_token = Token.query.filter_by(token_id=token).first()
+    db_token.status = 'U'
     user.lastlogin = time
     db.session.commit()
     # Some error here

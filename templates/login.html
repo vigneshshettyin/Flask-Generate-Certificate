@@ -26,6 +26,8 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin-2.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/simple-notify.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/simple-notify.min.js') }}"></script>
 
     <style>
         .dark-mode , .dark-mode .row , .dark-mode .text-center a
@@ -238,16 +240,6 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
-                                    {% with messages = get_flashed_messages(with_categories=true) %}
-                          {% if messages %}
-                          {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" role="alert">
-                         {{ message}}
-                        </div>
-                        {% endfor %}
-                       {% endif %}
-                      {% endwith %}
-
                                     <form class="user" method="post" action="/login">
                                         <div class="form-group">
                                             <input type="email" name="email" class="form-control form-control-user"
@@ -311,6 +303,32 @@
 
     <!-- js for dark mode -->
     <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+    {% with errors = get_flashed_messages(category_filter=["danger"]) %}
+                    {% if errors %}
+                    {% for error in errors %}
+                    <script>
+                        new Notify ({
+                        title: 'Error',
+                        text: `{{error|safe}}`,
+                        status: 'error'
+                        })
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <script>
+                        new Notify ({
+                            title: 'Success',
+                            text: `{{message|safe}}`,
+                            status: 'success'
+                            })
+                        </script>                      
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
 </body>
 
 </html>

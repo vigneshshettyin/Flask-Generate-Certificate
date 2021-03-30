@@ -7,15 +7,7 @@
                 <div class="d-flex justify-content-center">
                 <div class="col-lg-6 col-md-12 col-sm-12" style="text-align: center">
                     <form name="sentMessage" id="contactForm" action="{{id}}" method="post" >
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                          {% if messages %}
-                          {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" role="alert">
-                         {{ message}}
-                        </div>
-                        {% endfor %}
-                       {% endif %}
-                      {% endwith %}
+                    
                 <div class="form-group">
                   <input type="text" name="name" class="form-control" id="name" placeholder="Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" value="{{ post.name }}" required/>
                   <div class="validate"></div>
@@ -56,4 +48,30 @@
                     </div>
                 </div>
                 <!-- /.container-fluid -->
+                {% with errors = get_flashed_messages(category_filter=["danger"]) %}
+                    {% if errors %}
+                    {% for error in errors %}
+                    <script>
+                        new Notify ({
+                        title: 'Error',
+                        text: `{{error|safe}}`,
+                        status: 'error'
+                        })
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <script>
+                        new Notify ({
+                            title: 'Success',
+                            text: `{{message|safe}}`,
+                            status: 'success'
+                            })
+                        </script>                      
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
 {% endblock %}

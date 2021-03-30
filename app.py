@@ -4,6 +4,8 @@ from oauthlib.oauth2 import WebApplicationClient
 from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
+import requests_oauthlib
+from requests_oauthlib.compliance_fixes import facebook_compliance_fix
 from passlib.hash import sha256_crypt
 from password_generator import PasswordGenerator
 from sendgrid import SendGridAPIClient
@@ -55,6 +57,10 @@ RAZORPAY_KEY_ID = json["razorpay_key_id"]
 RAZORPAY_KEY_SECRET = json["razorpay_key_secret"]
 
 # Google Login Credentials
+FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
+FB_TOKEN_URL = json['facebook_token_url']
+FB_CLIENT_ID=json["facebook_app_id"]
+FB_CLIENT_SECRET=json["facebook_secret"]
 GOOGLE_CLIENT_ID = json["google_client_id"]
 GOOGLE_CLIENT_SECRET = json["google_client_secret"]
 GOOGLE_DISCOVERY_URL = (
@@ -1151,6 +1157,63 @@ def google_login_callback():
 
     # Send user back to homepage
     return redirect(url_for("dashboard_page"))
+
+
+
+FB_SCOPE=["email","public_profile"]
+
+
+@app.route('/login/facebook')
+def facebook_login():
+    facebook = requests_oauthlib.OAuth2Session(
+        FB_CLIENT_ID, redirect_uri=request.base_url + "/fb-callback", scope=FB_SCOPE
+    )
+    authorization_url, _ = facebook.authorization_url(FB_AUTHORIZATION_BASE_URL)
+
+    return redirect(authorization_url)
+
+
+
+@app.route('/login/facebook/callback')
+def facebook_login_callback():
+    facebook = requests_oauthlib.OAuth2Session(
+    	FB_CLIENT_ID, scope=FB_SCOPE, redirect_uri=request.base_url + "/callback"
+	)
+
+
+    # we need to apply a fix for Facebook here
+    facebook = facebook_compliance_fix(facebook)
+
+    facebook.fetch_token(
+        FB_TOKEN_URL,
+        client_secret=FB_CLIENT_SECRET,
+        authorization_response=flask.request.url,
+    )
+
+    # Fetch a protected resource, i.e. user profile, via Graph API
+
+    facebook_user_data = facebook.get(
+        "https://graph.facebook.com/me?fields=id,name,email,picture{url}"
+    ).json()
+  
+
+    users_email = facebook_user_data["email"]
+    users_name = facebook_user_data["name"]
+    picture_url = facebook_user_data.get("picture", {}).get("data", {}).get("url")
+
+    if not Users.query.filter_by(email=users_email).first():
+        entry = Users(name=users_name, email=users_email, password=password,
+                      profile_image=picture, lastlogin=time, createddate=time, status=1)
+        db.session.add(entry)
+        db.session.commit()
+
+    user = Users.query.filter_by(email=users_email).first()
+    login_user(user)
+
+    # Send user back to homepage
+    return redirect(url_for("dashboard_page"))        
+
+
 
 
 @app.errorhandler(404)

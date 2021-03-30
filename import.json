@@ -16,6 +16,8 @@
     "razorpay_key_secret": "@",
     "contributors_api": "https://githubcapi.herokuapp.com/get-contributors-data/",
     "google_client_id": "@",
-    "google_client_secret": "@"
+    "google_client_secret": "@",
+    "facebook_app_id":"@",
+    "facebook_secret":"@"
   }
 }

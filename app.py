@@ -58,7 +58,7 @@ RAZORPAY_KEY_SECRET = json["razorpay_key_secret"]
 
 # Google Login Credentials
 FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
-FB_TOKEN_URL = "https://graph.facebook.com/oauth/access_token"
+FB_TOKEN_URL = json['facebook_token_url']
 FB_CLIENT_ID=json["facebook_app_id"]
 FB_CLIENT_SECRET=json["facebook_secret"]
 GOOGLE_CLIENT_ID = json["google_client_id"]
@@ -1227,4 +1227,4 @@ def user_not_authorized(e):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run()

@@ -18,6 +18,7 @@
     "google_client_id": "@",
     "google_client_secret": "@",
     "facebook_app_id":"@",
-    "facebook_secret":"@"
+    "facebook_secret":"@",
+    "facebook_token_url" :"https://graph.facebook.com/oauth/access_token"
   }
 }

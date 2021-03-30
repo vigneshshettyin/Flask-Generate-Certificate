@@ -26,6 +26,9 @@
 
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin-2.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/simple-notify.min.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/simple-notify.min.js') }}"></script>
+
     <style>
           .dark-mode , .dark-mode .row , .dark-mode .text-center a
         {
@@ -210,110 +213,26 @@
       filter: blur(0px);
   }
   }
-
-  .form-group
-  {
-      margin-bottom:0.4rem;
-  }
-  hr {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    border: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-  }
   /* css for toggle button ends */
   
-  /*css for errror area*/
-  .errorarea
-  {
-      height:13vh;
-  }
-  /* The message box is shown when the user clicks on the password field */
-  #message {
-    visibility:hidden;
-  }
-  
-  #message p {
-    padding: 0px 5px;
-    font-size: 11px;
-    margin-bottom: 0px;
-  }
-
-  #message2 {
-    visibility:hidden;
-  }
-  
-  #message2 p {
-    padding: 0px 5px;
-    font-size: 11px;
-    margin-bottom: 0px;
-  }
-  
-  /* Add a green text color and a checkmark when the requirements are right */
-  .valid {
-    color: green;
-  }
-  
-  .valid:before {
-    position: relative;
-    left: -3px;
-    content: "✔";
-  }
-  
-  /* Add a red text color and an "x" when the requirements are wrong */
-  .invalid {
-    color: red;
-  }
-  
-  .invalid:before {
-    position: relative;
-    left: -3px;
-    content: "✖";
-  }
-  .main
-  {
-      margin-top:11vh;
-  }
-  @media screen and (max-width: 990px)
-  {
-   
-  #message2 {
-    visibility:hidden;
-    position: relative;
-    top:-50px;
-  }
-  .main
-  {
-      margin-top:10vh;
-  }    
-  }
     </style>
 </head>
 
 <body class="bg-warning">
      <!-- dark mode toggle -->
   <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
-    <div class="container px-2 main">
+    <div class="container">
 
         <div class="card o-hidden border-0 shadow-lg my-5">
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
-                <div class="row px-3">
+                <div class="row">
                     <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
                     <div class="col-lg-7">
-                        <div class="py-2">
+                        <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 text-gray-900 my-3">Create an Account!</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                             </div>
-                            {% with messages = get_flashed_messages(with_categories=true) %}
-                          {% if messages %}
-                          {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}" role="alert">
-                         {{ message}}
-                        </div>
-                        {% endfor %}
-                       {% endif %}
-                      {% endwith %}
                             <form class="user" action="/register" method="post">
                                 <div class="form-group">
                                         <input type="text" name="name" class="form-control form-control-user" id="exampleLastName"
@@ -324,29 +243,22 @@
                                         placeholder="Email Address" required>
                                     <div class="emailFeedBackArea invalid-feedback" style="display:none"></div>
                                 </div>
-                                <div class="form-group row" style="margin-bottom:10px;">
+                                <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                            <input type="password" name="password" id="psw" class="form-control form-control-user"  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Password" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
-                                        </div>
+                                        <input type="password" name="password" class="form-control form-control-user"
+                                            id="exampleInputPassword" placeholder="Password" required>
+                                    </div>
                                     <div class="col-sm-6">
-                                        <input type="password" name="password2" id="psw2" class="form-control form-control-user"
-                                             placeholder="Repeat Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required>
+                                        <input type="password" name="password2" class="form-control form-control-user"
+                                            id="exampleRepeatPassword" placeholder="Repeat Password" required>
                                     </div>
                                 </div>
-                                <div class="row px-1 errorarea">
-                                    <div id="message" class="col col-lg-6 col-11">
-                                        <p id="letter" class="invalid">A <b>lowercase</b> letter</p>
-                                        <p id="capital" class="invalid">A <b>capital (uppercase)</b> letter</p>
-                                        <p id="number" class="invalid">A <b>number</b></p>
-                                        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
-                                        </div>
-                                        <div id="message2" class="col col-lg-6 col-11">
-                                            <p id="passwordmatch" class="invalid"> <b>Password</b>Matched</p>
-                                        </div>    
+                                <div class="row col-md-12">
+                                    <div class="passwordFeedBackArea invalid-feedback" style="display:none"></div>
                                 </div>
-                                <input type="submit" id="registerBtn" class="btn btn-warning btn-user btn-block" disabled>
+                                <input type="submit" id="registerBtn" class="btn btn-warning btn-user btn-block">
                                 <hr>
-                                <a href="#" class="btn btn-google btn-user btn-block">
+                                <a href="/login/google" class="btn btn-google btn-user btn-block">
                                     <i class="fab fa-google fa-fw"></i> Register with Google
                                 </a>
                                 <a href="#" class="btn btn-facebook btn-user btn-block">
@@ -384,6 +296,32 @@
     
     <!-- js for dark mode -->
     <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+      {% with errors = get_flashed_messages(category_filter=["danger"]) %}
+                    {% if errors %}
+                    {% for error in errors %}
+                    <script>
+                        new Notify ({
+                        title: 'Error',
+                        text: `{{error|safe}}`,
+                        status: 'error'
+                        })
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <script>
+                        new Notify ({
+                            title: 'Success',
+                            text: `{{message|safe}}`,
+                            status: 'success'
+                            })
+                        </script>                      
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
 </body>
 
 </html>

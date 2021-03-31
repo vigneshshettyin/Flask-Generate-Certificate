@@ -92,7 +92,7 @@ password2Field.addEventListener("keyup", (e) => {
 
 
 // for show password
-function box1()
+function check2()
 {
   var notice=document.getElementById("notice");
   var password= passwordField;

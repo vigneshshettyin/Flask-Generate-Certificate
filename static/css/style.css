@@ -76,20 +76,21 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   top: calc(50% - 30px);
   left: calc(50% - 30px);
-  border: 6px solid #f2f2f2;
   border-top: 6px solid #F9A826;
   border-radius: 50%;
   width: 60px;
   height: 60px;
-  -webkit-animation: animate-preloader 1s linear infinite;
   animation: animate-preloader 1s linear infinite;
 }
+#feedback
+{
+  border:none; 
+  background-color: #F9A826;
+}
 #feedback:hover{
-  background-color: #065e77 !important;
+  background-color: #065e77;
 }
-#message:hover{
-  background-color: #D68423 !important;
-}
+
 @-webkit-keyframes animate-preloader {
   0% {
     transform: rotate(0deg);
@@ -113,7 +114,7 @@ h1, h2, h3, h4, h5, h6 {
 --------------------------------------------------------------*/
 @media screen and (max-width: 768px) {
   [data-aos-delay] {
-    transition-delay: 0 !important;
+    transition-delay: 0;
   }
 }
 
@@ -175,7 +176,7 @@ h1, h2, h3, h4, h5, h6 {
 #header.header-scrolled {
   top: 0;
   background: #fff;
-  box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.3);
+  box-shadow: 0 0 30px rgba(127, 137, 161, 0.3);
 }
 .dark-mode #header.header-scrolled
 {
@@ -214,10 +215,6 @@ h1, h2, h3, h4, h5, h6 {
 # Navigation Menu
 --------------------------------------------------------------*/
 /* Desktop Navigation */
-.main-nav {
-  /* Drop Down */
-  /* Deep Drop Down */
-}
 
 .main-nav, .main-nav * {
   margin: 0;
@@ -263,7 +260,7 @@ h1, h2, h3, h4, h5, h6 {
   visibility: hidden;
   padding: 10px 0;
   background: #fff;
-  box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
+  box-shadow: 0 0 30px rgba(30, 78, 189, 0.25);
   transition: ease all 0.3s;
 }
 
@@ -463,6 +460,7 @@ h1, h2, h3, h4, h5, h6 {
 
 #hero .intro-info h2 {
   color: #413e66;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   margin-bottom: 40px;
   font-size: 48px;
   font-weight: 700;
@@ -472,6 +470,7 @@ h1, h2, h3, h4, h5, h6 {
   background-color: black;
   color:#fff;
 }
+
 
 #hero .intro-info h2 span {
   color: #F9A826;
@@ -494,7 +493,6 @@ h1, h2, h3, h4, h5, h6 {
   padding: 10px 32px;
   border-radius: 4px;
   transition: 0.5s;
-  color: #fff;
   background: #F9A826;
   color: #fff;
 }
@@ -800,13 +798,12 @@ section {
 
 #call-to-action .cta-btn:hover {
   background: #F9A826;
-  border: 3px solid #F9A826;
 }
 
 /* Features Section
 --------------------------------*/
 #features {
-  padding: 80px 0;
+  padding: 80px 1px;
 }
 
 #features h4 {
@@ -1594,7 +1591,7 @@ section {
 
 #footer .footer-top .footer-newsletter input[type="submit"] {
   background: #F9A826;
-  border: 1px solid #F9A826;
+  border: 1px solid #ffad2a;
   width: 35%;
   padding: 6px 0;
   text-align: center;
@@ -1664,7 +1661,7 @@ section {
   font-size: 14px;
 }
 
-#footer .php-email-form input::focus, #footer .php-email-form textarea::focus {
+#footer .php-email-form input:focus, #footer .php-email-form textarea:focus {
   background-color: #F9A826;
 }
 

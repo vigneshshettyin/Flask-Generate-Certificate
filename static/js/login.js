@@ -36,7 +36,7 @@ emailField.addEventListener("keyup", (e) => {
 
 function check()
 {
-  // console.log("fun called")z
+  console.log("fun called")
   var notice=document.getElementById("notice");
   var password=document.getElementById("exampleInputPassword");
   var x=document.getElementById("box").checked;

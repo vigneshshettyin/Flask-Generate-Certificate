@@ -89,3 +89,25 @@ password2Field.addEventListener("keyup", (e) => {
       });
   }
 });
+
+
+// for show password
+function check2()
+{
+  var notice=document.getElementById("notice");
+  var password= passwordField;
+  var password2= password2Field;
+  var x=document.getElementById("box").checked;
+  if(x==true)
+  {
+    password.type="text";
+    password2.type="text";
+    notice.innerHTML="hide password";
+  }
+  else
+  {
+    password.type="password";
+    password2.type="password";
+    notice.innerHTML="show password";
+  }
+}

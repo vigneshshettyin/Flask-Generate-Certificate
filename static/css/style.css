@@ -706,7 +706,10 @@ section {
   margin-bottom: 0;
   text-align: left;
 }
-
+.dark-mode #services .description
+{
+  color: black;
+}
 /* Why Us Section
 --------------------------------*/
 #why-us {

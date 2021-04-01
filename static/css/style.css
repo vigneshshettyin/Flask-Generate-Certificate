@@ -11,6 +11,11 @@ a {
   color: #F9A826;
   transition: 0.5s;
 }
+#userDropdown .img-profile {
+  height: 1.4rem;
+  width: 1.4rem;
+}
+
 
 a:hover, a:active, a:focus {
   color: #D68423;

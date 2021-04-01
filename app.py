@@ -303,7 +303,7 @@ def mail_page():
 def home_page():
     response = requests.get(json["contributors_api"])
     team = response.json()
-    return render_template('index.html', json=json, team=team)
+    return render_template('index.html', json=json, team=team,user=current_user)
 
 
 @app.route('/contact', methods=['GET', 'POST'])

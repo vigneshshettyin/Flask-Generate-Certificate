@@ -249,7 +249,19 @@ h1, h2, h3, h4, h5, h6 {
 {
   color: #fff;
 }
-
+.dark-mode .dropdown-item
+{
+  color: black;
+}
+.dark-mode .modal-content
+{
+background-color: black;
+color: #fff;
+}
+.dark-mode .close
+{
+  color: #fff;
+}
 .main-nav a:hover, .main-nav .active > a, .main-nav li:hover > a {
   color: #F9A826;
   text-decoration: none;

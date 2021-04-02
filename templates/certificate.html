@@ -10,6 +10,24 @@
       <!-- Favicons -->
   <link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
   <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
+  <style>
+      .dark-mode , .dark-mode .row , .dark-mode .text-center a
+    {
+        background-color:black;
+background-image: linear-gradient(
+180deg
+, black 10%, black 100%);
+background-size: cover;
+color:#fff;
+    }
+    .dark-mode .text-gray-900
+    {
+        background-color:black;
+        color:#fff !important;
+    }
+
+</style>
 <style>
     @media print
 {
@@ -23,6 +41,8 @@
 <body>
 <!-- partial:index.partial.html -->
 <body>
+
+  <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
   <div class="container pm-certificate-container">
     <div class="outer-border"></div>
     <div class="inner-border"></div>
@@ -105,7 +125,7 @@
                 <center><img src="{{ url_for('static',filename=qr_image)}}" alt="QR Code" style="width: 100px; height:100px;"></center>
                 {% endif %}
                 <!-- AddToAny BEGIN -->
-<br><div style="{{ style }}"><center>
+<br><div><center>
 <a href="/download/{{number}}.pdf"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span> Download Certificate</button></a><br>
 <a href="https://www.addtoany.com/share#url=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;title=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32" height="32" style="background-color:#4169e1"></a>
 <a href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/twitter.svg" width="32" height="32" style="background-color:#4169e1"></a>
@@ -127,5 +147,7 @@
 </body>
 <!-- partial -->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
+          <!-- js for dark mode -->
+          <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
 </body>
 </html>

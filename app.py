@@ -650,7 +650,7 @@ def register_page():
         password = sha256_crypt.hash(password)
         profile_image = avatar(email, 128)
         entry = Users(name=name, email=email, password=password, profile_image=profile_image,
-                      last_login=time, status=0, is_staff=1)
+                      status=0, is_staff=1, last_login=time,)
         db.session.add(entry)
         db.session.commit()
         if send_activation_email(name, email):
@@ -1227,4 +1227,4 @@ def user_not_authorized(e):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

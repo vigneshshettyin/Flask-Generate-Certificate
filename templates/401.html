@@ -7,9 +7,28 @@
      <!-- Favicons -->
   <link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
   <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
+  <style>
+      .dark-mode , .dark-mode .row , .dark-mode .text-center a
+    {
+        background-color:black;
+background-image: linear-gradient(
+180deg
+, black 10%, black 100%);
+background-size: cover;
+color:#fff;
+    }
+    .dark-mode .text-gray-900
+    {
+        background-color:black;
+        color:#fff !important;
+    }
 
+</style>
 </head>
 <body>
+
+  <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
 <!-- partial:index.partial.html -->
 <div class="box">
   <div class="box__ghost">
@@ -50,6 +69,8 @@
 <!-- partial -->
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
 <script src="{{ url_for('static', filename='js/404.js') }}"></script>
+        <!-- js for dark mode -->
+        <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
 
 </body>
 </html>

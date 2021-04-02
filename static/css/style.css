@@ -784,6 +784,10 @@ section {
   padding: 40px 0;
 }
 
+.dark-mode #call-to-action {
+  background: #000000;
+}
+
 #call-to-action .cta-title {
   color: #fff;
   font-size: 28px;
@@ -1757,8 +1761,8 @@ section {
 }
 .dark-mode .form
 {
-  background-color: #fff;
-  color: black;
+  background-color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
 }
 
 

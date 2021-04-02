@@ -65,6 +65,10 @@ body {
   font-weight: 400;
   line-height: 1.5;
   color: #858796;
+  height: 95vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: left;
   background-color: #fff;
 }
@@ -9748,9 +9752,7 @@ html {
   min-height: 100%;
 }
 
-body {
-  height: 100%;
-}
+
 
 a:focus {
   outline: none;
@@ -10825,19 +10827,19 @@ a:focus {
 }
 
 .bg-login-image {
-  background: url("https://firebasestorage.googleapis.com/v0/b/genial-wonder-275803.appspot.com/o/Certify%2Flogin.png?alt=media&token=88ed0318-6924-4286-b111-f12b141fa592");
+  background-image: url(../images/login.png);
   background-position: center;
   background-size: cover;
 }
 
 .bg-register-image {
-  background: url("https://firebasestorage.googleapis.com/v0/b/genial-wonder-275803.appspot.com/o/Certify%2Fregister.png?alt=media&token=bc4244ad-2252-45b6-9f9d-dad54bd19995");
+  background: url(../images/register.png);
   background-position: center;
   background-size: cover;
 }
 
 .bg-password-image {
-  background: url("https://firebasestorage.googleapis.com/v0/b/genial-wonder-275803.appspot.com/o/Certify%2Fforgot.png?alt=media&token=15b9eb1b-f55c-4736-ad5c-7c48ec985268");
+  background: url(../images/forgot.png);
   background-position: center;
   background-size: cover;
 }

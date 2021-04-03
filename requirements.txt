@@ -36,7 +36,7 @@ requests_oauthlib
 requests==2.25.1
 sendgrid==6.6.0
 six==1.15.0
-SQLAlchemy==1.4.4
+SQLAlchemy==1.4.5
 starkbank-ecdsa==1.1.0
 toml==0.10.2
 urllib3==1.26.4

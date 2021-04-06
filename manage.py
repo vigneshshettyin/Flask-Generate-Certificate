@@ -1,15 +1,12 @@
 import os
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-import json
-
-with open('import.json', 'r') as c:
-    env_var = json.load(c)["jsondata"]
+from decouple import config
 
 from app import app, db
 
 
-app.config.from_object(env_var["app_settings"])
+app.config.from_object(config("app_settings"))
 
 migrate = Migrate(app, db)
 manager = Manager(app)

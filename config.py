@@ -1,12 +1,9 @@
 import os
-import json
+from decouple import config
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-with open('import.json', 'r') as c:
-    env_var = json.load(c)["jsondata"]
-
-DATABASE_URI = env_var["databaseUri"]
+DATABASE_URI = config("databaseUri")
 if DATABASE_URI.startswith("postgres://"):
     DATABASE_URI = DATABASE_URI.replace("postgres://", "postgresql://", 1)
 

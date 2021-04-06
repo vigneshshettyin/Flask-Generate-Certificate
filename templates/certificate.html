@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="UTF-8">
-  <title>{{ postc.name }} : Certificate : {{ json["favTitle"] }}</title>
+  <title>{{ postc.name }} : Certificate : {{ favTitle }}</title>
   <meta name="title" content="CGV : Online Certificate Verification System">
 	<meta name="description" content="A Startup Company based in India, that offers Full-Stack Web Development, User Interface Design, etc at a very reasonable cost. Contact us at contact@vigneshshetty.in">
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
@@ -127,13 +127,13 @@ color:#fff;
                 <!-- AddToAny BEGIN -->
 <br><div><center>
 <a href="/download/{{number}}.pdf"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span> Download Certificate</button></a><br>
-<a href="https://www.addtoany.com/share#url=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;title=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32" height="32" style="background-color:#4169e1"></a>
-<a href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/twitter.svg" width="32" height="32" style="background-color:#4169e1"></a>
-<a href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/linkedin.svg" width="32" height="32" style="background-color:royalblue"></a>
-<a href="https://www.addtoany.com/add_to/email?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/email.svg" width="32" height="32" style="background-color:royalblue"></a>
-<a href="https://www.addtoany.com/add_to/google_gmail?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/gmail.svg" width="32" height="32" style="background-color:royalblue"></a>
-<a href="https://www.addtoany.com/add_to/telegram?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/telegram.svg" width="32" height="32" style="background-color:royalblue"></a>
-<a href="https://www.addtoany.com/add_to/copy_link?linkurl=https%3A%2F%2F{{ json["site_url"] }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/link.svg" width="32" height="32" style="background-color:royalblue"></a>
+<a href="https://www.addtoany.com/share#url=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;title=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32" height="32" style="background-color:#4169e1"></a>
+<a href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/twitter.svg" width="32" height="32" style="background-color:#4169e1"></a>
+<a href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/linkedin.svg" width="32" height="32" style="background-color:royalblue"></a>
+<a href="https://www.addtoany.com/add_to/email?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/email.svg" width="32" height="32" style="background-color:royalblue"></a>
+<a href="https://www.addtoany.com/add_to/google_gmail?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/gmail.svg" width="32" height="32" style="background-color:royalblue"></a>
+<a href="https://www.addtoany.com/add_to/telegram?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/telegram.svg" width="32" height="32" style="background-color:royalblue"></a>
+<a href="https://www.addtoany.com/add_to/copy_link?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/link.svg" width="32" height="32" style="background-color:royalblue"></a>
 </center></div>
 <!-- AddToAny END -->
             </div>

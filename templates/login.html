@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Login : {{ json["favTitle"] }}</title>
+    <title>Login : {{ favTitle }}</title>
     <meta name="title" content="CGV : Online Certificate Verification System">
 	<meta name="description" content="A Startup Company based in India, that offers Full-Stack Web Development, User Interface Design, etc at a very reasonable cost. Contact us at contact@vigneshshetty.in">
 
@@ -93,8 +93,9 @@
                                             
                                             <div class="custom-control custom-checkbox small">
                                                 <input type="checkbox" name="box1" class="custom-control-input" id="box" onclick="check()">
-                                                <label class="custom-control-label" for="box"><span id="notice">show password</span>
+                                                <label class="custom-control-label" for="box"><span id="notice">Show password</span>
                                                 </label>
+                                                
                                             </div> 
                                         </div>
                                         <input id="loginBtn" class="btn btn-warning btn-user btn-block" type="submit">

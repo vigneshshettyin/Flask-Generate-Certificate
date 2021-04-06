@@ -21,7 +21,9 @@ $ .\env\Scripts\activate
 $ pip3 install -r requirements.txt
 ```
 
-**5.** Setup Database
+**5.** Create a new file called `.env` and copy all the data from `.env.sample` to `.env` as it is.
+
+**6.** Setup Database
 
 * To initialise a new database
   ```
@@ -41,7 +43,7 @@ $ pip3 install -r requirements.txt
   ```
 **Note** : Users need to run the upgrade command only during the project setup since the initial migrations have already been done. It just need to be applied using the `python manage.py db upgrade` command.
 
-**6.** Run the development server
+**7.** Run the development server
 ```shell
 $ flask run
 ```

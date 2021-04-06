@@ -755,12 +755,9 @@ def dashboard_page():
 @app.route("/view/groups", methods=['GET', 'POST'])
 @login_required
 def view_org_page():
-    if current_user.is_staff:
-        post = Group.query.order_by(Group.id).all()
-        return render_template('org_table.html', post=post, json=json, user=current_user)
-    else:
-        return render_template('block.html', json=json, user=current_user)
-
+    post = Group.query.filter_by(
+        user_id=current_user.id).order_by(Group.id).all()
+    return render_template('org_table.html', post=post, json=json, user=current_user)
 
 @app.route("/view/users", methods=['GET', 'POST'])
 @login_required
@@ -775,8 +772,12 @@ def view_users_page():
 @app.route("/view/<string:grp_id>/certificates", methods=['GET', 'POST'])
 @login_required
 def view_certificate_page(grp_id):
-    post = Certificate.query.filter_by(
-        group_id=grp_id).order_by(Certificate.id)
+    if current_user.is_staff:
+        post = Certificate.query.filter_by(
+            group_id=grp_id).order_by(Certificate.id)
+    else:
+        post = Certificate.query.filter_by(
+            group_id=grp_id, email=current_user.email).order_by(Certificate.id)
     return render_template('certificate_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user, grp_id=grp_id)
 
 

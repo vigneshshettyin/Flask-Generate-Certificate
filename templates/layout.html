@@ -67,11 +67,13 @@
             <hr class="sidebar-divider">
             <!-- Nav Item - Charts -->
 
+            {% if current_user.is_staff %}
             <li class="nav-item">
                 <a class="nav-link" href="/view/users">
                     <i class="fas fa-users"></i>
                     <span>USERS</span></a>
             </li>
+            {% endif %}
 
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
@@ -93,6 +95,8 @@
             <!-- Nav Item - Tables -->
 
             <!-- Nav Item - Tables -->
+            {% if current_user.is_staff %}
+              
             <li class="nav-item">
                 <a class="nav-link" href="/view/contacts">
                     <i class="fas fa-id-card-alt"></i>
@@ -118,6 +122,8 @@
                     <i class="fas fa-mail-bulk"></i>
                     <span>MAILER</span></a>
             </li>
+            
+            {% endif %}
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

@@ -35,8 +35,6 @@ def check(email):
 
 
 # end
-with open('import.json', 'r') as c:
-    json = json_lib.load(c)["jsondata"]
 
 app = Flask(__name__)
 app.config.from_object(config("app_settings"))
@@ -74,6 +72,8 @@ x = datetime.now(IST)
 time = x.strftime("%c")
 host = bool(config("host_status"))
 ipc = config("demo_ip")
+favTitle = config("favTitle")
+site_url = config("site_url")
 
 
 @login_manager.user_loader
@@ -187,7 +187,7 @@ def admin_required(func):
     def decorated_view(*args, **kwargs):
         if not current_user.is_staff:
             flash('You are not authorized to access this page.', 'danger')
-            return render_template('block.html', json=json, user=current_user)
+            return render_template('block.html', favTitle=favTitle, user=current_user)
         return func(*args, **kwargs)
     return decorated_view
 
@@ -242,9 +242,9 @@ def forgot_password_page():
                     flash("Error while sending password reset email!", "danger")
         elif (post == None):
             flash("We didn't find your account!", "danger")
-            return render_template('forgot-password.html', json=json, verified=False)
+            return render_template('forgot-password.html', favTitle=favTitle, verified=False)
 
-    return render_template('forgot-password.html', json=json, verified=False)
+    return render_template('forgot-password.html', favTitle=favTitle, verified=False)
 
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
@@ -269,20 +269,20 @@ def reset_password(token):
         db_token.status = 'E'
         db.session.commit()
         flash("Sorry, link has been expired.", "error")
-        return render_template('forgot-password.html', json=json, verified=False)
+        return render_template('forgot-password.html', favTitle=favTitle, verified=False)
     except Exception:
         flash("Sorry, Invalid token.", "error")
-        return render_template('forgot-password.html', json=json, verified=False)
+        return render_template('forgot-password.html', favTitle=favTitle, verified=False)
     user = Users.query.filter_by(email=email).first()
     first_name = user.name.split(" ")[0]
     db_token = Token.query.filter_by(token_id=token).first()
     if db_token.status == 'U':
         flash("Sorry, link has been already used.", "error")
-        return render_template("forgot-password.html", json=json, name=first_name, token=token, verified=False)
+        return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=False)
     elif db_token.status == 'E':
         flash("Sorry, link has been expired.", "error")
-        return render_template("forgot-password.html", json=json, name=first_name, token=token, verified=False)
-    return render_template("forgot-password.html", json=json, name=first_name, token=token, verified=True)
+        return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=False)
+    return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=True)
 
 
 @app.route('/view/mail', methods=['GET', 'POST'])
@@ -307,14 +307,14 @@ def mail_page():
         except Exception as e:
             print("Error")
             flash("Error while sending mail!", "danger")
-    return render_template('mail.html', json=json, c_user_name=current_user.name, user=current_user)
+    return render_template('mail.html', favTitle=favTitle, c_user_name=current_user.name, user=current_user)
 
 
 @app.route('/')
 def home_page():
     response = requests.get(config("contributors_api"))
     team = response.json()
-    return render_template('index.html', json=json, team=team,user=current_user)
+    return render_template('index.html', favTitle=favTitle, team=team,user=current_user)
 
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -423,10 +423,10 @@ def certificate_verify():
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
             flash("Certificate Number Valid!", "success")
-            return render_template('verify2.html', postc=postc, posto=posto, json=json, ip=ip_address)
+            return render_template('verify2.html', postc=postc, posto=posto, favTitle=favTitle, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
-    return render_template('verify.html', json=json, ip=ip_address)
+    return render_template('verify.html', favTitle=favTitle, ip=ip_address)
 
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])
@@ -444,10 +444,10 @@ def certificate_generate():
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_name = f"{qr_code.certificate_num}.png"
-            return render_template('certificate.html', postc=postc, qr_code=img_name, posto=posto, json=json, ip=ip_address)
+            return render_template('certificate.html', postc=postc, qr_code=img_name, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
-    return render_template('generate.html', json=json, ip=ip_address)
+    return render_template('generate.html', favTitle=favTitle, ip=ip_address)
 
 import pdfkit
 
@@ -463,12 +463,12 @@ def certificate_generate_string(number):
             base_url = 'http://127.0.0.1:5000/'
         else:
             base_url = config("site_url")
-        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, number=number, pdf=True, base_url=base_url, style=style)
+        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, favTitle=favTitle, site_url=site_url, number=number, pdf=True, base_url=base_url, style=style)
         try:
             pdfkit.from_string(rendered_temp, f'{number}.pdf', css='static/css/certificate.css')
         except OSError:
             print(OSError)
-        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, number=number, pdf=False, base_url=base_url)
+        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, favTitle=favTitle, site_url=site_url, number=number, pdf=False, base_url=base_url)
     else:
         return redirect('/')
 
@@ -580,9 +580,9 @@ def loginPage():
             return redirect(next_page) if next_page else redirect(url_for('dashboard_page'))
         else:
             flash("Invalid credentials or account not activated!", "danger")
-            return render_template('login.html', json=json)
+            return render_template('login.html', favTitle=favTitle)
     else:
-        return render_template('login.html', json=json)
+        return render_template('login.html', favTitle=favTitle)
 
 
 @app.route('/validate/email', methods=['POST'])
@@ -669,8 +669,8 @@ def register_page():
                 f"We've sent an account activation link on {email}", "success")
         else:
             flash("Error while sending account activation email!", "danger")
-            return render_template('resend.html', json=json)
-    return render_template('register.html', json=json)
+            return render_template('resend.html', favTitle=favTitle)
+    return render_template('register.html', favTitle=favTitle)
 
 
 @app.route('/resend-link/', methods=['GET', 'POST'])
@@ -693,7 +693,7 @@ def resend_email():
         else:
             flash('You are not registered yet.', 'danger')
             return redirect(url_for('resend_email'))
-    return render_template("resend.html", json=json)
+    return render_template("resend.html", favTitle=favTitle)
 
 
 @app.route('/confirm-email/<token>', methods=['GET'])
@@ -706,14 +706,14 @@ def confirm_email(token):
         db_token = Token.query.filter_by(token_id=token).first()
         db_token.status = 'E'
         flash("Sorry, link has been expired.")
-        return render_template('login.html', json=json)
+        return render_template('login.html', favTitle=favTitle)
     db_token = Token.query.filter_by(token_id=token).first()
     if db_token.status == 'U':
         flash("Sorry, link has been already used.", "error")
-        return render_template("resend.html", json=json)
+        return render_template("resend.html", favTitle=favTitle)
     elif db_token.status == 'E':
         flash("Sorry, link has been expired.", "error")
-        return render_template("resend.html", json=json)
+        return render_template("resend.html", favTitle=favTitle)
     user = Users.query.filter_by(email=email).first()
     user.status = 1
     db_token = Token.query.filter_by(token_id=token).first()
@@ -760,7 +760,7 @@ def dashboard_page():
     postf = len(Feedback.query.order_by(Feedback.id).all())
     postn = len(Newsletter.query.order_by(Newsletter.id).all())
     print(current_user.name)
-    return render_template('dashboard.html', json=json, postc=postc, postct=postct, postf=postf, postn=postn, user=current_user, )
+    return render_template('dashboard.html', favTitle=favTitle, postc=postc, postct=postct, postf=postf, postn=postn, user=current_user, )
 
 
 @app.route("/view/groups", methods=['GET', 'POST'])
@@ -768,14 +768,14 @@ def dashboard_page():
 def view_org_page():
     post = Group.query.filter_by(
         user_id=current_user.id).order_by(Group.id).all()
-    return render_template('org_table.html', post=post, json=json, user=current_user)
+    return render_template('org_table.html', post=post, favTitle=favTitle, user=current_user)
 
 @app.route("/view/users", methods=['GET', 'POST'])
 @login_required
 @admin_required
 def view_users_page():
     post = Users.query.order_by(Users.id).all()
-    return render_template('users_table.html', post=post, json=json, user=current_user)
+    return render_template('users_table.html', post=post, favTitle=favTitle, user=current_user)
 
 @app.route("/view/<string:grp_id>/certificates", methods=['GET', 'POST'])
 @login_required
@@ -786,7 +786,7 @@ def view_certificate_page(grp_id):
     else:
         post = Certificate.query.filter_by(
             group_id=grp_id, email=current_user.email).order_by(Certificate.id)
-    return render_template('certificate_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user, grp_id=grp_id)
+    return render_template('certificate_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user, grp_id=grp_id)
 
 
 @app.route("/view/contacts", methods=['GET', 'POST'])
@@ -794,7 +794,7 @@ def view_certificate_page(grp_id):
 @admin_required
 def view_contacts_page():
     post = Contact.query.order_by(Contact.id).all()
-    return render_template('contact_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
+    return render_template('contact_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/view/feedbacks", methods=['GET', 'POST'])
@@ -802,7 +802,7 @@ def view_contacts_page():
 @admin_required
 def view_feedbacks_page():
     post = Feedback.query.order_by(Feedback.id).all()
-    return render_template('feedback_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
+    return render_template('feedback_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/view/newsletters", methods=['GET', 'POST'])
@@ -810,7 +810,7 @@ def view_feedbacks_page():
 @admin_required
 def view_newsletters_page():
     post = Newsletter.query.order_by(Newsletter.id).all()
-    return render_template('newsletter_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
+    return render_template('newsletter_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/view/transactions", methods=['GET'])
@@ -818,7 +818,7 @@ def view_newsletters_page():
 @admin_required
 def view_transactions_page():
     post = Transactions.query.order_by(Transactions.id).all()
-    return render_template('transaction_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
+    return render_template('transaction_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/view/messages/<string:id>", methods=['GET'])
@@ -826,7 +826,7 @@ def view_transactions_page():
 @admin_required
 def view_message_page(id):
     post = Contact.query.filter_by(id=id).first()
-    return render_template('view_message.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
+    return render_template('view_message.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user)
 
 
 @app.route("/edit/<string:grp_id>/certificates/<string:id>", methods=['GET', 'POST'])
@@ -919,7 +919,7 @@ def edit_certificates_page(grp_id, id):
         "last_update": cert.last_update,
         "number": cert.number
     }
-    return jsonify(json=json, id=id, post=post)
+    return jsonify(favTitle=favTitle, id=id, post=post)
 
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
@@ -1007,7 +1007,7 @@ def edit_org_page(id):
         "email": grp.email,
         "phone": grp.phone
     }
-    return jsonify(json=json, id=id, post=post)
+    return jsonify(favTitle=favTitle, id=id, post=post)
 
 
 @app.route("/delete/group/<string:id>", methods=['GET', 'POST'])

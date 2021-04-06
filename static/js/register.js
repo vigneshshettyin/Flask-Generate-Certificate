@@ -27,6 +27,11 @@ emailField.addEventListener("keyup", (e) => {
           emailField.classList.add("is-invalid");
           emailFeedBackArea.style.display = "block";
           emailFeedBackArea.innerHTML = `<p class="text-center">${data.email_pattern_error}</p>`;
+        } else if(data.account_inactive){
+          regitserBtn.disabled = true;
+          emailField.classList.add("is-invalid");
+          emailFeedBackArea.style.display = "block";
+          emailFeedBackArea.innerHTML = `<p class="text-center">Your account is not active yet. Please activate it.</p>`;
         } else {
           regitserBtn.removeAttribute("disabled");
         }

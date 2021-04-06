@@ -191,6 +191,24 @@ def admin_required(func):
         return func(*args, **kwargs)
     return decorated_view
 
+def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
+    content = render_template(template_name, **kwargs)
+    message = Mail(
+                from_email=(from_email, from_email_name),
+                to_emails=email,
+                subject=subject,
+                html_content=content
+            )
+    try:
+        sg = SendGridAPIClient(config('sendgridapi'))
+        sg.send(message)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+    
+
+
 # For Gravatar
 def avatar(email, size):
     digest = hashlib.md5(email.lower().encode('utf-8')).hexdigest()
@@ -208,21 +226,7 @@ def send_password_reset_email(name, email):
         link = f"{config('site_url')}/reset-password/{token}"
     print(link)
     subject = "Password Reset Link | CGV"
-    content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-        name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">We get it, stuff happens. Please use the link below to reset your password.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + link + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Reset Password Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-    content = content1
-    message = Mail(
-        from_email=('forgot-password@cgv.in.net', 'Password Bot CGV'),
-        to_emails=email,
-        subject=subject,
-        html_content=content)
-    try:
-        sg = SendGridAPIClient(config('sendgridapi'))
-        response = sg.send(message)
-        return True
-    except Exception as e:
-        print(e)
-        return False
+    return send_email_now(email, subject, 'forgot-password@cgv.in.net', 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
 
 
 @app.route('/forgot', methods=['GET', 'POST'])
@@ -633,21 +637,7 @@ def send_activation_email(name, email):
         link = f"{config('site_url')}/confirm-email/{token}"
     print(link)
     subject = "Welcome aboard " + name + "!"
-    content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-        name) + '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p style="font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;">Thanks for signing up. Please use the link below to activate your account.</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + link + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:180px" target="_blank">Activate Now!</a></p> <br><br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-    content = content1
-    message = Mail(
-        from_email=('register-user@cgv.in.net', 'Register Bot CGV'),
-        to_emails=email,
-        subject=subject,
-        html_content=content)
-    try:
-        sg = SendGridAPIClient(config('sendgridapi'))
-        response = sg.send(message)
-        return True
-    except Exception as e:
-        print(e)
-        return False
+    return send_email_now(email, subject, 'register-user@cgv.in.net', 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -730,23 +720,10 @@ def confirm_email(token):
     j = url.json()
     city = j["city"]
     country = j["country"]
-    html_text1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Login Alert</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">Is that you?</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">We noticed you logged in to your CGV account from a new device and a new location.</p> <br><div style="background:#f6f7f8;border-radius:3px"> <br> City : '''
-    html_final = html_text1 + str(city) + '''<br><br> Country : ''' + str(
-        country) + '''<br><br>Time : ''' + str(time) + '''<br><br>IP : ''' + str(ip_address)
-    html_text2 = '''<br><p>Tip: To keep your account secured, please contact us to update your email id. Ignore if it’s already updated.</p></div><br><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-    html_final = html_final + html_text2
     subject = " New device login from " + \
         str(city) + ", " + str(country) + " detected."
-    message = Mail(
-        from_email=('login-alert@cgv.in.net', 'Security Bot CGV'),
-        to_emails=email,
-        subject=subject,
-        html_content=html_final)
-    try:
-        sg = SendGridAPIClient(config('sendgridapi'))
-        responsemail = sg.send(message)
-    except Exception as e:
-        print(e)
+    email_sent = send_email_now(email, subject, 'login-alert@cgv.in.net',
+                                'Security Bot CGV', 'emails/login-alert.html', city=city, country=country, time=str(time), ip_address=str(ip_address))
     login_user(user)
     next_page = request.args.get('next')
     return redirect(next_page) if next_page else redirect(url_for('dashboard_page'))
@@ -868,27 +845,8 @@ def edit_certificates_page(grp_id, id):
                     db.session.commit()
                     subject = "Certificate Generated With Certificate Number : " + \
                         str(number)
-                    content1 = '''<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Certificate Download</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
-                        name)
-                    content2 = '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p>Congratulations! Your certificate has been issued successfully.</p><p>Certificate Number : ''' + str(
-                        number)
-                    content3 = '''</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="https://''' + \
-                        config("site_url") + '''/certify/''' + str(
-                            number) + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> Download Certificate Here!</a><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + \
-                        config(
-                            "site_url") + '''/certificate/verify" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> E-Verify Certificate Here!</a></p> <br> <br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
-                    content = content1 + content2 + content3
-                    message = Mail(
-                        from_email=('certificate-generate@cgv.in.net',
-                                    'Certificate Generate Bot CGV'),
-                        to_emails=email,
-                        subject=subject,
-                        html_content=content)
-                    try:
-                        sg = SendGridAPIClient(config('sendgridapi'))
-                        response = sg.send(message)
-                    except Exception as e:
-                        print("Error!")
+                    email_sent = send_email_now(email, subject, 'certificate-generate@cgv.in.net', 'Certificate Generate Bot CGV', 'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
+                    if not email_sent:
                         flash("Error while sending mail!", "danger")
                     return jsonify(certificate_success=True)
                 except Exception as e:

@@ -1,0 +1,86 @@
+{% extends "layout.html" %}
+{% block body %}
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                <div style="padding: 5px">
+
+                </div>
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone No.</th>
+                                            <th>Order ID</th>
+                                            <th>Amount</th>
+                                            <th>Payment ID</th>
+                                            <th>Response Message</th>
+                                            <th>Status</th>
+                                            <th>Error Code</th>
+                                            <th>Error Source</th>
+                                            <th>Timestamp</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+{#                                    Start loop#}
+{% for post in post %}
+                                        <tr>
+                                            <td>{{ post.id}}</td>
+                                            <td>{{ post.name }}</td>
+                                            <td>{{ post.email }}</td>
+                                            <td>{{ post.phone }}</td>
+                                            <td>{{ post.order_id }}</td>
+                                            <td>{{ post.currency }} {{ post.amount }}</td>
+                                            <td>{{ post.payment_id }}</td>
+                                            <td>{{ post.response_msg }}</td>
+                                            <td>{{ post.status }}</td>
+                                            <td>{{ post.error_code }}</td>
+                                            <td>{{ post.error_source }}</td>
+                                            <td>{{ post.txn_timestamp }}</td>
+                                        </tr>
+
+{#                                    end loop#}
+{% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+                {% with errors = get_flashed_messages(category_filter=["danger"]) %}
+                    {% if errors %}
+                    {% for error in errors %}
+                    <script>
+                        new Notify ({
+                        title: 'Error',
+                        text: `{{error|safe}}`,
+                        status: 'error'
+                        })
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <script>
+                        new Notify ({
+                            title: 'Success',
+                            text: `{{message|safe}}`,
+                            status: 'success'
+                            })
+                        </script>                      
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+            {% endblock %}

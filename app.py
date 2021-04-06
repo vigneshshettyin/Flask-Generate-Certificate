@@ -812,6 +812,14 @@ def view_newsletters_page():
     return render_template('newsletter_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
 
 
+@app.route("/view/transactions", methods=['GET'])
+@login_required
+@admin_required
+def view_transactions_page():
+    post = Transactions.query.order_by(Transactions.id).all()
+    return render_template('transaction_table.html', post=post, json=json, c_user_name=current_user.name, user=current_user)
+
+
 @app.route("/view/messages/<string:id>", methods=['GET'])
 @login_required
 @admin_required

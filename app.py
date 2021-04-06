@@ -24,6 +24,7 @@ from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import qrcode
 from flask_login import UserMixin
 from functools import wraps
+from decouple import config
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -38,7 +39,7 @@ with open('import.json', 'r') as c:
     json = json_lib.load(c)["jsondata"]
 
 app = Flask(__name__)
-app.config.from_object(json['app_settings'])
+app.config.from_object(config("app_settings"))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -54,16 +55,16 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'loginPage'
 login_manager.login_message_category = 'info'
 
-RAZORPAY_KEY_ID = json["razorpay_key_id"]
-RAZORPAY_KEY_SECRET = json["razorpay_key_secret"]
+RAZORPAY_KEY_ID = config("razorpay_key_id")
+RAZORPAY_KEY_SECRET = config("razorpay_key_secret")
 
 # Google Login Credentials
 FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
-FB_TOKEN_URL = json['facebook_token_url']
-FB_CLIENT_ID=json["facebook_app_id"]
-FB_CLIENT_SECRET=json["facebook_secret"]
-GOOGLE_CLIENT_ID = json["google_client_id"]
-GOOGLE_CLIENT_SECRET = json["google_client_secret"]
+FB_TOKEN_URL = config('facebook_token_url')
+FB_CLIENT_ID=config("facebook_app_id")
+FB_CLIENT_SECRET=config("facebook_secret")
+GOOGLE_CLIENT_ID = config("google_client_id")
+GOOGLE_CLIENT_SECRET = config("google_client_secret")
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
@@ -71,8 +72,8 @@ GOOGLE_DISCOVERY_URL = (
 IST = pytz.timezone('Asia/Kolkata')
 x = datetime.now(IST)
 time = x.strftime("%c")
-host = bool(json["host_status"])
-ipc = json["demo_ip"]
+host = bool(config("host_status"))
+ipc = config("demo_ip")
 
 
 @login_manager.user_loader
@@ -204,7 +205,7 @@ def send_password_reset_email(name, email):
     if app.debug:
         link = f"http://127.0.0.1:5000/reset-password/{token}"
     else:
-        link = f"{json['site_url']}/reset-password/{token}"
+        link = f"{config('site_url')}/reset-password/{token}"
     print(link)
     subject = "Password Reset Link | CGV"
     content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
@@ -216,7 +217,7 @@ def send_password_reset_email(name, email):
         subject=subject,
         html_content=content)
     try:
-        sg = SendGridAPIClient(json['sendgridapi'])
+        sg = SendGridAPIClient(config('sendgridapi'))
         response = sg.send(message)
         return True
     except Exception as e:
@@ -231,7 +232,7 @@ def forgot_password_page():
         post = Users.query.filter_by(email=email).first()
         name = post.name
         if (post != None):
-            if (post.email == json["admin_email"]):
+            if (post.email == config("admin_email")):
                 flash("You can't reset password of administrator!", "danger")
             else:
                 if send_password_reset_email(name, email):
@@ -300,7 +301,7 @@ def mail_page():
             subject=subject,
             html_content=content)
         try:
-            sg = SendGridAPIClient(json['sendgridapi'])
+            sg = SendGridAPIClient(config('sendgridapi'))
             response = sg.send(message)
             flash("Email sent successfully!", "success")
         except Exception as e:
@@ -311,7 +312,7 @@ def mail_page():
 
 @app.route('/')
 def home_page():
-    response = requests.get(json["contributors_api"])
+    response = requests.get(config("contributors_api"))
     team = response.json()
     return render_template('index.html', json=json, team=team,user=current_user)
 
@@ -461,7 +462,7 @@ def certificate_generate_string(number):
         if app.debug:
             base_url = 'http://127.0.0.1:5000/'
         else:
-            base_url = json["site_url"]
+            base_url = config("site_url")
         rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, json=json, number=number, pdf=True, base_url=base_url, style=style)
         try:
             pdfkit.from_string(rendered_temp, f'{number}.pdf', css='static/css/certificate.css')
@@ -629,7 +630,7 @@ def send_activation_email(name, email):
     if app.debug:
         link = f"http://127.0.0.1:5000/confirm-email/{token}"
     else:
-        link = f"{json['site_url']}/confirm-email/{token}"
+        link = f"{config('site_url')}/confirm-email/{token}"
     print(link)
     subject = "Welcome aboard " + name + "!"
     content1 = '''<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>Register CGV</title></head><body><table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><tbody><tr width="100%"><td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica"><table style="border:none;padding:0 18px;margin:50px auto;width:500px"><tbody><tr width="100%" height="60"><td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd"></td></tr><tr width="100%"><td valign="top" align="left" style="background:#fff;padding:18px"><h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, ''' + str(
@@ -641,7 +642,7 @@ def send_activation_email(name, email):
         subject=subject,
         html_content=content)
     try:
-        sg = SendGridAPIClient(json['sendgridapi'])
+        sg = SendGridAPIClient(config('sendgridapi'))
         response = sg.send(message)
         return True
     except Exception as e:
@@ -742,7 +743,7 @@ def confirm_email(token):
         subject=subject,
         html_content=html_final)
     try:
-        sg = SendGridAPIClient(json['sendgridapi'])
+        sg = SendGridAPIClient(config('sendgridapi'))
         responsemail = sg.send(message)
     except Exception as e:
         print(e)
@@ -850,7 +851,7 @@ def edit_certificates_page(grp_id, id):
                                        group_id=grp_id, last_update=last_update)
                     db.session.add(post)
                     # Create QR Code for this certificate
-                    link = f'{json["site_url"]}/certify/{number}'
+                    link = f'{config("site_url")}/certify/{number}'
                     new_qr = QRCode(certificate_num=number, link=link)
                     qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
                     qr_image.add_data(link)
@@ -872,10 +873,10 @@ def edit_certificates_page(grp_id, id):
                     content2 = '''</p><div style="background:#f6f7f8;border-radius:3px"> <br><p>Congratulations! Your certificate has been issued successfully.</p><p>Certificate Number : ''' + str(
                         number)
                     content3 = '''</p><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="https://''' + \
-                        json["site_url"] + '''/certify/''' + str(
+                        config("site_url") + '''/certify/''' + str(
                             number) + '''" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> Download Certificate Here!</a><p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="''' + \
-                        json[
-                            "site_url"] + '''/certificate/verify" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> E-Verify Certificate Here!</a></p> <br> <br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
+                        config(
+                            "site_url") + '''/certificate/verify" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> E-Verify Certificate Here!</a></p> <br> <br></div><p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://cgvcertify.herokuapp.com" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>'''
                     content = content1 + content2 + content3
                     message = Mail(
                         from_email=('certificate-generate@cgv.in.net',
@@ -884,7 +885,7 @@ def edit_certificates_page(grp_id, id):
                         subject=subject,
                         html_content=content)
                     try:
-                        sg = SendGridAPIClient(json['sendgridapi'])
+                        sg = SendGridAPIClient(config('sendgridapi'))
                         response = sg.send(message)
                     except Exception as e:
                         print("Error!")
@@ -925,7 +926,7 @@ def edit_certificates_page(grp_id, id):
 @login_required
 def activate_users(id):
     activate = Users.query.filter_by(id=id).first()
-    if (activate.email == json["admin_email"]):
+    if (activate.email == config("admin_email")):
         flash("Administrator account will always be active!", "warning")
         return redirect(url_for('view_users_page'))
     else:
@@ -1013,7 +1014,7 @@ def edit_org_page(id):
 @login_required
 def delete_org_page(id):
     delete_org_page = Group.query.filter_by(id=id).first()
-    if (delete_org_page.email == json["admin_email"]):
+    if (delete_org_page.email == config("admin_email")):
         flash("Default organization can't be deleted!", "danger")
     else:
         db.session.delete(delete_org_page)
@@ -1026,7 +1027,7 @@ def delete_org_page(id):
 @login_required
 def delete_users_page(id):
     delete_users_page = Users.query.filter_by(id=id).first()
-    if (delete_users_page.email != json["admin_email"]):
+    if (delete_users_page.email != config("admin_email")):
         db.session.delete(delete_users_page)
         db.session.commit()
         flash("User deleted successfully!", "success")

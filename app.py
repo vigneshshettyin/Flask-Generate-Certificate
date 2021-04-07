@@ -142,8 +142,6 @@ class Newsletter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
     ip = db.Column(db.String(50), nullable=False)
-    country = db.Column(db.String(50), nullable=False)
-    city = db.Column(db.String(50), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 
@@ -154,8 +152,6 @@ class Contact(db.Model):
     phone = db.Column(db.String(50), nullable=False)
     message = db.Column(db.String(500), nullable=False)
     ip = db.Column(db.String(20), nullable=False)
-    country = db.Column(db.String(20), nullable=False)
-    city = db.Column(db.String(20), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 
@@ -167,8 +163,6 @@ class Feedback(db.Model):
     rating = db.Column(db.String(10), nullable=False)
     message = db.Column(db.String(500), nullable=False)
     ip = db.Column(db.String(20), nullable=False)
-    country = db.Column(db.String(20), nullable=False)
-    city = db.Column(db.String(20), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 
@@ -314,11 +308,14 @@ def contact_page():
         phone = request.form.get('phone')
         message = request.form.get('editordata')
         if (host == True):
-            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            try:
+                ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            except KeyError:
+                ip_address = request.remote_addr
+            except Exception:
+                ip_address = ipc
         else:
             ip_address = ipc
-        # ip_address = ipc
-
         # name validation it must be greater than than 2 letters and less than 40 letters
         if len(name) >= 2 and len(name) <= 40:
             pass
@@ -339,11 +336,7 @@ def contact_page():
             flash(
                 "Phone Number is not Correct Please Check it and Try It once again!!", "danger")
             return redirect('/#footer')
-        url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-        j = url.json()
-        city = j["city"]
-        country = j["country"]
-        entry = Contact(name=name, phone=phone, message=message, ip=ip_address, city=city, country=country, date=time,
+        entry = Contact(name=name, phone=phone, message=message, ip=ip_address, date=time,
                         email=email)
         db.session.add(entry)
         db.session.commit()
@@ -361,16 +354,16 @@ def feedback_page():
         rating = data["rating"]
         message = data["message"]
         if (host == True):
-            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            try:
+                ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            except KeyError:
+                ip_address = request.remote_addr
+            except Exception:
+                ip_address = ipc
         else:
             ip_address = ipc
         try:
-            url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-            j = url.json()
-            city = j["city"]
-            country = j["country"]
-            entry = Feedback(name=name, phone=phone, rating=rating, message=message, ip=ip_address, city=city,
-                            country=country, date=time, email=email)
+            entry = Feedback(name=name, phone=phone, rating=rating, message=message, ip=ip_address, date=time, email=email)
             db.session.add(entry)
             db.session.commit()
             return jsonify(feedback_success="Thank you for feedback – we will get back to you soon!", status=200)
@@ -384,17 +377,17 @@ def newsletter_page():
     if (request.method == 'POST'):
         email = request.form.get('email')
         if (host == True):
-            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            try:
+                ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            except KeyError:
+                ip_address = request.remote_addr
+            except Exception:
+                ip_address = ipc
         else:
             ip_address = ipc
-        url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-        j = url.json()
-        city = j["city"]
-        country = j["country"]
         post = Newsletter.query.filter_by(email=email).first()
         if (post == None):
-            entry = Newsletter(ip=ip_address, city=city,
-                               country=country, date=time, email=email)
+            entry = Newsletter(ip=ip_address, date=time, email=email)
             db.session.add(entry)
             db.session.commit()
             flash("Thank you for subscribing!", "success")
@@ -406,8 +399,12 @@ def newsletter_page():
 @app.route("/certificate/verify", methods=['GET', 'POST'])
 def certificate_verify():
     if (host == True):
-        # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-        ip_address = ipc
+        try:
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        except KeyError:
+            ip_address = request.remote_addr
+        except Exception:
+            ip_address = ipc
     else:
         ip_address = ipc
     if (request.method == 'POST'):
@@ -424,11 +421,15 @@ def certificate_verify():
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])
 def certificate_generate():
-    # if (host == True):
-    #     ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-    # else:
-    #     ip_address = ipc
-    ip_address = ipc
+    if (host == True):
+        try:
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        except KeyError:
+            ip_address = request.remote_addr
+        except Exception:
+            ip_address = ipc
+    else:
+        ip_address = ipc
     if (request.method == 'POST'):
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
@@ -702,19 +703,26 @@ def confirm_email(token):
     user.last_login = time
     db.session.commit()
     # Some error here
-    if host:
-        # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-        ip_address = ipc
+    if (host == True):
+        try:
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        except KeyError:
+            ip_address = request.remote_addr
+        except Exception:
+            ip_address = ipc
     else:
         ip_address = ipc
-    url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-    j = url.json()
-    city = j["city"]
-    country = j["country"]
-    subject = " New device login from " + \
-        str(city) + ", " + str(country) + " detected."
-    email_sent = send_email_now(email, subject, 'login-alert@cgv.in.net',
-                                'Security Bot CGV', 'emails/login-alert.html', city=city, country=country, time=str(time), ip_address=str(ip_address))
+    try:
+        url = requests.get("http://ip-api.com/json/{}".format(ip_address))
+        j = url.json()
+        city = j["city"]
+        country = j["country"]
+        subject = " New device login from " + \
+            str(city) + ", " + str(country) + " detected."
+        email_sent = send_email_now(email, subject, 'login-alert@cgv.in.net',
+                                    'Security Bot CGV', 'emails/login-alert.html', city=city, country=country, time=str(time), ip_address=str(ip_address))
+    except Exception:
+        pass
     login_user(user)
     next_page = request.args.get('next')
     return redirect(next_page) if next_page else redirect(url_for('dashboard_page'))
@@ -876,6 +884,7 @@ def edit_certificates_page(grp_id, id):
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
 @login_required
+@admin_required
 def activate_users(id):
     activate = Users.query.filter_by(id=id).first()
     if (activate.email == config("admin_email")):
@@ -885,11 +894,13 @@ def activate_users(id):
         if (activate.status == 1):
             activate.status = 0
             flash("User account deactivated!", "warning")
+            db.session.commit()
+            return redirect(url_for('view_users_page'))
         else:
             activate.status = 1
             flash("User account activated!", "success")
-        db.session.commit()
-        return redirect(url_for('view_users_page'))
+            db.session.commit()
+            return redirect(url_for('view_users_page'))
 
 
 @app.route("/permissions/<string:perm>/users/<string:id>", methods=['GET', 'POST'])

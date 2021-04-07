@@ -8,7 +8,10 @@ from app import app, db
 
 app.config.from_object(config("app_settings"))
 
-migrate = Migrate(app, db)
+if db.engine.url.drivername == 'sqlite':
+    migrate = Migrate(app, db, render_as_batch=True)
+else:
+    migrate = Migrate(app, db)
 manager = Manager(app)
 
 manager.add_command('db', MigrateCommand)

@@ -424,32 +424,7 @@
         $('#summernote').summernote();
     });
   </script>
-  {% with errors = get_flashed_messages(category_filter=["danger"]) %}
-                    {% if errors %}
-                    {% for error in errors %}
-                    <script>
-                        new Notify ({
-                        title: 'Error',
-                        text: `{{error|safe}}`,
-                        status: 'error'
-                        })
-                    </script>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
-                    {% if messages %}
-                    {% for message in messages %}
-                    <script>
-                        new Notify ({
-                            title: 'Success',
-                            text: `{{message|safe}}`,
-                            status: 'success'
-                            })
-                        </script>                      
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
+  
 
 </body>
 

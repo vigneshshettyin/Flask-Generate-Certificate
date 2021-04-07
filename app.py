@@ -1,3 +1,4 @@
+import pdfkit
 import os
 from flask.globals import current_app
 from oauthlib.oauth2 import WebApplicationClient
@@ -59,8 +60,8 @@ RAZORPAY_KEY_SECRET = config("razorpay_key_secret")
 # Google Login Credentials
 FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
 FB_TOKEN_URL = config('facebook_token_url')
-FB_CLIENT_ID=config("facebook_app_id")
-FB_CLIENT_SECRET=config("facebook_secret")
+FB_CLIENT_ID = config("facebook_app_id")
+FB_CLIENT_SECRET = config("facebook_secret")
 GOOGLE_CLIENT_ID = config("google_client_id")
 GOOGLE_CLIENT_SECRET = config("google_client_secret")
 GOOGLE_DISCOVERY_URL = (
@@ -92,12 +93,14 @@ class Users(db.Model, UserMixin):
     last_login = db.Column(db.String(50), nullable=False)
     group = db.relationship('Group', cascade="all,delete", backref='group')
 
+
 class Token(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), nullable=False)
     token_id = db.Column(db.String(200), nullable=False)
     # U->Used, E->Expired, A->Available
     status = db.Column(db.String(50), nullable=False, default='A')
+
 
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -182,6 +185,8 @@ class Transactions(db.Model):
         db.DateTime(), default=datetime.now(IST), nullable=False)
 
 # Admin Required Decorator
+
+
 def admin_required(func):
     @wraps(func)
     def decorated_view(*args, **kwargs):
@@ -191,14 +196,15 @@ def admin_required(func):
         return func(*args, **kwargs)
     return decorated_view
 
+
 def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
     content = render_template(template_name, **kwargs)
     message = Mail(
-                from_email=(from_email, from_email_name),
-                to_emails=email,
-                subject=subject,
-                html_content=content
-            )
+        from_email=(from_email, from_email_name),
+        to_emails=email,
+        subject=subject,
+        html_content=content
+    )
     try:
         sg = SendGridAPIClient(config('sendgridapi'))
         sg.send(message)
@@ -206,7 +212,6 @@ def send_email_now(email, subject, from_email, from_email_name, template_name, *
     except Exception as e:
         print(e)
         return False
-    
 
 
 # For Gravatar
@@ -217,7 +222,7 @@ def avatar(email, size):
 
 def send_password_reset_email(name, email):
     token = s.dumps(email, salt='cgv-password-reset')
-    new_token = Token(email=email,token_id=token,status='A')
+    new_token = Token(email=email, token_id=token, status='A')
     db.session.add(new_token)
     db.session.commit()
     if app.debug:
@@ -226,7 +231,7 @@ def send_password_reset_email(name, email):
         link = f"{config('site_url')}/reset-password/{token}"
     print(link)
     subject = "Password Reset Link | CGV"
-    return send_email_now(email, subject, 'forgot-password@cgv.in.net', 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
+    return send_email_now(email, subject, config("email"), 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
 
 
 @app.route('/forgot', methods=['GET', 'POST'])
@@ -287,31 +292,6 @@ def reset_password(token):
         flash("Sorry, link has been expired.", "error")
         return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=False)
     return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=True)
-
-
-@app.route('/view/mail', methods=['GET', 'POST'])
-@login_required
-def mail_page():
-    if (request.method == 'POST'):
-        fromemail = request.form.get('username')
-        name = request.form.get('name')
-        fromemail = fromemail + '@cgv.in.net'
-        toemail = request.form.get('toemail')
-        subject = request.form.get('subject')
-        content = request.form.get('editordata')
-        message = Mail(
-            from_email=(fromemail, name),
-            to_emails=toemail,
-            subject=subject,
-            html_content=content)
-        try:
-            sg = SendGridAPIClient(config('sendgridapi'))
-            response = sg.send(message)
-            flash("Email sent successfully!", "success")
-        except Exception as e:
-            print("Error")
-            flash("Error while sending mail!", "danger")
-    return render_template('mail.html', favTitle=favTitle, c_user_name=current_user.name, user=current_user)
 
 
 @app.route('/')
@@ -460,7 +440,6 @@ def certificate_generate():
             flash("No details found. Contact your organization!", "danger")
     return render_template('generate.html', favTitle=favTitle, ip=ip_address)
 
-import pdfkit
 
 @app.route("/certify/<string:number>", methods=['GET'])
 def certificate_generate_string(number):
@@ -474,16 +453,19 @@ def certificate_generate_string(number):
             base_url = 'http://127.0.0.1:5000/'
         else:
             base_url = config("site_url")
-        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, favTitle=favTitle, site_url=site_url, number=number, pdf=True, base_url=base_url, style=style)
+        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name,
+                                        favTitle=favTitle, site_url=site_url, number=number, pdf=True, base_url=base_url, style=style)
         try:
-            pdfkit.from_string(rendered_temp, f'{number}.pdf', css='static/css/certificate.css')
+            pdfkit.from_string(
+                rendered_temp, f'{number}.pdf', css='static/css/certificate.css')
         except OSError:
             print(OSError)
         return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, favTitle=favTitle, site_url=site_url, number=number, pdf=False, base_url=base_url)
     else:
         return redirect('/')
 
-@app.route('/download/<path:filename>', methods=['GET','POST'])
+
+@app.route('/download/<path:filename>', methods=['GET', 'POST'])
 def download(filename):
     docs = os.path.join(current_app.root_path)
     return send_from_directory(directory=docs, filename=filename)
@@ -644,7 +626,7 @@ def send_activation_email(name, email):
         link = f"{config('site_url')}/confirm-email/{token}"
     print(link)
     subject = "Welcome aboard " + name + "!"
-    return send_email_now(email, subject, 'register-user@cgv.in.net', 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
+    return send_email_now(email, subject, config("email"), 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -658,7 +640,7 @@ def register_page():
         password = sha256_crypt.hash(password)
         profile_image = avatar(email, 128)
         entry = Users(name=name, email=email, password=password, profile_image=profile_image,
-                      status=0, is_staff=1, last_login=time,)
+                      status=0, is_staff=0, last_login=time,)
         db.session.add(entry)
         db.session.commit()
         if send_activation_email(name, email):
@@ -729,7 +711,7 @@ def confirm_email(token):
     country = j["country"]
     subject = " New device login from " + \
         str(city) + ", " + str(country) + " detected."
-    email_sent = send_email_now(email, subject, 'login-alert@cgv.in.net',
+    email_sent = send_email_now(email, subject, config("email"),
                                 'Security Bot CGV', 'emails/login-alert.html', city=city, country=country, time=str(time), ip_address=str(ip_address))
     login_user(user)
     next_page = request.args.get('next')
@@ -754,12 +736,14 @@ def view_org_page():
         user_id=current_user.id).order_by(Group.id).all()
     return render_template('org_table.html', post=post, favTitle=favTitle, user=current_user)
 
+
 @app.route("/view/users", methods=['GET', 'POST'])
 @login_required
 @admin_required
 def view_users_page():
     post = Users.query.order_by(Users.id).all()
     return render_template('users_table.html', post=post, favTitle=favTitle, user=current_user)
+
 
 @app.route("/view/<string:grp_id>/certificates", methods=['GET', 'POST'])
 @login_required
@@ -852,7 +836,8 @@ def edit_certificates_page(grp_id, id):
                     db.session.commit()
                     subject = "Certificate Generated With Certificate Number : " + \
                         str(number)
-                    email_sent = send_email_now(email, subject, 'certificate-generate@cgv.in.net', 'Certificate Generate Bot CGV', 'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
+                    email_sent = send_email_now(email, subject, config("email"), 'Certificate Generate Bot CGV',
+                                                'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
                     if not email_sent:
                         flash("Error while sending mail!", "danger")
                     return jsonify(certificate_success=True)
@@ -1145,8 +1130,7 @@ def google_login_callback():
     return redirect(url_for("dashboard_page"))
 
 
-
-FB_SCOPE=["email","public_profile"]
+FB_SCOPE = ["email", "public_profile"]
 
 
 @app.route('/login/facebook')
@@ -1154,18 +1138,17 @@ def facebook_login():
     facebook = requests_oauthlib.OAuth2Session(
         FB_CLIENT_ID, redirect_uri=request.base_url + "/fb-callback", scope=FB_SCOPE
     )
-    authorization_url, _ = facebook.authorization_url(FB_AUTHORIZATION_BASE_URL)
+    authorization_url, _ = facebook.authorization_url(
+        FB_AUTHORIZATION_BASE_URL)
 
     return redirect(authorization_url)
-
 
 
 @app.route('/login/facebook/callback')
 def facebook_login_callback():
     facebook = requests_oauthlib.OAuth2Session(
-    	FB_CLIENT_ID, scope=FB_SCOPE, redirect_uri=request.base_url + "/callback"
-	)
-
+        FB_CLIENT_ID, scope=FB_SCOPE, redirect_uri=request.base_url + "/callback"
+    )
 
     # we need to apply a fix for Facebook here
     facebook = facebook_compliance_fix(facebook)
@@ -1181,11 +1164,11 @@ def facebook_login_callback():
     facebook_user_data = facebook.get(
         "https://graph.facebook.com/me?fields=id,name,email,picture{url}"
     ).json()
-  
 
     users_email = facebook_user_data["email"]
     users_name = facebook_user_data["name"]
-    picture_url = facebook_user_data.get("picture", {}).get("data", {}).get("url")
+    picture_url = facebook_user_data.get(
+        "picture", {}).get("data", {}).get("url")
 
     if not Users.query.filter_by(email=users_email).first():
         entry = Users(name=users_name, email=users_email, password=password,
@@ -1197,9 +1180,7 @@ def facebook_login_callback():
     login_user(user)
 
     # Send user back to homepage
-    return redirect(url_for("dashboard_page"))        
-
-
+    return redirect(url_for("dashboard_page"))
 
 
 @app.errorhandler(404)

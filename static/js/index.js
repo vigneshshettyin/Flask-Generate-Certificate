@@ -35,19 +35,19 @@ function getFeedback() {
     <label for="inlineRadio1">Rating</label> <br>
     <input type="radio" name="rating" id="inlineRadio1" value="1" required>
     <label for="inlineRadio1">1</label> &nbsp;
-    <input type="radio" name="rating" id="inlineRadio1" value="2" required>
+    <input type="radio" name="rating" id="inlineRadio2" value="2" required>
     <label for="inlineRadio1">2</label> &nbsp;
-    <input type="radio" name="rating" id="inlineRadio1" value="3" required>
+    <input type="radio" name="rating" id="inlineRadio3" value="3" required>
     <label for="inlineRadio1">3</label> &nbsp;
-    <input type="radio" name="rating" id="inlineRadio1" value="4" required>
+    <input type="radio" name="rating" id="inlineRadio4" value="4" required>
     <label for="inlineRadio1">4</label> &nbsp;
-    <input type="radio" name="rating" id="inlineRadio1" value="5" required>
+    <input type="radio" name="rating" id="inlineRadio5" value="5" checked required>
     <label for="inlineRadio1">5</label> &nbsp;
     <textarea class="swal2-input" name="message" id="message" rows="5" style="height:112px;" placeholder="Feedback...."></textarea>
     `,
     confirmButtonText: "Send Feedback",
     focusConfirm: false,
-    showLoaderOnConfirm: true,
+    showLoaderOnConfirm: false,
     customClass: {
       loader: "custom-loader",
     },

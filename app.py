@@ -1069,8 +1069,6 @@ def google_login():
     # Use library to construct the request for Google login and provide
     # scopes that let us retrieve user's profile from Google
 
-    print(f"I am base url {request.base_url}")
-
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=request.base_url + "/callback",
@@ -1137,7 +1135,11 @@ def google_login_callback():
     # Begin user session by logging the user in
 
     user = Users.query.filter_by(email=users_email).first()
-    login_user(user)
+    if user.status == 1:
+        login_user(user)
+    else:
+        flash("Your account has been deactivated. Contact us to activate it.", "danger")
+        return redirect(url_for("loginPage"))
 
     # Send user back to homepage
     return redirect(url_for("dashboard_page"))

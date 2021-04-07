@@ -141,7 +141,7 @@ class QRCode(db.Model):
 class Newsletter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
-    ip = db.Column(db.String(50), nullable=False)
+    ip = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 
@@ -151,7 +151,7 @@ class Contact(db.Model):
     email = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.String(50), nullable=False)
     message = db.Column(db.String(500), nullable=False)
-    ip = db.Column(db.String(20), nullable=False)
+    ip = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 
@@ -162,7 +162,7 @@ class Feedback(db.Model):
     phone = db.Column(db.String(50), nullable=False)
     rating = db.Column(db.String(10), nullable=False)
     message = db.Column(db.String(500), nullable=False)
-    ip = db.Column(db.String(20), nullable=False)
+    ip = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 

@@ -9,8 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 # from requests_oauthlib.compliance_fixes import facebook_compliance_fix
 from passlib.hash import sha256_crypt
 from password_generator import PasswordGenerator
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from flask_mail import Mail, Message
 from datetime import datetime
 import json as json_lib
 import requests
@@ -40,9 +39,14 @@ def check(email):
 app = Flask(__name__)
 app.config.from_object(config("app_settings"))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = config('email_username')
+app.config['MAIL_PASSWORD'] = config('email_password')
 
 db = SQLAlchemy(app)
-
+mail = Mail(app)
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -199,18 +203,16 @@ def admin_required(func):
 
 def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
     content = render_template(template_name, **kwargs)
-    message = Mail(
-        from_email=(from_email, from_email_name),
-        to_emails=email,
+    msg = Message(
+        sender=(from_email, from_email_name),
+        recipients=[email],
         subject=subject,
-        html_content=content
+        html=content
     )
     try:
-        sg = SendGridAPIClient(config('sendgridapi'))
-        sg.send(message)
+        mail.send(msg)
         return True
-    except Exception as e:
-        print(e)
+    except Exception:
         return False
 
 
@@ -231,7 +233,7 @@ def send_password_reset_email(name, email):
         link = f"{config('site_url')}/reset-password/{token}"
     print(link)
     subject = "Password Reset Link | CGV"
-    return send_email_now(email, subject, config("email"), 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
+    return send_email_now(email, subject, 'password-bot@cgv.in.net', 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
 
 
 @app.route('/forgot', methods=['GET', 'POST'])
@@ -626,7 +628,7 @@ def send_activation_email(name, email):
         link = f"{config('site_url')}/confirm-email/{token}"
     print(link)
     subject = "Welcome aboard " + name + "!"
-    return send_email_now(email, subject, config("email"), 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
+    return send_email_now(email, subject, 'register-bot@cgv.in.net', 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -711,7 +713,7 @@ def confirm_email(token):
     country = j["country"]
     subject = " New device login from " + \
         str(city) + ", " + str(country) + " detected."
-    email_sent = send_email_now(email, subject, config("email"),
+    email_sent = send_email_now(email, subject, 'login-alert@cgv.in.net',
                                 'Security Bot CGV', 'emails/login-alert.html', city=city, country=country, time=str(time), ip_address=str(ip_address))
     login_user(user)
     next_page = request.args.get('next')
@@ -836,7 +838,7 @@ def edit_certificates_page(grp_id, id):
                     db.session.commit()
                     subject = "Certificate Generated With Certificate Number : " + \
                         str(number)
-                    email_sent = send_email_now(email, subject, config("email"), 'Certificate Generate Bot CGV',
+                    email_sent = send_email_now(email, subject, 'new-certificate@cgv.in.net', 'Certificate Generate Bot CGV',
                                                 'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
                     if not email_sent:
                         flash("Error while sending mail!", "danger")

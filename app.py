@@ -70,7 +70,7 @@ GOOGLE_DISCOVERY_URL = (
 IST = pytz.timezone('Asia/Kolkata')
 x = datetime.now(IST)
 time = x.strftime("%c")
-host = bool(config("host_status"))
+host = config('host_status', default=False, cast=bool)
 ipc = config("demo_ip")
 favTitle = config("favTitle")
 site_url = config("site_url")
@@ -316,8 +316,11 @@ def mail_page():
 
 @app.route('/')
 def home_page():
-    response = requests.get(config("contributors_api"))
-    team = response.json()
+    try:
+        response = requests.get(config("contributors_api"))
+        team = response.json()
+    except Exception:
+        team = {}
     return render_template('index.html', favTitle=favTitle, team=team,user=current_user)
 
 
@@ -369,24 +372,28 @@ def contact_page():
 @app.route('/feedback', methods=['GET', 'POST'])
 def feedback_page():
     if (request.method == 'POST'):
-        name = request.form.get('name')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        rating = request.form.get('rating')
-        message = request.form.get('message')
+        data = json_lib.loads(request.data)
+        name = data["name"]
+        email = data["email"]
+        phone = data["phone"]
+        rating = data["rating"]
+        message = data["message"]
         if (host == True):
             ip_address = request.environ['HTTP_X_FORWARDED_FOR']
         else:
             ip_address = ipc
-        url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-        j = url.json()
-        city = j["city"]
-        country = j["country"]
-        entry = Feedback(name=name, phone=phone, rating=rating, message=message, ip=ip_address, city=city,
-                         country=country, date=time, email=email)
-        db.session.add(entry)
-        db.session.commit()
-        flash("Thank you for feedback – we will get back to you soon!", "success")
+        try:
+            url = requests.get("http://ip-api.com/json/{}".format(ip_address))
+            j = url.json()
+            city = j["city"]
+            country = j["country"]
+            entry = Feedback(name=name, phone=phone, rating=rating, message=message, ip=ip_address, city=city,
+                            country=country, date=time, email=email)
+            db.session.add(entry)
+            db.session.commit()
+            return jsonify(feedback_success="Thank you for feedback – we will get back to you soon!", status=200)
+        except Exception:
+            return jsonify(feedback_error="Sorry, we could not record your feedback.", status=400)
     return redirect('/#footer')
 
 

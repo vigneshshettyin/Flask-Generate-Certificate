@@ -24,3 +24,93 @@ $("#cnfPay").click(function () {
     return false;
   }
 });
+
+function getFeedback() {
+  Swal.fire({
+    title: "Feedback",
+    html: `<form action="/feedback" method="post" role="form">
+    <input type="text" name="name" class="swal2-input" id="name" placeholder="Your Name"/>
+    <input type="email" name="email" class="swal2-input" id="email" placeholder="Your Email"/>
+    <input type="phone" name="phone" class="swal2-input" id="phone" placeholder="Your Phone Number"/>
+    <label for="inlineRadio1">Rating</label> <br>
+    <input type="radio" name="rating" id="inlineRadio1" value="1" required>
+    <label for="inlineRadio1">1</label> &nbsp;
+    <input type="radio" name="rating" id="inlineRadio1" value="2" required>
+    <label for="inlineRadio1">2</label> &nbsp;
+    <input type="radio" name="rating" id="inlineRadio1" value="3" required>
+    <label for="inlineRadio1">3</label> &nbsp;
+    <input type="radio" name="rating" id="inlineRadio1" value="4" required>
+    <label for="inlineRadio1">4</label> &nbsp;
+    <input type="radio" name="rating" id="inlineRadio1" value="5" required>
+    <label for="inlineRadio1">5</label> &nbsp;
+    <textarea class="swal2-input" name="message" id="message" rows="5" style="height:112px;" placeholder="Feedback...."></textarea>
+    `,
+    confirmButtonText: "Send Feedback",
+    focusConfirm: false,
+    showLoaderOnConfirm: true,
+    customClass: {
+      loader: "custom-loader",
+    },
+    loaderHtml: '<div class="spinner-border text-primary"></div>',
+    preConfirm: () => {
+      Swal.showLoading();
+      const name = Swal.getPopup().querySelector("#name").value;
+      const email = Swal.getPopup().querySelector("#email").value;
+      const phone = Swal.getPopup().querySelector("#phone").value;
+      const rating = Swal.getPopup().querySelector("input[name=rating]:checked")
+        .value;
+      const message = Swal.getPopup().querySelector("#message").value;
+      var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+      if (!name) {
+        Swal.showValidationMessage(`Name is missing`);
+      } else if (!email) {
+        Swal.showValidationMessage(`Email address is missing.`);
+      } else if (String(email).search(pattern) == -1) {
+        Swal.showValidationMessage(`Enter a valid email address`);
+      } else if (!phone) {
+        Swal.showValidationMessage(`Phone Number is missing`);
+      } else if (!rating) {
+        Swal.showValidationMessage(`Rating is missing`);
+      } else if (!message) {
+        Swal.showValidationMessage(`Feedback is missing`);
+      }
+      return {
+        email: email,
+        name: name,
+        phone: phone,
+        rating: rating,
+        message: message,
+      };
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then((result) => {
+    if (result.value) {
+      fetch("/feedback", {
+        body: JSON.stringify({
+          email: result.value.email,
+          name: result.value.name,
+          phone: result.value.phone,
+          rating: result.value.rating,
+          message: result.value.message,
+        }),
+        method: "POST",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.feedback_success) {
+            new Notify({
+              title: "Success",
+              text: `${data.feedback_success}`,
+              status: "success",
+            });
+          } else {
+            new Notify({
+              title: "Error",
+              text: `${data.feedback_error}`,
+              status: "error",
+            });
+          }
+        });
+    }
+  });
+}

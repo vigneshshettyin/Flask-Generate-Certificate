@@ -697,7 +697,7 @@ def confirm_email(token):
     user.status = 1
     db_token = Token.query.filter_by(token_id=token).first()
     db_token.status = 'U'
-    user.lastlogin = time
+    user.last_login = time
     db.session.commit()
     # Some error here
     if host:
@@ -1117,7 +1117,7 @@ def google_login_callback():
     # Doesn't exist? Add it to the database.
     if not Users.query.filter_by(email=users_email).first():
         entry = Users(name=users_name, email=users_email, password=password,
-                      profile_image=picture, lastlogin=time, createddate=time, status=1)
+                      profile_image=picture, last_login=time, status=1)
         db.session.add(entry)
         db.session.commit()
 
@@ -1156,7 +1156,7 @@ def facebook_login_callback():
     facebook.fetch_token(
         FB_TOKEN_URL,
         client_secret=FB_CLIENT_SECRET,
-        authorization_response=flask.request.url,
+        authorization_response=request.url,
     )
 
     # Fetch a protected resource, i.e. user profile, via Graph API
@@ -1170,9 +1170,12 @@ def facebook_login_callback():
     picture_url = facebook_user_data.get(
         "picture", {}).get("data", {}).get("url")
 
+    pwo = PasswordGenerator()
+    pwd = pwo.generate()
+    password = sha256_crypt.hash(pwd)
     if not Users.query.filter_by(email=users_email).first():
         entry = Users(name=users_name, email=users_email, password=password,
-                      profile_image=picture, lastlogin=time, createddate=time, status=1)
+                      profile_image=picture_url, last_login=time, status=1)
         db.session.add(entry)
         db.session.commit()
 

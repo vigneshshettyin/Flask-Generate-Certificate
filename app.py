@@ -876,6 +876,7 @@ def edit_certificates_page(grp_id, id):
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
 @login_required
+@admin_required
 def activate_users(id):
     activate = Users.query.filter_by(id=id).first()
     if (activate.email == config("admin_email")):
@@ -885,11 +886,13 @@ def activate_users(id):
         if (activate.status == 1):
             activate.status = 0
             flash("User account deactivated!", "warning")
+            db.session.commit()
+            return redirect(url_for('view_users_page'))
         else:
             activate.status = 1
             flash("User account activated!", "success")
-        db.session.commit()
-        return redirect(url_for('view_users_page'))
+            db.session.commit()
+            return redirect(url_for('view_users_page'))
 
 
 @app.route("/permissions/<string:perm>/users/<string:id>", methods=['GET', 'POST'])

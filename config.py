@@ -3,7 +3,7 @@ from decouple import config
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-DATABASE_URI = config("databaseUri")
+DATABASE_URI = config("DATABASE_URL")
 if DATABASE_URI.startswith("postgres://"):
     DATABASE_URI = DATABASE_URI.replace("postgres://", "postgresql://", 1)
 

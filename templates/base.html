@@ -89,27 +89,31 @@
 }
 #mypage
 {
- position: relative;
- z-index: 1000;
- height:55%;
- width:40%;
- top:30vh;
- left:35vw;
-  background: url("/static/images/logo.png");
-  background-repeat: no-repeat;
-  text-align: center;
-  justify-content: center;
-  background-size: contain;
-  
+ margin-top: 28vh;
 }
-
+#mypage img
+{
+  width: 20vw;
+  height: 40vh;
+}
+@media screen and (max-width: 600px) {
+  #mypage
+{
+ margin-top: 28vh;
+}
+#mypage img
+{
+  width:  60vw;
+  height: 40vh;
+}
+}
   </style>
   </head>
 
 <body class="">
 <div class=" text-center outer">
         <div id="mypage">
-            <!-- <img src="2.png" alt="Loading" /> -->
+            <img src="/static/images/logo.png" alt="Loading" />
        </div>
     </div>
 

@@ -75,14 +75,43 @@
     width:100%;
     position:absolute;
 }
+/**css for preloader**/
 
 
+.outer{
+  height:100vh;
+  width:100vw;
+  z-index: 100000;
+ background-color: #f4dbb1;
+  position:absolute;
+  top:0px;
+  left:0px;
+}
+#mypage
+{
+ position: relative;
+ z-index: 1000;
+ height:55%;
+ width:40%;
+ top:30vh;
+ left:35vw;
+  background: url("/static/images/logo.png");
+  background-repeat: no-repeat;
+  text-align: center;
+  justify-content: center;
+  background-size: contain;
+  
+}
 
   </style>
   </head>
 
 <body class="">
-
+<div class=" text-center outer">
+        <div id="mypage">
+            <!-- <img src="2.png" alt="Loading" /> -->
+       </div>
+    </div>
 
 {% block body %}  {% endblock %}
 
@@ -266,6 +295,14 @@
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function(){
+            $('#mypage').fadeOut(6000);
+            $('.outer').fadeOut(6000);
+        });
+    </script>
 </body>
 
 </html>

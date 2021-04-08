@@ -977,12 +977,9 @@ def edit_org_page(id):
 @login_required
 def delete_org_page(id):
     delete_org_page = Group.query.filter_by(id=id).first()
-    if (delete_org_page.email == config("admin_email")):
-        flash("Default organization can't be deleted!", "danger")
-    else:
-        db.session.delete(delete_org_page)
-        db.session.commit()
-        flash("Organization deleted successfully!", "success")
+    db.session.delete(delete_org_page)
+    db.session.commit()
+    flash("Group deleted successfully!", "success")
     return redirect('/view/groups')
 
 

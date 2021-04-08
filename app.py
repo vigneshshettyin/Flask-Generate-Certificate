@@ -5,12 +5,11 @@ from oauthlib.oauth2 import WebApplicationClient
 from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-import requests_oauthlib
-from requests_oauthlib.compliance_fixes import facebook_compliance_fix
+# import requests_oauthlib
+# from requests_oauthlib.compliance_fixes import facebook_compliance_fix
 from passlib.hash import sha256_crypt
 from password_generator import PasswordGenerator
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from flask_mail import Mail, Message
 from datetime import datetime
 import json as json_lib
 import requests
@@ -40,9 +39,14 @@ def check(email):
 app = Flask(__name__)
 app.config.from_object(config("app_settings"))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = config('email_username')
+app.config['MAIL_PASSWORD'] = config('email_password')
 
 db = SQLAlchemy(app)
-
+mail = Mail(app)
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -58,10 +62,10 @@ RAZORPAY_KEY_ID = config("razorpay_key_id")
 RAZORPAY_KEY_SECRET = config("razorpay_key_secret")
 
 # Google Login Credentials
-FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
-FB_TOKEN_URL = config('facebook_token_url')
-FB_CLIENT_ID = config("facebook_app_id")
-FB_CLIENT_SECRET = config("facebook_secret")
+# FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
+# FB_TOKEN_URL = config('facebook_token_url')
+# FB_CLIENT_ID = config("facebook_app_id")
+# FB_CLIENT_SECRET = config("facebook_secret")
 GOOGLE_CLIENT_ID = config("google_client_id")
 GOOGLE_CLIENT_SECRET = config("google_client_secret")
 GOOGLE_DISCOVERY_URL = (
@@ -71,7 +75,7 @@ GOOGLE_DISCOVERY_URL = (
 IST = pytz.timezone('Asia/Kolkata')
 x = datetime.now(IST)
 time = x.strftime("%c")
-host = bool(config("host_status"))
+host = config('host_status', default=False, cast=bool)
 ipc = config("demo_ip")
 favTitle = config("favTitle")
 site_url = config("site_url")
@@ -137,9 +141,7 @@ class QRCode(db.Model):
 class Newsletter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
-    ip = db.Column(db.String(50), nullable=False)
-    country = db.Column(db.String(50), nullable=False)
-    city = db.Column(db.String(50), nullable=False)
+    ip = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 
@@ -149,9 +151,7 @@ class Contact(db.Model):
     email = db.Column(db.String(50), nullable=False)
     phone = db.Column(db.String(50), nullable=False)
     message = db.Column(db.String(500), nullable=False)
-    ip = db.Column(db.String(20), nullable=False)
-    country = db.Column(db.String(20), nullable=False)
-    city = db.Column(db.String(20), nullable=False)
+    ip = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 
@@ -162,9 +162,7 @@ class Feedback(db.Model):
     phone = db.Column(db.String(50), nullable=False)
     rating = db.Column(db.String(10), nullable=False)
     message = db.Column(db.String(500), nullable=False)
-    ip = db.Column(db.String(20), nullable=False)
-    country = db.Column(db.String(20), nullable=False)
-    city = db.Column(db.String(20), nullable=False)
+    ip = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(50), nullable=False)
 
 
@@ -199,18 +197,16 @@ def admin_required(func):
 
 def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
     content = render_template(template_name, **kwargs)
-    message = Mail(
-        from_email=(from_email, from_email_name),
-        to_emails=email,
+    msg = Message(
+        sender=(from_email, from_email_name),
+        recipients=[email],
         subject=subject,
-        html_content=content
+        html=content
     )
     try:
-        sg = SendGridAPIClient(config('sendgridapi'))
-        sg.send(message)
+        mail.send(msg)
         return True
-    except Exception as e:
-        print(e)
+    except Exception:
         return False
 
 
@@ -231,7 +227,7 @@ def send_password_reset_email(name, email):
         link = f"{config('site_url')}/reset-password/{token}"
     print(link)
     subject = "Password Reset Link | CGV"
-    return send_email_now(email, subject, config("email"), 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
+    return send_email_now(email, subject, 'password-bot@cgv.in.net', 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
 
 
 @app.route('/forgot', methods=['GET', 'POST'])
@@ -296,9 +292,12 @@ def reset_password(token):
 
 @app.route('/')
 def home_page():
-    response = requests.get(config("contributors_api"))
-    team = response.json()
-    return render_template('index.html', favTitle=favTitle, team=team, user=current_user)
+    try:
+        response = requests.get(config("contributors_api"))
+        team = response.json()
+    except Exception:
+        team = {}
+    return render_template('index.html', favTitle=favTitle, team=team,user=current_user)
 
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -309,11 +308,14 @@ def contact_page():
         phone = request.form.get('phone')
         message = request.form.get('editordata')
         if (host == True):
-            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            try:
+                ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            except KeyError:
+                ip_address = request.remote_addr
+            except Exception:
+                ip_address = ipc
         else:
             ip_address = ipc
-        # ip_address = ipc
-
         # name validation it must be greater than than 2 letters and less than 40 letters
         if len(name) >= 2 and len(name) <= 40:
             pass
@@ -334,11 +336,7 @@ def contact_page():
             flash(
                 "Phone Number is not Correct Please Check it and Try It once again!!", "danger")
             return redirect('/#footer')
-        url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-        j = url.json()
-        city = j["city"]
-        country = j["country"]
-        entry = Contact(name=name, phone=phone, message=message, ip=ip_address, city=city, country=country, date=time,
+        entry = Contact(name=name, phone=phone, message=message, ip=ip_address, date=time,
                         email=email)
         db.session.add(entry)
         db.session.commit()
@@ -349,24 +347,28 @@ def contact_page():
 @app.route('/feedback', methods=['GET', 'POST'])
 def feedback_page():
     if (request.method == 'POST'):
-        name = request.form.get('name')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        rating = request.form.get('rating')
-        message = request.form.get('message')
+        data = json_lib.loads(request.data)
+        name = data["name"]
+        email = data["email"]
+        phone = data["phone"]
+        rating = data["rating"]
+        message = data["message"]
         if (host == True):
-            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            try:
+                ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            except KeyError:
+                ip_address = request.remote_addr
+            except Exception:
+                ip_address = ipc
         else:
             ip_address = ipc
-        url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-        j = url.json()
-        city = j["city"]
-        country = j["country"]
-        entry = Feedback(name=name, phone=phone, rating=rating, message=message, ip=ip_address, city=city,
-                         country=country, date=time, email=email)
-        db.session.add(entry)
-        db.session.commit()
-        flash("Thank you for feedback – we will get back to you soon!", "success")
+        try:
+            entry = Feedback(name=name, phone=phone, rating=rating, message=message, ip=ip_address, date=time, email=email)
+            db.session.add(entry)
+            db.session.commit()
+            return jsonify(feedback_success="Thank you for feedback – we will get back to you soon!", status=200)
+        except Exception:
+            return jsonify(feedback_error="Sorry, we could not record your feedback.", status=400)
     return redirect('/#footer')
 
 
@@ -375,17 +377,17 @@ def newsletter_page():
     if (request.method == 'POST'):
         email = request.form.get('email')
         if (host == True):
-            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            try:
+                ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+            except KeyError:
+                ip_address = request.remote_addr
+            except Exception:
+                ip_address = ipc
         else:
             ip_address = ipc
-        url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-        j = url.json()
-        city = j["city"]
-        country = j["country"]
         post = Newsletter.query.filter_by(email=email).first()
         if (post == None):
-            entry = Newsletter(ip=ip_address, city=city,
-                               country=country, date=time, email=email)
+            entry = Newsletter(ip=ip_address, date=time, email=email)
             db.session.add(entry)
             db.session.commit()
             flash("Thank you for subscribing!", "success")
@@ -397,8 +399,12 @@ def newsletter_page():
 @app.route("/certificate/verify", methods=['GET', 'POST'])
 def certificate_verify():
     if (host == True):
-        # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-        ip_address = ipc
+        try:
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        except KeyError:
+            ip_address = request.remote_addr
+        except Exception:
+            ip_address = ipc
     else:
         ip_address = ipc
     if (request.method == 'POST'):
@@ -415,11 +421,15 @@ def certificate_verify():
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])
 def certificate_generate():
-    # if (host == True):
-    #     ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-    # else:
-    #     ip_address = ipc
-    ip_address = ipc
+    if (host == True):
+        try:
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        except KeyError:
+            ip_address = request.remote_addr
+        except Exception:
+            ip_address = ipc
+    else:
+        ip_address = ipc
     if (request.method == 'POST'):
         certificateno = request.form.get('certificateno')
         postc = Certificate.query.filter_by(number=certificateno).first()
@@ -619,7 +629,7 @@ def send_activation_email(name, email):
         link = f"{config('site_url')}/confirm-email/{token}"
     print(link)
     subject = "Welcome aboard " + name + "!"
-    return send_email_now(email, subject, config("email"), 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
+    return send_email_now(email, subject, 'register-bot@cgv.in.net', 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -633,7 +643,7 @@ def register_page():
         password = sha256_crypt.hash(password)
         profile_image = avatar(email, 128)
         entry = Users(name=name, email=email, password=password, profile_image=profile_image,
-                      status=0, is_staff=1, last_login=time,)
+                      status=0, is_staff=0, last_login=time,)
         db.session.add(entry)
         db.session.commit()
         if send_activation_email(name, email):
@@ -690,22 +700,29 @@ def confirm_email(token):
     user.status = 1
     db_token = Token.query.filter_by(token_id=token).first()
     db_token.status = 'U'
-    user.lastlogin = time
+    user.last_login = time
     db.session.commit()
     # Some error here
-    if host:
-        # ip_address = request.environ['HTTP_X_FORWARDED_FOR']
-        ip_address = ipc
+    if (host == True):
+        try:
+            ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+        except KeyError:
+            ip_address = request.remote_addr
+        except Exception:
+            ip_address = ipc
     else:
         ip_address = ipc
-    url = requests.get("http://ip-api.com/json/{}".format(ip_address))
-    j = url.json()
-    city = j["city"]
-    country = j["country"]
-    subject = " New device login from " + \
-        str(city) + ", " + str(country) + " detected."
-    email_sent = send_email_now(email, subject, config("email"),
-                                'Security Bot CGV', 'emails/login-alert.html', city=city, country=country, time=str(time), ip_address=str(ip_address))
+    try:
+        url = requests.get("http://ip-api.com/json/{}".format(ip_address))
+        j = url.json()
+        city = j["city"]
+        country = j["country"]
+        subject = " New device login from " + \
+            str(city) + ", " + str(country) + " detected."
+        email_sent = send_email_now(email, subject, 'login-alert@cgv.in.net',
+                                    'Security Bot CGV', 'emails/login-alert.html', city=city, country=country, time=str(time), ip_address=str(ip_address))
+    except Exception:
+        pass
     login_user(user)
     next_page = request.args.get('next')
     return redirect(next_page) if next_page else redirect(url_for('dashboard_page'))
@@ -829,7 +846,7 @@ def edit_certificates_page(grp_id, id):
                     db.session.commit()
                     subject = "Certificate Generated With Certificate Number : " + \
                         str(number)
-                    email_sent = send_email_now(email, subject, config("email"), 'Certificate Generate Bot CGV',
+                    email_sent = send_email_now(email, subject, 'new-certificate@cgv.in.net', 'Certificate Generate Bot CGV',
                                                 'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
                     if not email_sent:
                         flash("Error while sending mail!", "danger")
@@ -867,6 +884,7 @@ def edit_certificates_page(grp_id, id):
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
 @login_required
+@admin_required
 def activate_users(id):
     activate = Users.query.filter_by(id=id).first()
     if (activate.email == config("admin_email")):
@@ -876,11 +894,13 @@ def activate_users(id):
         if (activate.status == 1):
             activate.status = 0
             flash("User account deactivated!", "warning")
+            db.session.commit()
+            return redirect(url_for('view_users_page'))
         else:
             activate.status = 1
             flash("User account activated!", "success")
-        db.session.commit()
-        return redirect(url_for('view_users_page'))
+            db.session.commit()
+            return redirect(url_for('view_users_page'))
 
 
 @app.route("/permissions/<string:perm>/users/<string:id>", methods=['GET', 'POST'])
@@ -957,12 +977,9 @@ def edit_org_page(id):
 @login_required
 def delete_org_page(id):
     delete_org_page = Group.query.filter_by(id=id).first()
-    if (delete_org_page.email == config("admin_email")):
-        flash("Default organization can't be deleted!", "danger")
-    else:
-        db.session.delete(delete_org_page)
-        db.session.commit()
-        flash("Organization deleted successfully!", "success")
+    db.session.delete(delete_org_page)
+    db.session.commit()
+    flash("Group deleted successfully!", "success")
     return redirect('/view/groups')
 
 
@@ -1049,8 +1066,6 @@ def google_login():
     # Use library to construct the request for Google login and provide
     # scopes that let us retrieve user's profile from Google
 
-    print(f"I am base url {request.base_url}")
-
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
         redirect_uri=request.base_url + "/callback",
@@ -1110,70 +1125,77 @@ def google_login_callback():
     # Doesn't exist? Add it to the database.
     if not Users.query.filter_by(email=users_email).first():
         entry = Users(name=users_name, email=users_email, password=password,
-                      profile_image=picture, lastlogin=time, createddate=time, status=1)
+                      profile_image=picture, last_login=time, status=1)
         db.session.add(entry)
         db.session.commit()
 
     # Begin user session by logging the user in
 
     user = Users.query.filter_by(email=users_email).first()
-    login_user(user)
+    if user.status == 1:
+        login_user(user)
+    else:
+        flash("Your account has been deactivated. Contact us to activate it.", "danger")
+        return redirect(url_for("loginPage"))
 
     # Send user back to homepage
     return redirect(url_for("dashboard_page"))
 
 
-FB_SCOPE = ["email", "public_profile"]
+# FB_SCOPE = ["email", "public_profile"]
 
 
-@app.route('/login/facebook')
-def facebook_login():
-    facebook = requests_oauthlib.OAuth2Session(
-        FB_CLIENT_ID, redirect_uri=request.base_url + "/fb-callback", scope=FB_SCOPE
-    )
-    authorization_url, _ = facebook.authorization_url(
-        FB_AUTHORIZATION_BASE_URL)
+# @app.route('/login/facebook')
+# def facebook_login():
+#     facebook = requests_oauthlib.OAuth2Session(
+#         FB_CLIENT_ID, redirect_uri=request.base_url + "/fb-callback", scope=FB_SCOPE
+#     )
+#     authorization_url, _ = facebook.authorization_url(
+#         FB_AUTHORIZATION_BASE_URL)
 
-    return redirect(authorization_url)
+#     return redirect(authorization_url)
 
 
-@app.route('/login/facebook/callback')
-def facebook_login_callback():
-    facebook = requests_oauthlib.OAuth2Session(
-        FB_CLIENT_ID, scope=FB_SCOPE, redirect_uri=request.base_url + "/callback"
-    )
+# @app.route('/login/facebook/callback')
+# def facebook_login_callback():
+#     facebook = requests_oauthlib.OAuth2Session(
+#         FB_CLIENT_ID, scope=FB_SCOPE, redirect_uri=request.base_url + "/callback"
+#     )
 
-    # we need to apply a fix for Facebook here
-    facebook = facebook_compliance_fix(facebook)
+#     # we need to apply a fix for Facebook here
+#     facebook = facebook_compliance_fix(facebook)
 
-    facebook.fetch_token(
-        FB_TOKEN_URL,
-        client_secret=FB_CLIENT_SECRET,
-        authorization_response=flask.request.url,
-    )
+#     facebook.fetch_token(
+#         FB_TOKEN_URL,
+#         client_secret=FB_CLIENT_SECRET,
+#         authorization_response=request.url,
+#     )
 
-    # Fetch a protected resource, i.e. user profile, via Graph API
+#     # Fetch a protected resource, i.e. user profile, via Graph API
 
-    facebook_user_data = facebook.get(
-        "https://graph.facebook.com/me?fields=id,name,email,picture{url}"
-    ).json()
+#     facebook_user_data = facebook.get(
+#         "https://graph.facebook.com/me?fields=id,name,email,picture{url}"
+#     ).json()
 
-    users_email = facebook_user_data["email"]
-    users_name = facebook_user_data["name"]
-    picture_url = facebook_user_data.get(
-        "picture", {}).get("data", {}).get("url")
+#     users_email = facebook_user_data["email"]
+#     users_name = facebook_user_data["name"]
+#     picture_url = facebook_user_data.get(
+#         "picture", {}).get("data", {}).get("url")
 
-    if not Users.query.filter_by(email=users_email).first():
-        entry = Users(name=users_name, email=users_email, password=password,
-                      profile_image=picture, lastlogin=time, createddate=time, status=1)
-        db.session.add(entry)
-        db.session.commit()
+#     pwo = PasswordGenerator()
+#     pwd = pwo.generate()
+#     password = sha256_crypt.hash(pwd)
+#     if not Users.query.filter_by(email=users_email).first():
+#         entry = Users(name=users_name, email=users_email, password=password,
+#                       profile_image=picture_url, last_login=time, status=1)
+#         db.session.add(entry)
+#         db.session.commit()
 
-    user = Users.query.filter_by(email=users_email).first()
-    login_user(user)
+#     user = Users.query.filter_by(email=users_email).first()
+#     login_user(user)
 
-    # Send user back to homepage
-    return redirect(url_for("dashboard_page"))
+#     # Send user back to homepage
+#     return redirect(url_for("dashboard_page"))
 
 
 @app.errorhandler(404)

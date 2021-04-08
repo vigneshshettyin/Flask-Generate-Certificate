@@ -49,6 +49,19 @@
 
                 </div>
                 <!-- /.container-fluid -->
+                {% with warnings = get_flashed_messages(category_filter=["warning"]) %}
+                    {% if warnings %}
+                    {% for warning in warnings %}
+                    <script>
+                        new Notify ({
+                        title: 'Warning',
+                        text: `{{warning|safe}}`,
+                        status: 'warning'
+                        })
+                    </script>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
                 {% with errors = get_flashed_messages(category_filter=["danger"]) %}
                     {% if errors %}
                     {% for error in errors %}

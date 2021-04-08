@@ -51,7 +51,7 @@ Apart from that you can also use cloud platforms to deploy the project once you 
 
 Click Here to view the deployment!
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://cgvcertify.herokuapp.com/)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://certify-us.herokuapp.com/)
 <br>
 <br>
 

@@ -25,6 +25,8 @@ import qrcode
 from flask_login import UserMixin
 from functools import wraps
 from decouple import config
+import boto3
+import io
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -44,6 +46,7 @@ app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USERNAME'] = config('email_username')
 app.config['MAIL_PASSWORD'] = config('email_password')
+app.config['MAIL_DEBUG'] = False
 
 db = SQLAlchemy(app)
 mail = Mail(app)
@@ -182,8 +185,8 @@ class Transactions(db.Model):
     txn_timestamp = db.Column(
         db.DateTime(), default=datetime.now(IST), nullable=False)
 
-# Admin Required Decorator
 
+# Admin Required Decorator
 
 def admin_required(func):
     @wraps(func)
@@ -196,18 +199,53 @@ def admin_required(func):
 
 
 def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
-    content = render_template(template_name, **kwargs)
     msg = Message(
-        sender=(from_email, from_email_name),
+        sender=(from_email_name, from_email),
         recipients=[email],
-        subject=subject,
-        html=content
+        subject=subject
     )
+    msg.html = render_template(template_name, **kwargs)
     try:
         mail.send(msg)
         return True
     except Exception:
         return False
+
+
+def upload_image(file, bucket="cgv", **kwargs):
+    """
+    Function to upload an image to an S3 bucket
+    """
+    s3_client = boto3.client('s3', aws_access_key_id=config(
+        "S3_KEY"), aws_secret_access_key=config("S3_SECRET_ACCESS_KEY"))
+    response = s3_client.put_object(
+        Bucket=bucket,
+        Key=f'qr_codes/{kwargs["number"]}.png',
+        Body=file,
+        ContentType='image/png',
+    )
+
+    return response
+
+
+def upload_doc(file, bucket="cgv", **kwargs):
+    """
+    Function to upload a raw file to an S3 bucket
+    """
+    s3_client = boto3.client('s3', aws_access_key_id=config(
+        "S3_KEY"), aws_secret_access_key=config("S3_SECRET_ACCESS_KEY"))
+    if kwargs["localhost"]:
+        with open(file, "rb") as f:
+            response = s3_client.upload_fileobj(
+                f, bucket, f'certificates/{kwargs["number"]}.pdf')
+    else:
+        response = s3_client.put_object(
+            Bucket=bucket,
+            Key=f'certificates/{kwargs["number"]}.pdf',
+            Body=file,
+        )
+
+    return response
 
 
 # For Gravatar
@@ -297,7 +335,7 @@ def home_page():
         team = response.json()
     except Exception:
         team = {}
-    return render_template('index.html', favTitle=favTitle, team=team,user=current_user)
+    return render_template('index.html', favTitle=favTitle, team=team, user=current_user)
 
 
 @app.route('/contact', methods=['GET', 'POST'])
@@ -363,7 +401,8 @@ def feedback_page():
         else:
             ip_address = ipc
         try:
-            entry = Feedback(name=name, phone=phone, rating=rating, message=message, ip=ip_address, date=time, email=email)
+            entry = Feedback(name=name, phone=phone, rating=rating,
+                             message=message, ip=ip_address, date=time, email=email)
             db.session.add(entry)
             db.session.commit()
             return jsonify(feedback_success="Thank you for feedback – we will get back to you soon!", status=200)
@@ -451,19 +490,21 @@ def certificate_generate_string(number):
         style = "display: none;"
         posto = Group.query.filter_by(id=postc.group_id).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
-        img_name = f"{qr_code.certificate_num}.png"
-        if app.debug:
-            base_url = 'http://127.0.0.1:5000/'
+        img_url = qr_code.qr_code
+        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url,
+                                        favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
+        if not app.debug:
+            configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
+            file = pdfkit.from_string(
+                rendered_temp, False, css='static/css/certificate.css', configuration=configr)
+            upload_doc(file, number=number, localhost=False)
         else:
-            base_url = config("site_url")
-        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name,
-                                        favTitle=favTitle, site_url=site_url, number=number, pdf=True, base_url=base_url, style=style)
-        try:
-            pdfkit.from_string(
-                rendered_temp, f'{number}.pdf', css='static/css/certificate.css')
-        except OSError:
-            print(OSError)
-        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_name, favTitle=favTitle, site_url=site_url, number=number, pdf=False, base_url=base_url)
+            try:
+                pdfkit.from_string(
+                    rendered_temp, f"{number}.pdf", css='static/css/certificate.css')
+            except OSError:
+                upload_doc(f"{number}.pdf", number=number, localhost=True)
+        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=f"https://cgv.s3.us-east-2.amazonaws.com/certificates/{number}.pdf", pdf=False)
     else:
         return redirect('/')
 
@@ -828,6 +869,7 @@ def edit_certificates_page(grp_id, id):
                     post = Certificate(name=name, number=number, email=email, coursename=coursename, user_id=userid,
                                        group_id=grp_id, last_update=last_update)
                     db.session.add(post)
+                    db.session.commit()
                     # Create QR Code for this certificate
                     link = f'{config("site_url")}/certify/{number}'
                     new_qr = QRCode(certificate_num=number, link=link)
@@ -835,21 +877,27 @@ def edit_certificates_page(grp_id, id):
                     qr_image.add_data(link)
                     qr_image.make(fit=True)
                     img = qr_image.make_image(fill='black', back_color='white')
-                    imgname = f"{number}.png"
+                    buffer = io.BytesIO()
+                    img.save(buffer, format="PNG")
+                    buffer.seek(0)
                     try:
-                        os.mkdir("static/qr_codes")
-                    except Exception:
-                        pass
-                    img.save("static/qr_codes/"+imgname)
-                    new_qr.qr_code = f"qr_codes/{imgname}"
-                    db.session.add(new_qr)
-                    db.session.commit()
+                        upload_image(buffer, number=number)
+                        img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+                        new_qr.qr_code = f"{img_url}"
+                        new_qr.certificate_id = post.id
+                        db.session.add(new_qr)
+                        db.session.commit()
+                    except Exception as e:
+                        print(e)
                     subject = "Certificate Generated With Certificate Number : " + \
                         str(number)
-                    email_sent = send_email_now(email, subject, 'new-certificate@cgv.in.net', 'Certificate Generate Bot CGV',
+                    email_sent = send_email_now(email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
                                                 'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
                     if not email_sent:
                         flash("Error while sending mail!", "danger")
+                    else:
+                        flash(
+                            "An email with certificate details has been sent!", "success")
                     return jsonify(certificate_success=True)
                 except Exception as e:
                     print(e)
@@ -977,9 +1025,12 @@ def edit_org_page(id):
 @login_required
 def delete_org_page(id):
     delete_org_page = Group.query.filter_by(id=id).first()
-    db.session.delete(delete_org_page)
-    db.session.commit()
-    flash("Group deleted successfully!", "success")
+    if (delete_org_page.email == config("admin_email")):
+        flash("Default organization can't be deleted!", "danger")
+    else:
+        db.session.delete(delete_org_page)
+        db.session.commit()
+        flash("Organization deleted successfully!", "success")
     return redirect('/view/groups')
 
 

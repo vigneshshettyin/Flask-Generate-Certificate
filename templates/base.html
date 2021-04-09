@@ -75,47 +75,14 @@
     width:100%;
     position:absolute;
 }
-/**css for preloader**/
 
 
-.outer{
-  height:100vh;
-  width:100vw;
-  z-index: 100000;
- background-color: #f4dbb1;
-  position:absolute;
-  top:1px;
-  left:1px;
-}
-#mypage
-{
- margin-top: 28vh;
-}
-#mypage img
-{
-  width: 20vw;
-  height: 40vh;
-}
-@media screen and (max-width: 600px) {
-  #mypage
-{
- margin-top: 28vh;
-}
-#mypage img
-{
-  width:  60vw;
-  height: 40vh;
-}
-}
+
   </style>
   </head>
 
 <body class="">
-<div class=" text-center outer">
-        <div id="mypage">
-            <img src="/static/images/logo.png" alt="Loading" />
-       </div>
-    </div>
+
 
 {% block body %}  {% endblock %}
 
@@ -299,14 +266,6 @@
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script>
-        $(document).ready(function(){
-            $('#mypage').fadeOut(6000);
-            $('.outer').fadeOut(6000);
-        });
-    </script>
 </body>
 
 </html>

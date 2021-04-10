@@ -12,21 +12,7 @@
   <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
   <style>
-      .dark-mode , .dark-mode .row , .dark-mode .text-center a
-    {
-        background-color:black;
-background-image: linear-gradient(
-180deg
-, black 10%, black 100%);
-background-size: cover;
-color:#fff;
-    }
-    .dark-mode .text-gray-900
-    {
-        background-color:black;
-        color:#fff !important;
-    }
-
+     
 </style>
 <style>
     @media print
@@ -43,7 +29,6 @@ color:#fff;
 <body>
   {% if not pdf %}
     
-  <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
   
   {% endif %}
   <div class="container pm-certificate-container">

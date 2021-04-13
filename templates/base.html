@@ -76,7 +76,10 @@
     position:absolute;
 }
 
-
+.dark-mode #textarea
+{
+  background-color: #fff;
+}
 
   </style>
   </head>
@@ -167,7 +170,7 @@
                 <div class="form-group">
                   <input type="tel" class="form-control" name="phone" id="phone_number" placeholder="Phone"  data-msg="Please enter your contact number"  required/>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="textarea">
                   <textarea id="summernote" name="editordata" required></textarea>
               </div>
                <center><button style="background-color: #F9A826; border-color: #F9A826;" class="btn btn-primary" type="submit" id ="message" title="Send Feedback">Send Message</button></center>

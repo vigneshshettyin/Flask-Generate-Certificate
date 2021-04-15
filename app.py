@@ -491,20 +491,20 @@ def certificate_generate_string(number):
         posto = Group.query.filter_by(id=postc.group_id).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_url = qr_code.qr_code
-        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url,
-                                        favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
+        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url,favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
         if not app.debug:
             configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
             file = pdfkit.from_string(
                 rendered_temp, False, css='static/css/certificate.css', configuration=configr)
             upload_doc(file, number=number, localhost=False)
+            download_url = f"https://cgv.s3.us-east-2.amazonaws.com/certificates/{number}.pdf"
         else:
             try:
                 pdfkit.from_string(
                     rendered_temp, f"{number}.pdf", css='static/css/certificate.css')
             except OSError:
-                upload_doc(f"{number}.pdf", number=number, localhost=True)
-        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=f"https://cgv.s3.us-east-2.amazonaws.com/certificates/{number}.pdf", pdf=False)
+                download_url = f"http://127.0.0.1:5000/download/{number}.pdf"
+        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=download_url, pdf=False)
     else:
         return redirect('/')
 
@@ -881,8 +881,16 @@ def edit_certificates_page(grp_id, id):
                     img.save(buffer, format="PNG")
                     buffer.seek(0)
                     try:
-                        upload_image(buffer, number=number)
-                        img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+                        if not app.debug:
+                            upload_image(buffer, number=number)
+                            img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+                        else:
+                            try:
+                                os.mkdir("static/qr_codes")
+                            except Exception:
+                                pass
+                            img.save("static/qr_codes/"+f"{number}.png")
+                            img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
                         new_qr.qr_code = f"{img_url}"
                         new_qr.certificate_id = post.id
                         db.session.add(new_qr)

@@ -33,10 +33,53 @@
     <link href="{{ url_for('static', filename='css/simple-notify.min.css') }}" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/simple-notify.min.js') }}"></script>
 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
+<style>
+.topnav
+{
+    margin-right: 5vw;
+}
+.sticky-footer
+{
+    background-color: #fff;
+}
+.switch
+{
+    top:2rem;
+}
+.username
+{
+    color: gray;
+}
+.dark-mode row
+{
+    background-color: #fff;
+}
+.dark-mode .maincontent , .dark-mode #content , .dark-mode .sticky-footer , .dark-mode .navbar ,.dark-mode .username
+{
+    background-color: black;
+    color: #fff;
+}
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 992px) {
+    
+    .navbar-expand .navbar-nav
+    {
+        margin-right: 20vw;
+    }
+    .topbar.navbar-light .navbar-nav .nav-item .nav-link
+    {
+        padding:2px;
+    }
+  }
+</style>
 </head>
 
 <body id="page-top">
-
+    
+<!-- dark mode toggle -->
+  <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
+  <!-- dark mode toggle end -->
     <!-- Page Wrapper -->
     <div id="wrapper">
 
@@ -142,7 +185,7 @@
             <div id="content">
 
                 <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav class="navbar navbar-expand navbar-light topbar mb-4 static-top shadow">
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
@@ -164,7 +207,7 @@
                     </form>
 
                     <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
+                    <ul class="navbar-nav ml-auto topnav">
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
@@ -316,7 +359,7 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.name }}</span>
+                                <span class="mr-2 d-none d-lg-inline username small">{{ user.name }}</span>
                                 <img class="img-profile rounded-circle" src="{{ user.profile_image }}">
                             </a>
                             <!-- Dropdown - User Information -->
@@ -353,7 +396,7 @@
             <!-- End of Main Content -->
             <!-- End of Main Content -->
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
+            <footer class="sticky-footer">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
                         <span> Made with <i class="fa fa-heart" style="color: red;"></i> in <strong>CGV</strong></span>
@@ -424,6 +467,7 @@
         $('#summernote').summernote();
     });
   </script>
+   <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
   
 
 </body>

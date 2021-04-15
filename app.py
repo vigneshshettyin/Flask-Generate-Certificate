@@ -476,8 +476,21 @@ def certificate_generate():
             posto = Group.query.filter_by(id=postc.group_id).first()
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
-            img_name = f"{qr_code.certificate_num}.png"
-            return render_template('certificate.html', postc=postc, qr_code=img_name, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address)
+            img_url = qr_code.qr_code
+            rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno, pdf=True)
+            if not app.debug:
+                configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
+                file = pdfkit.from_string(
+                    rendered_temp, False, css='static/css/certificate.css', configuration=configr)
+                upload_doc(file, number=certificateno, localhost=False)
+                download_url = f"https://cgv.s3.us-east-2.amazonaws.com/certificates/{certificateno}.pdf"
+            else:
+                try:
+                    pdfkit.from_string(
+                        rendered_temp, f"{certificateno}.pdf", css='static/css/certificate.css')
+                except OSError:
+                    download_url = f"http://127.0.0.1:5000/download/{certificateno}.pdf"
+            return render_template('certificate.html', postc=postc, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('generate.html', favTitle=favTitle, ip=ip_address)

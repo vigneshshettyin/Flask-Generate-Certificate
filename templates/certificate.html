@@ -1,115 +1,54 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ postc.name }} : Certificate : {{ favTitle }}</title>
-  <meta name="title" content="CGV : Online Certificate Verification System">
-	<meta name="description" content="A Startup Company based in India, that offers Full-Stack Web Development, User Interface Design, etc at a very reasonable cost. Contact us at contact@vigneshshetty.in">
-  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css'>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="{{url_for('static', filename='css/certificate.css')}}">
-      <!-- Favicons -->
-  <link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
-  <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
-  <style>
-     
-</style>
-<style>
-    @media print
-{
-    .no-print, .no-print *
-    {
-        display: none !important;
-    }
-}
-</style>
-</head>
-<body>
-<!-- partial:index.partial.html -->
-<body>
-  {% if not pdf %}
-    
-  
-  {% endif %}
-  <div class="container pm-certificate-container">
-    <div class="outer-border"></div>
-    <div class="inner-border"></div>
-    
-    <div class="pm-certificate-border col-xs-12">
-      <div class="row pm-certificate-header">
-        <div class="pm-certificate-title cursive col-xs-12 text-center">
-          <h2>Certificate of Training</h2>
+
+    <title>Certificate: {{ postc.number}}</title>
+  </head>
+  <body>
+    <div class="container">
+        <div class="bgimage">
+            <div class="Leftcorner">
+                <img src="https://i.imgur.com/b6K4QTl.png" alt="">
+            </div>      
+            <div class="rightcorner">
+                <img src="https://i.imgur.com/nvngFDs.png" alt="">
+            </div>  
         </div>
-      </div>
-
-      <div class="row pm-certificate-body">
-        
-        <div class="pm-certificate-block">
-            <div class="col-xs-12">
-              <div class="row">
-                <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                <div class="pm-certificate-name underline margin-0 col-xs-8 text-center">
-                  <span class="pm-name-text bold">{{ postc.name }}</span>
+        <div class="content">
+            <h1>CERTIFICATE OF TRAINING</h1>
+            <div class="underline">
+                <p>{{ postc.name }}</p>
+            </div>
+            <p style="font-family: 'Montserrat';font-style: italic;font-weight: bold;text-align: center;color:#252F5F;">has been certified at <span>{{ postc.last_update }}</span> <br>
+                while completing the training course entitled</p>  <!--replace the Thu Mar 09:43:09 2021 with updated time -->
+            <div class="underline">
+                <p>{{ postc.coursename}}</p>
+            </div>
+            <div class="content-footer">
+                <div class="QrCode">
+                    <img src="{{ qr_code }}" alt="">
+                    <p>ID:#{{ postc.number}}</p>
                 </div>
-                <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-              </div>
-            </div>          
-
-            <div class="col-xs-12">
-              <div class="row">
-                <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                <div class="pm-earned col-xs-8 text-center">
-                  <span class="pm-earned-text padding-0 block cursive">has been certified </span>
-                </div>
-                <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                <div class="col-xs-12"></div>
-              </div>
+                <div class="signline">
+                    <img src="https://i.imgur.com/BJL4JVt.png" alt="">
+                    <p>{{ posto.subname }}</p>
+                </div>    
+            </div>
             </div>
             
-            <div class="col-xs-12">
-              <div class="row">
-                <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                <div class="pm-course-title col-xs-8 text-center">
-                  <span class="pm-earned-text block cursive">while completing the training course entitled</span>
-                </div>
-                <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-              </div>
-            </div>
-
-            <div class="col-xs-12">
-              <div class="row">
-                <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-                <div class="pm-course-title underline col-xs-8 text-center">
-                  <span class="pm-credits-text block bold sans">{{ postc.coursename}}</span>
-                </div>
-                <div class="col-xs-2"><!-- LEAVE EMPTY --></div>
-              </div>
-            </div>
-        </div>       
-        
-        <div class="col-xs-12">
-          <div class="row">
-            <div class="pm-certificate-footer">
-                <div class="col-xs-4 pm-certified col-xs-4 text-center">
-                  <span class="pm-credits-text block sans">{{ posto.name }}</span>
-                  <span class="pm-empty-space block underline">Authorized</span>
-                  <span class="bold block">{{ posto.subname }}</span>
-                </div>
-                <div class="col-xs-4">
-                  <!-- LEAVE EMPTY -->
-                </div>
-                <div class="col-xs-4 pm-certified col-xs-4 text-center">
-                  <span class="pm-credits-text block sans">Certified at</span>
-                  <span class="pm-empty-space block underline">{{ postc.last_update}}</span>
-                  <span class="bold block"></span>
-                  <span class="bold block">Certificate No. # {{ postc.number}}</span>
-                </div>
-                
-                <center><img src="{{ qr_code }}" alt="QR Code" style="width: 100px; height:100px;"></center>
-                <!-- AddToAny BEGIN -->
-<br><div><center>
+        </div>    
+    </div>
+    <br><div><center>
   {% if not pdf %}
 <a href="{{download_url}}"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span> Download Certificate</button></a><br>
+<br>
 <a href="https://www.addtoany.com/share#url=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;title=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32" height="32" style="background-color:#4169e1"></a>
 <a href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/twitter.svg" width="32" height="32" style="background-color:#4169e1"></a>
 <a href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/linkedin.svg" width="32" height="32" style="background-color:royalblue"></a>
@@ -122,17 +61,11 @@
 
   {% endif %}
             </div>
-          </div>
-        </div>
 
-      </div>
-
-    </div>
-  </div>
-</body>
-<!-- partial -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'></script>
-          <!-- js for dark mode -->
-          <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
-</body>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
 </html>

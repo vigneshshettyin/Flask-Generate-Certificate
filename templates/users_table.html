@@ -35,7 +35,7 @@
                                         <i class="fas {{'fa-check' if post.status == 0 else 'fa-times'}}"></i>
                                         </a>
                                             </td>
-                                            <td><a href="/delete/users/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
+                                            <td><a style="cursor: pointer;" class="btn btn-danger btn-circle" onclick="delUser('{{ post.id }}')"><i class="fas fa-trash"></i></a></td>
                                         </tr>
 
 {#                                    end loop#}
@@ -69,7 +69,9 @@
                         new Notify ({
                         title: 'Error',
                         text: `{{error|safe}}`,
-                        status: 'error'
+                        status: 'error',
+                        autoclose: true,
+                        autotimeout: 3000,
                         })
                     </script>
                     {% endfor %}
@@ -88,4 +90,19 @@
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
+
+<script>
+
+    function delUser(userId){
+        Swal.fire({
+        title: 'Are you sure?',
+        icon: "warning",
+        text: "You won't be able to revert this!",
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: `<a href="/delete/users/${userId}" style="color: white;text-decoration: none;">Yeah!</a>`
+        })
+    }
+</script>
             {% endblock %}

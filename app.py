@@ -1057,14 +1057,15 @@ def delete_org_page(id):
 
 @app.route("/delete/users/<string:id>", methods=['GET', 'POST'])
 @login_required
+@admin_required
 def delete_users_page(id):
     delete_users_page = Users.query.filter_by(id=id).first()
-    if (delete_users_page.email != config("admin_email")):
+    if (delete_users_page.email == config("admin_email")) or delete_users_page.is_staff:        
+        flash("You can't delete administrator!", "danger")
+    else:        
         db.session.delete(delete_users_page)
         db.session.commit()
         flash("User deleted successfully!", "success")
-    else:
-        flash("You can't delete administrator!", "danger")
         return redirect('/view/users')
     return redirect('/view/users')
 

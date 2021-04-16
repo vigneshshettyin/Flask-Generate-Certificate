@@ -61,7 +61,7 @@ function getFeedback() {
         .value;
       const message = Swal.getPopup().querySelector("#message").value;
       var pattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-      var phonepattern=/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+      var phonepattern=/^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im;
       if (!name) {
         Swal.showValidationMessage(`Name is missing`);
       } else if (!email) {

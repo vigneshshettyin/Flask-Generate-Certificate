@@ -41,8 +41,7 @@
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu "
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="/logout" data-toggle="modal" data-target="#logoutModal"
-                                 style="color:black">
+                                <a class="dropdown-item" href="#" style="color:black" onclick="confirmation()">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -59,26 +58,6 @@
 
     </div>
   </header><!-- End Header -->
-
-<!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="/logout">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
   <!-- ======= Hero Section ======= -->
@@ -480,5 +459,25 @@
 <div style="padding: 20px;">
   <center><button type="button" class="btn btn-primary btn-lg" id="feedback" onclick="getFeedback()">Submit Feedback</button></center>
 </div>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+<script>
+  function confirmation(){
+  swal({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    buttons: true,
+    buttons: ['cancel','Yes, Log out'],
+    dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      window.location = "/logout";
+    } else {
+      
+    }
+  });
+  }
+</script>
 {% endblock %}

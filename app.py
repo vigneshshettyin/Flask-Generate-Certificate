@@ -493,7 +493,7 @@ def certificate_generate():
             return render_template('certificate.html', postc=postc, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
-    return render_template('generate.html', favTitle=favTitle, ip=ip_address)
+    return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address)
 
 
 @app.route("/certify/<string:number>", methods=['GET'])

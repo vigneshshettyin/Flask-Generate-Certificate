@@ -1,4 +1,16 @@
 {% extends "base.html" %}
+{% block css %}
+
+#darkmodeid
+{
+  padding-left:6rem;
+  padding-top:0px;
+  margin-top:0px;
+}
+
+{% endblock css %}
+
+
 {% block body %}
   <!-- ======= Top Bar ======= -->
   <div id="topbar" class="d-none d-lg-flex align-items-end fixed-top topbar-transparent">
@@ -11,9 +23,7 @@
       </div>
     </div>
   </div>
-  <!-- dark mode toggle -->
-  <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
-  <!-- dark mode toggle end -->
+ 
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top header-transparent">
     <div class="container d-flex align-items-center">
@@ -51,8 +61,9 @@
 
           <li><a href="/login"><i class="fa fa-sign-in" aria-hidden="true"></i> LOGIN</a></li>
           {% endif %}
-  
-          <!-- <li><a href="#" id="toggle" onclick="myfun()">Toggle Mode</a></li> -->
+          <li id="darkmodeid"> <!-- dark mode toggle -->
+          <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
+          <!-- dark mode toggle end --></li>
         </ul>
       </nav><!-- .main-nav-->
 

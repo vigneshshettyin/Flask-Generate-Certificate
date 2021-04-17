@@ -277,10 +277,10 @@
         </div>
 
         <div class="row d-flex justify-content-center">
-
+          <div class="owl-carousel contributors-carousel">
           {% for t,d in team.items() %}
 
-          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="px-2 py-2" data-aos="fade-up" data-aos-delay="200">
             <div class="member">
               <img src="{{ d.image }}" class="img-fluid" alt="#">
               <div class="member-info">
@@ -295,7 +295,7 @@
           </div>
 
           {% endfor %}
-
+          </div>
 
 
         </div>

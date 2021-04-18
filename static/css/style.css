@@ -159,13 +159,13 @@ h1, h2, h3, h4, h5, h6 {
   padding: 10px;
   font-size: 22px;
   margin: 2px;
-  border-radius: 0px 50px 50px 0px;
-  transform: translate(-34px,0px);
+  border-radius: 0 50px 50px 0;
+  transform: translate(-34px,0);
   transition: all 0.5s;
   background-color: #F9A826;
 }
 .social-icons a:hover{
-  transform: translate(0px,0px);
+  transform: translate(0,0);
 }
 .social-icons a i{
   margin-left: 25px;
@@ -191,7 +191,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.5s;
   z-index: 997;
   padding: 15px 0;
-  top: 0px;
+  top: 0;
 }
 
 #header.header-transparent {

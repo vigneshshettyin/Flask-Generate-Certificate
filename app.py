@@ -2,7 +2,7 @@ import pdfkit
 import os
 from flask.globals import current_app
 from oauthlib.oauth2 import WebApplicationClient
-from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory
+from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory, make_response
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 # import requests_oauthlib
@@ -27,6 +27,7 @@ from functools import wraps
 from decouple import config
 import boto3
 import io
+import csv
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -311,19 +312,19 @@ def reset_password(token):
         db_token = Token.query.filter_by(token_id=token).first()
         db_token.status = 'E'
         db.session.commit()
-        flash("Sorry, link has been expired.", "error")
+        flash("Sorry, link has been expired.", "danger")
         return render_template('forgot-password.html', favTitle=favTitle, verified=False)
     except Exception:
-        flash("Sorry, Invalid token.", "error")
+        flash("Sorry, Invalid token.", "danger")
         return render_template('forgot-password.html', favTitle=favTitle, verified=False)
     user = Users.query.filter_by(email=email).first()
     first_name = user.name.split(" ")[0]
     db_token = Token.query.filter_by(token_id=token).first()
     if db_token.status == 'U':
-        flash("Sorry, link has been already used.", "error")
+        flash("Sorry, link has been already used.", "danger")
         return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=False)
     elif db_token.status == 'E':
-        flash("Sorry, link has been expired.", "error")
+        flash("Sorry, link has been expired.", "danger")
         return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=False)
     return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=True)
 
@@ -493,7 +494,7 @@ def certificate_generate():
             return render_template('certificate.html', postc=postc, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
-    return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address)
+    return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address, user=current_user)
 
 
 @app.route("/certify/<string:number>", methods=['GET'])
@@ -745,10 +746,10 @@ def confirm_email(token):
         return render_template('login.html', favTitle=favTitle)
     db_token = Token.query.filter_by(token_id=token).first()
     if db_token.status == 'U':
-        flash("Sorry, link has been already used.", "error")
+        flash("Sorry, link has been already used.", "danger")
         return render_template("resend.html", favTitle=favTitle)
     elif db_token.status == 'E':
-        flash("Sorry, link has been expired.", "error")
+        flash("Sorry, link has been expired.", "danger")
         return render_template("resend.html", favTitle=favTitle)
     user = Users.query.filter_by(email=email).first()
     user.status = 1
@@ -870,7 +871,7 @@ def edit_certificates_page(grp_id, id):
         coursename = data["course"]
         email = data["email"]
         letters = string.ascii_letters
-        number = ''.join(random.choice(letters) for i in range(4))
+        number = ''.join(random.choice(letters) for _ in range(4))
         number = 'CGV' + name[0:4].upper() + number
         userid = current_user.id
         last_update = time
@@ -950,6 +951,78 @@ def edit_certificates_page(grp_id, id):
     }
     return jsonify(favTitle=favTitle, id=id, post=post)
 
+
+@app.route('/upload/<string:grp_id>/certificate', methods=['POST', 'GET'])
+@login_required
+def upload_csv(grp_id):
+    csv_file = request.files['fileToUpload']
+    csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    # This skips the first row of the CSV file.
+    next(csv_reader)
+    for row in csv_reader:
+        number = ''.join(random.choice(string.ascii_letters) for _ in range(4))
+        number = 'CGV' + row[0][0:4].upper() + number
+        certificate = Certificate(number=number, name=row[0], email=row[1], coursename=row[2], user_id=current_user.id, group_id=grp_id, last_update=time)
+        db.session.add(certificate)
+        db.session.commit()
+        # Create QR Code for this certificate
+        link = f'{config("site_url")}/certify/{number}'
+        new_qr = QRCode(certificate_num=number, link=link)
+        qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr_image.add_data(link)
+        qr_image.make(fit=True)
+        img = qr_image.make_image(fill='black', back_color='white')
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
+        try:
+            if not app.debug:
+                upload_image(buffer, number=number)
+                img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+            else:
+                try:
+                    os.mkdir("static/qr_codes")
+                except Exception:
+                    pass
+                    img.save("static/qr_codes/"+f"{number}.png")
+                    img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
+                new_qr.qr_code = f"{img_url}"
+                new_qr.certificate_id = certificate.id
+                db.session.add(new_qr)
+                db.session.commit()
+                
+        except Exception as e:
+            print(e)
+    return jsonify(result=True, status=200)
+
+# For Certificate
+def row_to_list(obj):
+    lst = []
+    lst.append(obj.number)
+    lst.append(obj.name)
+    lst.append(obj.email)
+    lst.append(obj.coursename)
+    lst.append(obj.last_update)
+    return lst
+
+@app.route("/download/<string:grp_id>/certificate")
+def export_certificate_csv(grp_id):
+    all_certificates = Certificate.query.filter_by(group_id=grp_id).order_by(Certificate.id)
+    if all_certificates.count()<=0:
+        flash("No certificates available in this group", "danger")
+        return redirect(f"/view/{grp_id}/certificates")
+    si = io.StringIO()
+    cw = csv.writer(si, delimiter=",")
+    cw.writerow(["Number", "Name", "Email" , "Course Name", "Date Created"])
+    for row in all_certificates:
+        row = row_to_list(row)
+        cw.writerow(row)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = f"attachment; filename=group{grp_id}.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+    
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
 @login_required
@@ -1280,6 +1353,37 @@ def page_not_found(e):
 def user_not_authorized(e):
     return render_template('401.html'), 401
 
+def rowToList(obj):
+    lst = []
+    name = obj.name
+    email = obj.email
+    rating = obj.rating
+    msg = obj.message
+    lst.append(name)
+    lst.append(email)
+    lst.append(rating)
+    lst.append(msg)
+    return lst
+
+
+@app.route('/downloadfeedback')
+@login_required
+@admin_required
+def ToCsv():
+    allfeedback = Feedback.query.all()
+    if len(allfeedback) == 0:
+        flash("No Feedback available","danger")
+        return redirect("/view/contacts")
+    with open('feedback_response.csv', 'w',newline='') as f:
+        writer = csv.writer(f, delimiter=',')
+        writer.writerow(["Name", "Email", "Rating out of 5" , "Message"])
+
+        for row in allfeedback:
+            row = rowToList(row)
+            print(row,type(row))
+            writer.writerow(row)
+    flash("csv file is downloaded successfully","success")
+    return redirect("/view/contacts")
 
 if __name__ == '__main__':
     app.run(debug=True)

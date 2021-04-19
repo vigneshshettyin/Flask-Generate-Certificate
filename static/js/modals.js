@@ -312,8 +312,13 @@ function editCertificate(grp_id, cert_id) {
 function uploadFile(grp_id) {
   Swal.fire({
     title: "Select a CSV file",
-    text:
-      "File must contain Name, Email and Course Name spearated by comma in the order specified.",
+    text: "Download the sample CSV file and add your data inside that.",
+    footer: `<a class="btn btn-info btn-icon-split" href="/static/assets/sample_csv.csv" download>
+                        <span class="icon text-white-50">
+                           <i class="fa fa-download" aria-hidden="true"></i>
+                        </span>
+                        <span class="text">Sample CSV File</span>                                    
+                    </a>`,
     showCancelButton: true,
     confirmButtonText: "Upload",
     input: "file",
@@ -336,7 +341,7 @@ function uploadFile(grp_id) {
         processData: false,
         contentType: false,
         success: function (resp) {
-          console.log(resp)
+          console.log(resp);
           new Notify({
             title: "Success",
             text: `Your data has been imported successfully!`,

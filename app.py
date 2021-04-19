@@ -958,6 +958,8 @@ def upload_csv(grp_id):
     csv_file = request.files['fileToUpload']
     csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
     csv_reader = csv.reader(csv_file, delimiter=',')
+    # This skips the first row of the CSV file.
+    next(csv_reader)
     for row in csv_reader:
         number = ''.join(random.choice(string.ascii_letters) for _ in range(4))
         number = 'CGV' + row[0][0:4].upper() + number
@@ -993,6 +995,7 @@ def upload_csv(grp_id):
         except Exception as e:
             print(e)
     return jsonify(result=True, status=200)
+
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
 @login_required

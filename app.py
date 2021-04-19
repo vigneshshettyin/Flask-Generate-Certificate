@@ -1401,7 +1401,6 @@ def rowToListContact(obj):
     lst.append(msg)
     lst.append(date)
     lst.append(ip)
-    print(lst)
     return lst
 
 
@@ -1421,6 +1420,25 @@ def ContactToCsv():
         cw.writerow(row)
     output = make_response(si.getvalue())
     output.headers["Content-Disposition"] = f"attachment; filename=contact_response.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+@app.route('/downloadNewsletter')
+@login_required
+@admin_required
+def NewsletterToCsv():
+    allfeedback = Newsletter.query.all()
+    if len(allfeedback) == 0:
+        flash("No Newsletter available","danger")
+        return redirect("/view/newsletters")
+    si = io.StringIO()
+    cw = csv.writer(si, delimiter=",")
+    cw.writerow(["Email" , "IP", "Date"])
+    for row in allfeedback:
+        row = rowToListNewsletter(row)
+        cw.writerow(row)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = f"attachment; filename=NewsLetter.csv"
     output.headers["Content-type"] = "text/csv"
     return output
 

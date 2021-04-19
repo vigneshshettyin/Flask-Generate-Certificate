@@ -1353,7 +1353,8 @@ def page_not_found(e):
 def user_not_authorized(e):
     return render_template('401.html'), 401
 
-def rowToList(obj):
+#for feedback
+def rowToListFeedback(obj):
     lst = []
     name = obj.name
     email = obj.email
@@ -1373,17 +1374,55 @@ def ToCsv():
     allfeedback = Feedback.query.all()
     if len(allfeedback) == 0:
         flash("No Feedback available","danger")
-        return redirect("/view/contacts")
-    with open('feedback_response.csv', 'w',newline='') as f:
-        writer = csv.writer(f, delimiter=',')
-        writer.writerow(["Name", "Email", "Rating out of 5" , "Message"])
+        return redirect("/view/feedbacks")
+    si = io.StringIO()
+    cw = csv.writer(si, delimiter=",")
+    cw.writerow(["Name",  "Email" , "Rating Out of 5" , "Message"])
+    for row in allfeedback:
+        row = rowToListFeedback(row)
+        cw.writerow(row)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = f"attachment; filename=feedback_response.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
 
-        for row in allfeedback:
-            row = rowToList(row)
-            print(row,type(row))
-            writer.writerow(row)
-    flash("csv file is downloaded successfully","success")
-    return redirect("/view/contacts")
+#for contact
+def rowToListContact(obj):
+    lst = []
+    name = obj.name
+    email = obj.email
+    number = obj.phone
+    msg = obj.message[3:-4]
+    date = obj.date
+    ip = obj.ip
+    lst.append(name)
+    lst.append(email)
+    lst.append(number)
+    lst.append(msg)
+    lst.append(date)
+    lst.append(ip)
+    print(lst)
+    return lst
+
+
+@app.route('/downloadcontact')
+@login_required
+@admin_required
+def ContactToCsv():
+    allfeedback = Contact.query.all()
+    if len(allfeedback) == 0:
+        flash("No Contacts available","danger")
+        return redirect("/view/contacts")
+    si = io.StringIO()
+    cw = csv.writer(si, delimiter=",")
+    cw.writerow(["Name", "Email" , "Number", "Message" , "Date" , "IP"])
+    for row in allfeedback:
+        row = rowToListContact(row)
+        cw.writerow(row)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = f"attachment; filename=contact_response.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
 
 if __name__ == '__main__':
     app.run(debug=True)

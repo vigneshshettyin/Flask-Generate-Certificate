@@ -339,7 +339,7 @@ function uploadFile(grp_id) {
           console.log(resp)
           new Notify({
             title: "Success",
-            text: `Your data has been imported succeffully!`,
+            text: `Your data has been imported successfully!`,
             status: "success",
           });
           window.location.reload();

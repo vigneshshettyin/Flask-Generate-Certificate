@@ -1326,6 +1326,37 @@ def page_not_found(e):
 def user_not_authorized(e):
     return render_template('401.html'), 401
 
+def rowToList(obj):
+    lst = []
+    name = obj.name
+    email = obj.email
+    rating = obj.rating
+    msg = obj.message
+    lst.append(name)
+    lst.append(email)
+    lst.append(rating)
+    lst.append(msg)
+    return lst
+
+
+@app.route('/downloadfeedback')
+@login_required
+@admin_required
+def ToCsv():
+    allfeedback = Feedback.query.all()
+    if len(allfeedback) == 0:
+        flash("No Feedback available","danger")
+        return redirect("/view/contacts")
+    with open('feedback_response.csv', 'w',newline='') as f:
+        writer = csv.writer(f, delimiter=',')
+        writer.writerow(["Name", "Email", "Rating out of 5" , "Message"])
+
+        for row in allfeedback:
+            row = rowToList(row)
+            print(row,type(row))
+            writer.writerow(row)
+    flash("csv file is downloaded successfully","success")
+    return redirect("/view/contacts")
 
 if __name__ == '__main__':
     app.run(debug=True)

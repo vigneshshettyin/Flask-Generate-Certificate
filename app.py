@@ -1374,17 +1374,54 @@ def ToCsv():
     allfeedback = Feedback.query.all()
     if len(allfeedback) == 0:
         flash("No Feedback available","danger")
-        return redirect("/view/contacts")
+        return redirect("/view/feedbacks")
     si = io.StringIO()
     cw = csv.writer(si, delimiter=",")
-    cw.writerow(["Number", "Name", "Email" , "Course Name", "Date Created"])
+    cw.writerow(["Name",  "Email" , "Rating Out of 5" , "Message"])
     for row in allfeedback:
         row = rowToListFeedback(row)
         cw.writerow(row)
     output = make_response(si.getvalue())
     output.headers["Content-Disposition"] = f"attachment; filename=feedback_response.csv"
     output.headers["Content-type"] = "text/csv"
-    flash("csv file is downloaded successfully","success")
+    return output
+
+#for contact
+def rowToListContact(obj):
+    lst = []
+    name = obj.name
+    email = obj.email
+    number = obj.phone
+    msg = obj.message[3:-4]
+    date = obj.date
+    ip = obj.ip
+    lst.append(name)
+    lst.append(email)
+    lst.append(number)
+    lst.append(msg)
+    lst.append(date)
+    lst.append(ip)
+    print(lst)
+    return lst
+
+
+@app.route('/downloadcontact')
+@login_required
+@admin_required
+def ContactToCsv():
+    allfeedback = Contact.query.all()
+    if len(allfeedback) == 0:
+        flash("No Contacts available","danger")
+        return redirect("/view/contacts")
+    si = io.StringIO()
+    cw = csv.writer(si, delimiter=",")
+    cw.writerow(["Name", "Email" , "Number", "Message" , "Date" , "IP"])
+    for row in allfeedback:
+        row = rowToListContact(row)
+        cw.writerow(row)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = f"attachment; filename=contact_response.csv"
+    output.headers["Content-type"] = "text/csv"
     return output
 
 if __name__ == '__main__':

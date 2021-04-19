@@ -27,6 +27,7 @@ from functools import wraps
 from decouple import config
 import boto3
 import io
+import csv
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -870,7 +871,7 @@ def edit_certificates_page(grp_id, id):
         coursename = data["course"]
         email = data["email"]
         letters = string.ascii_letters
-        number = ''.join(random.choice(letters) for i in range(4))
+        number = ''.join(random.choice(letters) for _ in range(4))
         number = 'CGV' + name[0:4].upper() + number
         userid = current_user.id
         last_update = time
@@ -949,6 +950,51 @@ def edit_certificates_page(grp_id, id):
         "number": cert.number
     }
     return jsonify(favTitle=favTitle, id=id, post=post)
+
+
+@app.route('/upload/<string:grp_id>/certificate', methods=['POST', 'GET'])
+@login_required
+def upload_csv(grp_id):
+    csv_file = request.files['fileToUpload']
+    csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    # This skips the first row of the CSV file.
+    next(csv_reader)
+    for row in csv_reader:
+        number = ''.join(random.choice(string.ascii_letters) for _ in range(4))
+        number = 'CGV' + row[0][0:4].upper() + number
+        certificate = Certificate(number=number, name=row[0], email=row[1], coursename=row[2], user_id=current_user.id, group_id=grp_id, last_update=time)
+        db.session.add(certificate)
+        db.session.commit()
+        # Create QR Code for this certificate
+        link = f'{config("site_url")}/certify/{number}'
+        new_qr = QRCode(certificate_num=number, link=link)
+        qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr_image.add_data(link)
+        qr_image.make(fit=True)
+        img = qr_image.make_image(fill='black', back_color='white')
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        buffer.seek(0)
+        try:
+            if not app.debug:
+                upload_image(buffer, number=number)
+                img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+            else:
+                try:
+                    os.mkdir("static/qr_codes")
+                except Exception:
+                    pass
+                    img.save("static/qr_codes/"+f"{number}.png")
+                    img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
+                new_qr.qr_code = f"{img_url}"
+                new_qr.certificate_id = certificate.id
+                db.session.add(new_qr)
+                db.session.commit()
+                
+        except Exception as e:
+            print(e)
+    return jsonify(result=True, status=200)
 
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])

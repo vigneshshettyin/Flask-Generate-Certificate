@@ -142,25 +142,45 @@ h1, h2, h3, h4, h5, h6 {
   top: -40px;
 }
 
-#topbar .social-links a {
-  color: #413e66;
-  padding-left: 20px;
-  display: inline-block;
-  line-height: 1px;
-  transition: 0.3s;
+/*--------------------------------------------------------------
+# Social-Links
+--------------------------------------------------------------*/
+
+.social-icons{
+  position: fixed;
+  top: 30%;
+  left: 0%;
+  width: 86px;
+  display: flex;
+  flex-direction: column;
 }
 
-.dark-mode #topbar .social-links a
-{
-  background-color: black;
-  color:#fff;
+.social-icons a{
+  padding: 10px;
+  font-size: 22px;
+  margin: 2px;
+  border-radius: 0 50px 50px 0;
+  transform: translate(-34px,0);
+  transition: all 0.5s;
+  background-color: #F9A826;
 }
-#topbar .social-links a:hover {
-  color: #F9A826;
+.social-icons a:hover{
+  transform: translate(0,0);
 }
-
-#topbar .social-links a:first-child {
-  border-left: 0;
+.social-icons a i{
+  margin-left: 25px;
+  background-color: white;
+  height: 40px;
+  width: 40px;
+  color: black;
+  text-align: center;
+  line-height: 40px;
+  border-radius: 50%;
+  transition: all 1s;
+}
+.social-icons a:hover i{
+  transform: rotate(360deg);
+  color:#F9A826;
 }
 
 /*--------------------------------------------------------------
@@ -171,7 +191,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.5s;
   z-index: 997;
   padding: 15px 0;
-  top: 40px;
+  top: 0;
 }
 
 #header.header-transparent {
@@ -439,7 +459,6 @@ color: #fff;
 #hero {
   width: 100%;
   height: 100vh;
-  position: relative;
   background: #f5f8fd ;
   background-size: cover;
 }
@@ -521,6 +540,9 @@ color: #fff;
 /*--------------------------------------------------------------
 # Sections
 --------------------------------------------------------------*/
+#main{
+  margin-left: 70px;
+}
 section {
   overflow: hidden;
 }

@@ -2,7 +2,7 @@ import pdfkit
 import os
 from flask.globals import current_app
 from oauthlib.oauth2 import WebApplicationClient
-from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory
+from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory, make_response
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 # import requests_oauthlib
@@ -312,19 +312,19 @@ def reset_password(token):
         db_token = Token.query.filter_by(token_id=token).first()
         db_token.status = 'E'
         db.session.commit()
-        flash("Sorry, link has been expired.", "error")
+        flash("Sorry, link has been expired.", "danger")
         return render_template('forgot-password.html', favTitle=favTitle, verified=False)
     except Exception:
-        flash("Sorry, Invalid token.", "error")
+        flash("Sorry, Invalid token.", "danger")
         return render_template('forgot-password.html', favTitle=favTitle, verified=False)
     user = Users.query.filter_by(email=email).first()
     first_name = user.name.split(" ")[0]
     db_token = Token.query.filter_by(token_id=token).first()
     if db_token.status == 'U':
-        flash("Sorry, link has been already used.", "error")
+        flash("Sorry, link has been already used.", "danger")
         return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=False)
     elif db_token.status == 'E':
-        flash("Sorry, link has been expired.", "error")
+        flash("Sorry, link has been expired.", "danger")
         return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=False)
     return render_template("forgot-password.html", favTitle=favTitle, name=first_name, token=token, verified=True)
 
@@ -746,10 +746,10 @@ def confirm_email(token):
         return render_template('login.html', favTitle=favTitle)
     db_token = Token.query.filter_by(token_id=token).first()
     if db_token.status == 'U':
-        flash("Sorry, link has been already used.", "error")
+        flash("Sorry, link has been already used.", "danger")
         return render_template("resend.html", favTitle=favTitle)
     elif db_token.status == 'E':
-        flash("Sorry, link has been expired.", "error")
+        flash("Sorry, link has been expired.", "danger")
         return render_template("resend.html", favTitle=favTitle)
     user = Users.query.filter_by(email=email).first()
     user.status = 1
@@ -996,6 +996,33 @@ def upload_csv(grp_id):
             print(e)
     return jsonify(result=True, status=200)
 
+# For Certificate
+def row_to_list(obj):
+    lst = []
+    lst.append(obj.number)
+    lst.append(obj.name)
+    lst.append(obj.email)
+    lst.append(obj.coursename)
+    lst.append(obj.last_update)
+    return lst
+
+@app.route("/download/<string:grp_id>/certificate")
+def export_certificate_csv(grp_id):
+    all_certificates = Certificate.query.filter_by(group_id=grp_id).order_by(Certificate.id)
+    if all_certificates.count()<=0:
+        flash("No certificates available in this group", "danger")
+        return redirect(f"/view/{grp_id}/certificates")
+    si = io.StringIO()
+    cw = csv.writer(si, delimiter=",")
+    cw.writerow(["Number", "Name", "Email" , "Course Name", "Date Created"])
+    for row in all_certificates:
+        row = row_to_list(row)
+        cw.writerow(row)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = f"attachment; filename=group{grp_id}.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+    
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
 @login_required

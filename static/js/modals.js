@@ -306,3 +306,52 @@ function editCertificate(grp_id, cert_id) {
       });
     });
 }
+
+// Upload CSV
+
+function uploadFile(grp_id) {
+  Swal.fire({
+    title: "Select a CSV file",
+    text:
+      "File must contain Name, Email and Course Name spearated by comma in the order specified.",
+    showCancelButton: true,
+    confirmButtonText: "Upload",
+    input: "file",
+    willOpen: () => {
+      $(".swal2-file").change(function () {
+        var reader = new FileReader();
+        reader.readAsDataURL(this.files[0]);
+      });
+      $(".swal2-file").attr("accept", ".csv");
+    },
+  }).then((file) => {
+    if (file.value) {
+      var formData = new FormData();
+      var f = $(".swal2-file")[0].files[0];
+      formData.append("fileToUpload", f);
+      $.ajax({
+        method: "post",
+        url: `/upload/${grp_id}/certificate`,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (resp) {
+          console.log(resp)
+          new Notify({
+            title: "Success",
+            text: `Your data has been imported succeffully!`,
+            status: "success",
+          });
+          window.location.reload();
+        },
+        error: function () {
+          new Notify({
+            title: "Error",
+            text: `Sorry, we encountered an error while uploading the file.`,
+            status: "error",
+          });
+        },
+      });
+    }
+  });
+}

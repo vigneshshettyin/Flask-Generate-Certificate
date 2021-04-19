@@ -1423,6 +1423,19 @@ def ContactToCsv():
     output.headers["Content-type"] = "text/csv"
     return output
 
+
+#for Newsletter
+def rowToListNewsletter(obj):
+    lst = []
+    email = obj.email
+    ip = obj.ip
+    date = obj.date
+    lst.append(email)
+    lst.append(ip)
+    lst.append(date)
+    return lst
+
+
 @app.route('/downloadNewsletter')
 @login_required
 @admin_required

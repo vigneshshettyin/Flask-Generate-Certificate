@@ -453,10 +453,10 @@ def certificate_verify():
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
             flash("Certificate Number Valid!", "success")
-            return render_template('verify2.html', postc=postc, posto=posto, favTitle=favTitle, ip=ip_address)
+            return render_template('Redesign-verify2.html', postc=postc, posto=posto, favTitle=favTitle, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
-    return render_template('verify.html', favTitle=favTitle, ip=ip_address)
+    return render_template('Redesign-verify.html', favTitle=favTitle, ip=ip_address)
 
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])

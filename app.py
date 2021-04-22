@@ -453,10 +453,10 @@ def certificate_verify():
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
             flash("Certificate Number Valid!", "success")
-            return render_template('verify2.html', postc=postc, posto=posto, favTitle=favTitle, ip=ip_address)
+            return render_template('Redesign-verify2.html', postc=postc, posto=posto, favTitle=favTitle, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
-    return render_template('verify.html', favTitle=favTitle, ip=ip_address)
+    return render_template('Redesign-verify2.html', favTitle=favTitle, ip=ip_address)
 
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])
@@ -1401,7 +1401,6 @@ def rowToListContact(obj):
     lst.append(msg)
     lst.append(date)
     lst.append(ip)
-    print(lst)
     return lst
 
 
@@ -1421,6 +1420,38 @@ def ContactToCsv():
         cw.writerow(row)
     output = make_response(si.getvalue())
     output.headers["Content-Disposition"] = f"attachment; filename=contact_response.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+
+
+#for Newsletter
+def rowToListNewsletter(obj):
+    lst = []
+    email = obj.email
+    ip = obj.ip
+    date = obj.date
+    lst.append(email)
+    lst.append(ip)
+    lst.append(date)
+    return lst
+
+
+@app.route('/downloadNewsletter')
+@login_required
+@admin_required
+def NewsletterToCsv():
+    allfeedback = Newsletter.query.all()
+    if len(allfeedback) == 0:
+        flash("No Newsletter available","danger")
+        return redirect("/view/newsletters")
+    si = io.StringIO()
+    cw = csv.writer(si, delimiter=",")
+    cw.writerow(["Email" , "IP", "Date"])
+    for row in allfeedback:
+        row = rowToListNewsletter(row)
+        cw.writerow(row)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = f"attachment; filename=NewsLetter.csv"
     output.headers["Content-type"] = "text/csv"
     return output
 

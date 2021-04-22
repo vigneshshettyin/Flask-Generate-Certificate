@@ -463,25 +463,5 @@
 <div style="padding: 20px;">
   <center><button type="button" class="btn btn-primary btn-lg" id="feedback" onclick="getFeedback()">Submit Feedback</button></center>
 </div>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-<script>
-  function confirmation(){
-  swal({
-    title: "Are you sure?",
-    text: "",
-    icon: "warning",
-    buttons: true,
-    buttons: ['cancel','Yes, Log out'],
-    dangerMode: true,
-  })
-  .then((willDelete) => {
-    if (willDelete) {
-      window.location = "/logout";
-    } else {
-      
-    }
-  });
-  }
-</script>
 {% endblock %}

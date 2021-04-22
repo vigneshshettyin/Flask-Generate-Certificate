@@ -276,6 +276,27 @@
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
-</body>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+<script>
+  function confirmation(){
+  swal({
+    title: "Are you sure?",
+    text: "",
+    icon: "warning",
+    buttons: true,
+    buttons: ['cancel','Yes, Log out'],
+    dangerMode: true,
+  })
+  .then((willDelete) => {
+    if (willDelete) {
+      window.location = "/logout";
+    } else {
+      
+    }
+  });
+  }
+</script>
+
+</body>
 </html>

@@ -1,18 +1,3 @@
-.dark-mode , .dark-mode .row , .dark-mode .text-center a
-        {
-            background-color:black;
-    background-image: linear-gradient(
-180deg
-, black 10%, black 100%);
-    background-size: cover;
-    color:#fff;
-        }
-        .dark-mode .text-gray-900
-        {
-            background-color:black;
-            color:#fff !important;
-        }
-  
 
 /* css for toggle button */
 .switch{

@@ -456,7 +456,7 @@ def certificate_verify():
             return render_template('Redesign-verify2.html', postc=postc, posto=posto, favTitle=favTitle, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
-    return render_template('Redesign-verify2.html', favTitle=favTitle, ip=ip_address)
+    return render_template('Redesign-verify2.html', favTitle=favTitle, ip=ip_address,user=current_user)
 
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])

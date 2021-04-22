@@ -532,7 +532,6 @@ def download(filename):
 # Payment Views
 @app.route("/pay", methods=["GET", "POST"])
 def pay_now():
-    print(request.form)
     name = request.form.get("name")
     email = request.form.get("email")
     phone = request.form.get("phone")
@@ -576,7 +575,6 @@ def razorpay_handler():
                                    hashlib.sha256).hexdigest()
     # checking authentic source
     if generated_signature == sign:
-        print("payment Successfully done")
         new_txn = Transactions(name=name, email=email, phone=phone, order_id=order_id, amount=amount, currency=currency,
                                payment_id=payment_id, response_msg=sign, status="SUCCESS")
         db.session.add(new_txn)
@@ -619,7 +617,6 @@ def loginPage():
         email = request.form.get('email')
         password = request.form.get('password')
         remember = request.form.get('remember')
-        print(remember)
         response = Users.query.filter_by(email=email).first()
         if ((response != None) and (response.status == 1) and (response.email == email) and (
                 sha256_crypt.verify(password, response.password) == 1) and (response.status == 1)):
@@ -790,15 +787,17 @@ def dashboard_page():
     postct = len(Contact.query.order_by(Contact.id).all())
     postf = len(Feedback.query.order_by(Feedback.id).all())
     postn = len(Newsletter.query.order_by(Newsletter.id).all())
-    print(current_user.name)
     return render_template('dashboard.html', favTitle=favTitle, postc=postc, postct=postct, postf=postf, postn=postn, user=current_user, )
 
 
 @app.route("/view/groups", methods=['GET', 'POST'])
 @login_required
 def view_org_page():
-    post = Group.query.filter_by(
-        user_id=current_user.id).order_by(Group.id).all()
+    if current_user.is_staff:
+        post = Group.query.order_by(Group.id).all()
+    else:
+        post = Group.query.filter_by(
+            user_id=current_user.id).order_by(Group.id).all()
     return render_template('org_table.html', post=post, favTitle=favTitle, user=current_user)
 
 

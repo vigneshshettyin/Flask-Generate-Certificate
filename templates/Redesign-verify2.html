@@ -1,8 +1,15 @@
 {% extends "base.html" %}
+{% block css %}
+
+#darkmodeid
+{
+  padding-left:6rem;
+  padding-top:0px;
+  margin-top:0px;
+}
+
+{% endblock css %}
 {% block body %}
-  <!-- dark mode toggle -->
-  <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
-  <!-- dark mode toggle end -->
   <!-- ======= Header ======= -->
   <header id="header" class="fixed-top header-transparent">
     <div class="container d-flex align-items-center">
@@ -14,24 +21,27 @@
       <nav class="main-nav d-none d-lg-block dark">
         <ul>
           <li class="active"><a href="/">HOME</a></li>
-          <li><a href="#why-us">ABOUT US</a></li>
-          <li><a href="#services">SERVICES</a></li>
-          <li><a href="#team">TEAM</a></li>
-          <li><a href="#pricing">PRICING</a></li>
+          <li><a href="/#why-us">ABOUT US</a></li>
+          <li><a href="/#services">SERVICES</a></li>
+          <li><a href="/#team">TEAM</a></li>
+          <li><a href="/#pricing">PRICING</a></li>
           <li><a href="#footer">CONTACT US</a></li>
           <li><a href="https://cgvs.tawk.help/">HELPDESK</a></li>
           {% if current_user.is_authenticated %}
                   <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {{ user.name }}
-                                <img class="img-profile rounded-circle" src="{{ user.profile_image }}">
+                                {{ current_user.name }}
+                                <img class="img-profile rounded-circle" src="{{ current_user.profile_image }}">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu "
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="/logout" data-toggle="modal" data-target="#logoutModal"
-                                 style="color:black">
+                                <a class="dropdown-item" href="/dashboard" style="color:black">
+                                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                  Dashboard
+                                </a>
+                                <a class="dropdown-item" href="#" style="color:black" onclick="confirmation()">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
@@ -41,8 +51,9 @@
 
           <li><a href="/login"><i class="fa fa-sign-in" aria-hidden="true"></i> LOGIN</a></li>
           {% endif %}
-  
-          <!-- <li><a href="#" id="toggle" onclick="myfun()">Toggle Mode</a></li> -->
+          <li id="darkmodeid"> <!-- dark mode toggle -->
+          <input type="checkbox" id="toggle" name="checkbox" class="switch" onclick="myfun()">
+          <!-- dark mode toggle end --></li>
         </ul>
       </nav><!-- .main-nav-->
 

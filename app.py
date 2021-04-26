@@ -986,10 +986,10 @@ def upload_csv(grp_id):
                     pass
                     img.save("static/qr_codes/"+f"{number}.png")
                     img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
-                new_qr.qr_code = f"{img_url}"
-                new_qr.certificate_id = certificate.id
-                db.session.add(new_qr)
-                db.session.commit()
+            new_qr.qr_code = f"{img_url}"
+            new_qr.certificate_id = certificate.id
+            db.session.add(new_qr)
+            db.session.commit()
                 
         except Exception as e:
             print(e)

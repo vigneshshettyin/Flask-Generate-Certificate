@@ -42,7 +42,7 @@ razorpay==1.2.0
 requests==2.25.1
 s3transfer==0.3.6
 six==1.15.0
-SQLAlchemy==1.4.6
+SQLAlchemy==1.4.12
 starkbank-ecdsa==1.1.0
 toml==0.10.2
 urllib3==1.26.4

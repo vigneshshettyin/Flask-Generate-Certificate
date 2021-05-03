@@ -424,9 +424,27 @@ color: #fff;
   text-align: right;
 }
 
+.l-0{
+  left: 0;
+}
+
+.drag-sidebar{
+  width: 10px;
+height: 100%;
+position: fixed;
+z-index: 10000;
+background: transparent;
+border: 0px;
+
+}
+
+button.drag-sidebar:focus{
+outline: 0px;
+}
+
 .mobile-nav-toggle i {
   margin: 18px 18px 0 0;
-  color: #065e77;
+  color: #f9a828;
 }
 
 .mobile-nav-overly {

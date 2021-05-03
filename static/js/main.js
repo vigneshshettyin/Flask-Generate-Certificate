@@ -104,9 +104,11 @@
     $('body').append('<div class="mobile-nav-overly"></div>');
     
     $(".drag-sidebar").on('mousedown', function(e) {
+      if($(window).width() < 997){
       $('.mobile-nav-toggle i').toggleClass('fa-times fa-bars');
       $('.mobile-nav-overly').toggle();
       $(".mobile-nav").toggleClass('l-0')
+      }
     });
 
     $(document).on('click', '.mobile-nav-toggle', function(e) {

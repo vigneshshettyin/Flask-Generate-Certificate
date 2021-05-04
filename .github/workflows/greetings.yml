@@ -1,16 +1,22 @@
 name: Greetings
 
-on: [pull_request, issues]
+on:
+  issues:
+    types: [opened]
+  pull_request:
+    types: [opened]
 
 jobs:
   greeting:
     runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
     steps:
-    - uses: actions/first-interaction@v1
+    - uses: Karthik-Nayak98/Greeting-action@main
       with:
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: 'Thanks for opening an issue waiting for a contributor like you😁😁'
-        pr-message: 'Thanks for opening a PR I will review it soon 😃😃'
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        issue_message: 'Hello @${{github.actor}}, <br>
+                        Thank you for opening an issue. :partying_face: <br>
+                        To get assigned to this particular issue please wait for <b>maintainers</b><br>
+                        <i> Check this <a href="https://github.com/vikasdo/Book-Recommendation-Analysis#readme">guide</a> before contributing.'
+        PR_message:
+                      '<h1> :partying_face: Congratulations :tada: </h1>:pray:
+                      Thank you @${{github.actor}} for taking out your time and contributing to our project. Our team will now review this and if everything looks good it will be merged.'

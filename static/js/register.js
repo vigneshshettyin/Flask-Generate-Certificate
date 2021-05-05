@@ -97,22 +97,23 @@ password2Field.addEventListener("keyup", (e) => {
 
 
 // for show password
-function check2()
-{
-  var notice=document.getElementById("notice");
-  var password= passwordField;
-  var password2= password2Field;
-  var x=document.getElementById("box").checked;
-  if(x==true)
-  {
-    password.type="text";
-    password2.type="text";
-    notice.innerHTML="hide password";
-  }
-  else
-  {
-    password.type="password";
-    password2.type="password";
-    notice.innerHTML="show password";
-  }
-}
+// for show password
+const togglePassword1 = document.querySelector('#togglePassword1');
+const togglePassword2 = document.querySelector('#togglePassword2');
+const password1 = document.querySelector('#exampleInputPassword');
+const password2 = document.querySelector('#exampleRepeatPassword');
+
+togglePassword1.addEventListener('click', function (e) {
+  // toggle the type attribute
+  const type = password1.getAttribute('type') === 'password' ? 'text' : 'password';
+  password1.setAttribute('type', type);
+  // toggle the eye slash icon
+  this.classList.toggle('fa-eye-slash');
+});
+togglePassword2.addEventListener('click', function (e) {
+  // toggle the type attribute
+  const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+  password2.setAttribute('type', type);
+  // toggle the eye slash icon
+  this.classList.toggle('fa-eye-slash');
+});

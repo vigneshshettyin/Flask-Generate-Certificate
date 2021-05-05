@@ -46,7 +46,24 @@
         }
   
 
-  
+    .form-control
+    {
+        width:93%;
+        display: inline-block;
+    }
+    .fa-eye
+    {
+        margin-left: -35px;
+    cursor: pointer;
+    }
+    /* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 992px) {
+  .form-control
+    {
+        width:97%;
+        display: inline-block;
+    }
+}
     </style>
 </head>
 
@@ -81,8 +98,12 @@
                                             <div class="emailFeedBackArea invalid-feedback" style="display:none"></div>
                                         </div>
                                         <div class="form-group">
+                                         
                                             <input type="password" name="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" placeholder="Password" required>
+                                                id="exampleInputPassword" placeholder="Password" required > 
+                                                       <i class="far fa-eye" id="togglePassword"></i>
+
+                                                
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
@@ -90,13 +111,6 @@
                                                 <label class="custom-control-label" for="customCheck">Remember
                                                     Me</label>
                                             </div>
-                                            
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" name="box1" class="custom-control-input" id="box" onclick="check()">
-                                                <label class="custom-control-label" for="box"><span id="notice">Show password</span>
-                                                </label>
-                                                
-                                            </div> 
                                         </div>
                                         <input id="loginBtn" class="btn btn-warning btn-user btn-block" type="submit">
                                         </a>

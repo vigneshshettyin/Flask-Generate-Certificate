@@ -33,21 +33,12 @@ emailField.addEventListener("keyup", (e) => {
 
 
 // for show password
-
-function check()
-{
-  console.log("fun called")
-  var notice=document.getElementById("notice");
-  var password=document.getElementById("exampleInputPassword");
-  var x=document.getElementById("box").checked;
-  if(x==true)
-  {
-    password.type="text";
-    notice.innerHTML="hide password";
-  }
-  else
-  {
-    password.type="password";
-    notice.innerHTML="show password";
-  }
-}
+const togglePassword = document.querySelector('#togglePassword');
+const password = document.querySelector('#exampleInputPassword');
+togglePassword.addEventListener('click', function (e) {
+  // toggle the type attribute
+  const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+  password.setAttribute('type', type);
+  // toggle the eye slash icon
+  this.classList.toggle('fa-eye-slash');
+});

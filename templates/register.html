@@ -45,6 +45,24 @@
             color:#fff !important;
         }
   
+    .form-control
+    {
+        width:98%;
+        display: inline-block;
+    }
+    .fa-eye
+    {
+        margin-left: -50px;
+    cursor: pointer;
+    }
+    /* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 992px) {
+  .form-control
+    {
+        width:97%;
+        display: inline-block;
+    }
+}
     </style>
 </head>
 
@@ -77,10 +95,12 @@
                                     <div class="col-sm-6 mb-3 mb-sm-0">
                                         <input type="password" name="password" class="form-control form-control-user"
                                             id="exampleInputPassword" placeholder="Password" required>
+                                             <i class="far fa-eye" id="togglePassword1"></i>
                                     </div>
                                     <div class="col-sm-6">
                                         <input type="password" name="password2" class="form-control form-control-user"
                                             id="exampleRepeatPassword" placeholder="Repeat Password" required>
+                                             <i class="far fa-eye" id="togglePassword2"></i>
                                     </div>
                                 </div>
                                 <div class="mb-2">

@@ -26,6 +26,7 @@ a:hover, a:active, a:focus {
 p {
   padding: 0;
   margin: 0 0 30px 0;
+  text-align: justify;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -475,10 +476,9 @@ outline: 0px;
 # Hero Section
 --------------------------------------------------------------*/
 #hero {
-  width: 100%;
-  height: 100vh;
-  background: #f5f8fd ;
+  background: #f5f8fd;
   background-size: cover;
+  margin-left: 38px;
 }
 .dark-mode #hero
 {
@@ -559,7 +559,7 @@ outline: 0px;
 # Sections
 --------------------------------------------------------------*/
 #main{
-  margin-left: 70px;
+  margin-left: 47px;
 }
 section {
   overflow: hidden;
@@ -1527,6 +1527,7 @@ section {
 #footer .footer-top {
   padding: 60px 0 30px 0;
   background: #f5f8fd;
+  margin-left: 47px;
 }
 .dark-mode #footer .footer-top
 {
@@ -1655,13 +1656,12 @@ section {
 
 #footer .footer-top .footer-newsletter input[type="submit"] {
   background: #F9A826;
-  border: 1px solid #ffad2a;
-  width: 35%;
-  padding: 6px 0;
-  text-align: center;
-  color: #fff;
-  transition: 0.3s;
-  cursor: pointer;
+    border: 1px solid #ffad2a;
+    padding: 6px 3px;
+    margin: 2px 9px;
+    color: #fff;
+    transition: 0.3s;
+    cursor: pointer;
 }
 
 #footer .footer-top .footer-newsletter input[type="submit"]:hover {

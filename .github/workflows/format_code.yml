@@ -1,6 +1,7 @@
-name: Format code on every PR
+name: Auto-format code on every PR
 
 on:
+  push:
   pull_request:
     branches: [main]
 jobs:

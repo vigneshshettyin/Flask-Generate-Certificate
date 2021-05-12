@@ -11,5 +11,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Prettier Action
-        uses: creyD/prettier_action@v3.3
+     - name: autopep8
+       uses: peter-evans/autopep8@v1.2.1
+

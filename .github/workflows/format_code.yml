@@ -10,6 +10,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-     - name: autopep8
-       uses: peter-evans/autopep8@v1.2.1
-
+      - name: autopep8
+        uses: peter-evans/autopep8@v1.2.1

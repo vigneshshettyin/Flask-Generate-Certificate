@@ -1,0 +1,15 @@
+name: Format code on every PR
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Prettier Action
+        uses: creyD/prettier_action@v3.3

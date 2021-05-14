@@ -15,29 +15,23 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Name</th>
-                                            <th>Category</th>
-                                            <th>Backgroud Image</th>
-                                            <th>Signature Image</th>
+                                            <th>Content</th>
                                             <th>Last Updated</th>
                                             <th>Edit</th>
                                             <th>Delete</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-{#                                    Start loop#}
 {% for post in post %}
                                         <tr>
                                             <td>{{ post.id}}</td>
-                                            <td><a href="{{ url_for('view_certificate_page', grp_id=post.id) }}">{{ post.name}}</a></td>
-                                            <td>{{ post.category_id}}</td>
-                                            <td><a href="{{post.bg_image}}">{{ post.bg_image|truncate(30) }}</a></td>
-                                            <td><a href="{{post.signature}}">{{ post.signature|truncate(30) }}</a></td>
-                                            <td>{{ post.date|truncate(19,true,"") }}</td>
-                                            <td><a style="cursor: pointer;" class="btn btn-success btn-circle editGrpBtn" data-post-id="{{post.id}}" onclick="editGrp('{{post.id}}')"><i class="fas fa-edit"></i></a></td>
-                                            <td><a href="/delete/group/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
+                                            <td>{{ post.name}}</td>
+                                            <td>{{ post.content}}</td>
+                                            <td>{{ post.last_update }}</td>
+                                            <td><a style="cursor: pointer;" class="btn btn-success btn-circle editGrpBtn" data-post-id="{{post.id}}" onclick="editCategory('{{post.id}}')"><i class="fas fa-edit"></i></a></td>
+                                            <td><a href="/delete/category/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
                                         </tr>
 
-{#                                    end loop#}
 {% endfor %}
 
                                     </tbody>

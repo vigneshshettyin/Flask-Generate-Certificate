@@ -118,7 +118,19 @@
                     <span>USERS</span></a>
             </li>
             {% endif %}
-
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCat"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-certificate"></i>
+                    <span>CATEGORIES</span>
+                </a>
+                <div id="collapseCat" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="/view/categories">LIST CATEGORIES</a>
+                        <a class="collapse-item" id="" onclick="addCategory()" style="cursor: pointer">ADD CATEGORY</a>
+                    </div>
+                </div>
+            </li>
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">

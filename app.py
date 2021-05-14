@@ -827,7 +827,7 @@ def view_org_page():
 @login_required
 def view_category_page():
     if current_user.is_staff:
-        post = Category.query.order_by(Group.id).all()
+        category = Category.query.order_by(Category.id).all()
     else:
         category = Category.query.filter_by(user_id=current_user.id).all()
     return render_template('category_table.html', post=category, favTitle=favTitle, user=current_user)

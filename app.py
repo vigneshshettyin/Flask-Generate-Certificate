@@ -134,7 +134,7 @@ class Certificate(db.Model):
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     coursename = db.Column(db.String(500), nullable=False)
-    last_update = db.Column(db.DateTime, nullable=False, default=x)
+    last_update = db.Column(db.String(50), nullable=False, default=x)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     qrcode = db.relationship('QRCode', cascade="all,delete", backref='qrcode')
@@ -144,7 +144,7 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=True)
-    last_update = db.Column(db.DateTime, nullable=False, default=x)
+    last_update = db.Column(db.String(50), nullable=False, default=x)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
@@ -1117,7 +1117,7 @@ def edit_category_page(id):
             if Category.query.filter_by(name=name).first():
                 return jsonify(category_duplicate=True)
             try:
-                post = Category(name=name, content=content, last_update=x, user_id=current_user.id)
+                post = Category(name=name, content=content, last_update=time, user_id=current_user.id)
                 db.session.add(post)
                 db.session.commit()
                 return jsonify(category_success=True)
@@ -1129,7 +1129,7 @@ def edit_category_page(id):
                 post = Category.query.filter_by(id=id).first()
                 post.name = name
                 post.content = content
-                post.last_update = x
+                post.last_update = time
                 post.user_id = current_user.id
                 db.session.commit()
                 return jsonify(category_success=True)

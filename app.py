@@ -65,6 +65,10 @@ login_manager.login_message_category = 'info'
 RAZORPAY_KEY_ID = config("razorpay_key_id")
 RAZORPAY_KEY_SECRET = config("razorpay_key_secret")
 
+# S3 Client
+s3_client = boto3.client('s3', aws_access_key_id=config(
+    "S3_KEY"), aws_secret_access_key=config("S3_SECRET_ACCESS_KEY"))
+
 # Google Login Credentials
 # FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
 # FB_TOKEN_URL = config('facebook_token_url')
@@ -113,10 +117,12 @@ class Token(db.Model):
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    subname = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(50), nullable=False)
-    phone = db.Column(db.String(50), nullable=False)
     date = db.Column(db.String(50), nullable=False)
+    bg_image = db.Column(db.String(500), nullable=True)
+    signature = db.Column(db.String(500), nullable=True)
+    category = db.relationship(
+        'Category', cascade='all,delete', backref='categories')
+    category_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     certificates = db.relationship(
         'Certificate', cascade="all,delete", backref='certificates')
@@ -128,11 +134,19 @@ class Certificate(db.Model):
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
     coursename = db.Column(db.String(500), nullable=False)
-    last_update = db.Column(db.String(50), nullable=False)
+    last_update = db.Column(db.DateTime, nullable=False, default=x)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     qrcode = db.relationship('QRCode', cascade="all,delete", backref='qrcode')
 
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=True)
+    last_update = db.Column(db.DateTime, nullable=False, default=x)
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class QRCode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -217,14 +231,20 @@ def upload_image(file, bucket="cgv", **kwargs):
     """
     Function to upload an image to an S3 bucket
     """
-    s3_client = boto3.client('s3', aws_access_key_id=config(
-        "S3_KEY"), aws_secret_access_key=config("S3_SECRET_ACCESS_KEY"))
-    response = s3_client.put_object(
-        Bucket=bucket,
-        Key=f'qr_codes/{kwargs["number"]}.png',
-        Body=file,
-        ContentType='image/png',
-    )
+    if kwargs["folder"] == "qr_codes":
+        response = s3_client.put_object(
+            Bucket=bucket,
+            Key=f'{kwargs["folder"]}/{kwargs["number"]}.png',
+            Body=file,
+            ContentType='image/png',
+        )
+    else:
+        response = s3_client.put_object(
+            Bucket=bucket,
+            Key=f'{kwargs["folder"]}/{kwargs["name"]}',
+            Body=file,
+            ContentType='image/png',
+        )
 
     return response
 
@@ -233,8 +253,6 @@ def upload_doc(file, bucket="cgv", **kwargs):
     """
     Function to upload a raw file to an S3 bucket
     """
-    s3_client = boto3.client('s3', aws_access_key_id=config(
-        "S3_KEY"), aws_secret_access_key=config("S3_SECRET_ACCESS_KEY"))
     if kwargs["localhost"]:
         with open(file, "rb") as f:
             response = s3_client.upload_fileobj(
@@ -248,6 +266,11 @@ def upload_doc(file, bucket="cgv", **kwargs):
 
     return response
 
+def delete_from_s3(file, bucket='cgv'):
+    """
+    Function to delete objects from S3 bucket
+    """
+    s3_client.delete_object(Bucket=bucket, Key=file)
 
 # For Gravatar
 def avatar(email, size):
@@ -800,6 +823,15 @@ def view_org_page():
             user_id=current_user.id).order_by(Group.id).all()
     return render_template('org_table.html', post=post, favTitle=favTitle, user=current_user)
 
+@app.route("/view/categories", methods=['GET', 'POST'])
+@login_required
+def view_category_page():
+    if current_user.is_staff:
+        post = Category.query.order_by(Group.id).all()
+    else:
+        category = Category.query.filter_by(user_id=current_user.id).all()
+    return render_template('category_table.html', post=category, favTitle=favTitle, user=current_user)
+
 
 @app.route("/view/users", methods=['GET', 'POST'])
 @login_required
@@ -895,7 +927,7 @@ def edit_certificates_page(grp_id, id):
                     buffer.seek(0)
                     try:
                         if not app.debug:
-                            upload_image(buffer, number=number)
+                            upload_image(buffer, number=number, folder="qr_codes")
                             img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
                         else:
                             try:
@@ -977,7 +1009,7 @@ def upload_csv(grp_id):
         buffer.seek(0)
         try:
             if not app.debug:
-                upload_image(buffer, number=number)
+                upload_image(buffer, number=number, folder="qr_codes")
                 img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
             else:
                 try:
@@ -1067,49 +1099,122 @@ def change_permissions(perm, id):
         flash("You are not authorised to change permissions", "danger")
     return redirect(url_for('view_users_page'))
 
+@app.route('/get-all-categories', methods=['GET'])
+@login_required
+def get_all_categories():
+    categories = Category.query.filter_by(user_id=current_user.id).all()
+    data = {'category': [category.name for category in categories]}
+    return jsonify(data)
+
+@app.route("/edit/category/<string:id>", methods=['GET', 'POST'])
+@login_required
+def edit_category_page(id):
+    if request.method == 'POST':
+        data = json_lib.loads(request.data)
+        name = data["name"]
+        content = data["content"]
+        if id == '0':
+            if Category.query.filter_by(name=name).first():
+                return jsonify(category_duplicate=True)
+            try:
+                post = Category(name=name, content=content, last_update=x, user_id=current_user.id)
+                db.session.add(post)
+                db.session.commit()
+                return jsonify(category_success=True)
+            except Exception:
+                return jsonify(category_error=True)
+
+        else:
+            try:
+                post = Category.query.filter_by(id=id).first()
+                post.name = name
+                post.content = content
+                post.last_update = x
+                post.user_id = current_user.id
+                db.session.commit()
+                return jsonify(category_success=True)
+            except Exception:
+                return jsonify(category_error=True)
+    cat = Category.query.filter_by(id=id).first()
+    post = {
+        "id": cat.id,
+        "name": cat.name,
+        "content": cat.content,
+    }
+    return jsonify(favTitle=favTitle, id=id, post=post)
+
+
+@app.route("/delete/category/<string:id>", methods=['GET', 'POST'])
+@login_required
+def delete_cat_page(id):
+    try:
+        delete_cat_page = Category.query.filter_by(id=id).first()
+        db.session.delete(delete_cat_page)
+        db.session.commit()
+        flash("Category deleted successfully!", "success")
+    except Exception:
+        flash("Something went wrong!", "error")
+    return redirect('/view/categories')
+
 
 @app.route("/edit/group/<string:id>", methods=['GET', 'POST'])
 @login_required
 def edit_org_page(id):
     if request.method == 'POST':
-        data = json_lib.loads(request.data)
-        name = data["name"]
-        dept = data["dept"]
-        email = data["email"]
-        phone = data["phone"]
-        date = time
+        name = request.form.get("name")
+        category_name = request.form.get("category")
+        signature = request.files.get("signature")
+        bg_image = request.files.get("bg_image")
+        date = x
         if id == '0':
-            if Group.query.filter_by(email=email).first():
+            if Group.query.filter_by(name=name, user_id=current_user.id).first():
                 return jsonify(group_duplicate=True)
             try:
-                post = Group(name=name, subname=dept, email=email,
-                             phone=phone, date=date, user_id=current_user.id)
+                category = Category.query.filter_by(name=category_name).first()
+                category_id = category.id
+                post = Group(name=name, date=date, category_id=category_id, user_id=current_user.id)
+                img_name = name.replace(" ", "+")
+                upload_image(signature, folder="signatures", name=name)
+                upload_image(bg_image, folder="backgrounds", name=name)
+                sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
+                bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                post.bg_image, post.signature = bg_url, sign_url
                 db.session.add(post)
                 db.session.commit()
-                return jsonify(group_success=True)
+                category.group_id =post.id
+                db.session.add(category)
+                db.session.commit()
+                return jsonify(result=True, status=200)
             except Exception:
                 return jsonify(group_error=True)
-
         else:
             try:
                 post = Group.query.filter_by(id=id).first()
                 post.name = name
-                post.subname = dept
-                post.phone = phone
-                post.email = email
+                category = Category.query.filter_by(name=category_name).first()
+                category_id = category.id
+                post.category_id = category_id
+                img_name = name.replace(" ", "+")
+                if signature:
+                    upload_image(signature, folder="signatures", name=name)
+                    sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
+                    post.signature = sign_url
+                if bg_image:
+                    upload_image(bg_image, folder="backgrounds", name=name)
+                    bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                    post.bg_image = bg_url
                 post.date = date
                 post.user_id = current_user.id
                 db.session.commit()
-                return jsonify(group_success=True)
+                return jsonify(result=True, status=200)
             except Exception:
-                return jsonify(group_error=True)
+                return jsonify(result=False, status=500)
     grp = Group.query.filter_by(id=id).first()
+    category = Category.query.filter_by(id=grp.category_id).first()
     post = {
         "id": grp.id,
         "name": grp.name,
-        "subname": grp.subname,
-        "email": grp.email,
-        "phone": grp.phone
+        "category": category.name
     }
     return jsonify(favTitle=favTitle, id=id, post=post)
 
@@ -1118,12 +1223,14 @@ def edit_org_page(id):
 @login_required
 def delete_org_page(id):
     delete_org_page = Group.query.filter_by(id=id).first()
-    if (delete_org_page.email == config("admin_email")):
-        flash("Default organization can't be deleted!", "danger")
-    else:
+    try:
         db.session.delete(delete_org_page)
         db.session.commit()
+        delete_from_s3(file=f'signatures/{delete_org_page.name}')
+        delete_from_s3(file=f'backgrounds/{delete_org_page.name}')
         flash("Organization deleted successfully!", "success")
+    except Exception:
+        flash("Something went wrong!", "error")
     return redirect('/view/groups')
 
 

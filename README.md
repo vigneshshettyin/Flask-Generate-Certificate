@@ -13,7 +13,7 @@ Certificate Generation and Verification System project aims in developing a comp
 [![Issues](https://img.shields.io/github/issues/vigneshshettyin/Flask-Generate-Certificate.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 ![Pull Requests](https://img.shields.io/github/issues-pr/vigneshshettyin/Flask-Generate-Certificate)
-[![Maintenance](https://img.shields.io/maintenance/yes/2021?color=green&logo=github)]
+[![Maintenance](https://img.shields.io/maintenance/yes/2021?color=brightgreen&logo=github)]
 [![MPL-2.0 License](https://img.shields.io/github/license/vigneshshettyin/Flask-Generate-Certificate.svg?style=flat-square)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/master/LICENSE)
 <!--[![CodeFactor](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate/badge)](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate)-->
 [![GitHub watchers](https://img.shields.io/github/watchers/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/watchers/)

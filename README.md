@@ -1,70 +1,117 @@
-# Getting Started with Create React App
+<div align="center">
+<img src="https://raw.githubusercontent.com/vigneshshettyin/Flask-Generate-Certificate/main/static/images/logo.png" alt="Logo" width=100 height=100>
+</div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 🚀 Certificate Generation and Verification System
+Certificate Generation and Verification System project aims in developing a computerized system to maintain and generate the certificate. It has an admin login through which the admin can monitor the whole system. It also has a facility where users after logging in to their account can monitor and generate a certificate for their particular use. Admin will manage user logins, will have the option to deactivate any user. Every time any changes are done an automated email will be sent depending on the update. Overall this project is being developed to help the users in the best way possible and also to reduce human efforts.
+<br><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-## Available Scripts
+[![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/vigneshshettyin/Flask-Generate-Certificate)
+[![GitHub forks](https://img.shields.io/github/forks/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/network/)
+[![GitHub stars](https://img.shields.io/github/stars/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/stargazers/)
+[![Issues](https://img.shields.io/github/issues/vigneshshettyin/Flask-Generate-Certificate.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+![Pull Requests](https://img.shields.io/github/issues-pr/vigneshshettyin/Flask-Generate-Certificate)
+![Maintenance](https://img.shields.io/maintenance/yes/2021?color=brightgreen&logo=github)
+[![MPL-2.0 License](https://img.shields.io/github/license/vigneshshettyin/Flask-Generate-Certificate.svg?style=flat-square)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/master/LICENSE)
+[![GitHub watchers](https://img.shields.io/github/watchers/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/watchers/)
+![GitHub contributors](https://img.shields.io/github/contributors/vigneshshettyin/Flask-Generate-Certificate)
+![](https://img.shields.io/github/repo-size/vigneshshettyin/Flask-Generate-Certificate.svg?label=Repo%20size&style=flat-square)&nbsp;
+[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 
-In the project directory, you can run:
+Feel free to use it as-is or customize it as much as you want.
 
-### `npm start`
+But if you want to **Contribute** and make this much better for other developer have a look at [Issues](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+If you created something awesome and want to contribute then feel free to open Please don't hesitate to open a [Pull Request](https://github.com/vigneshshettyin/Flask-Generate-Certificate/pulls).
 
-### `npm test`
+## Tech Stack:
+<img alt="CSS3" src="https://img.shields.io/badge/css3%20-%231572B6.svg?&style=for-the-badge&logo=css3&logoColor=white"/> 	<img alt="HTML5" src="https://img.shields.io/badge/html5%20-%23E34F26.svg?&style=for-the-badge&logo=html5&logoColor=white"/> <img alt="Python" src="https://img.shields.io/badge/python%20-%2314354C.svg?&style=for-the-badge&logo=python&logoColor=white"/> <img alt="JavaScript" src="https://img.shields.io/badge/javascript%20-%23323330.svg?&style=for-the-badge&logo=javascript&logoColor=%23F7DF1E"/> <img alt="Bootstrap" src="https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white"/> <img alt="jQuery" src="https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white"/> <img alt="Flask" src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"/> <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"/> <img alt="SQLite" src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white"/> <img alt="Heroku" src="https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white"/>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+# Getting Started 🚀
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## How To Use 🔧
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+There are two ways of using the project:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 1. [Conventional Way](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/INSTALLATION.md)
+## 2. [Using Docker](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/DOCKER.md)
 
-### `npm run eject`
+Apart from that you can also use cloud platforms to deploy the project once you can get it running locally:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 1. [Deploying on Heroku](#).<br>
+## 2. [Deploying on AWS](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/AWS.md).<br>
+## 3. [Deploying on Azure](#).<br>
+## 4. [Deploying on Google Cloud](#).<br>
+## 5. [Deploying on Digital Ocean](#).<br>
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Live Deployment 📦
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Click Here to view the deployment!
 
-## Learn More
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://certify-us.herokuapp.com/)
+<br>
+<br>
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Mockup & Demo 🛠️
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+<table><tr><td valign="top" width="50%">
 
-### Code Splitting
+[![MAC](http://img.youtube.com/vi/6ZH4bZP1RgE/0.jpg)](http://www.youtube.com/watch?v=6ZH4bZP1RgE "MAC MOCKUP")
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+</td><td valign="top" width="50%">
 
-### Analyzing the Bundle Size
+[![MAC](http://img.youtube.com/vi/Ys2iFw8Bypk/0.jpg)](https://www.youtube.com/watch?v=h3VKpZDOVqw&feature=youtu.be "MAC DEMO")
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+</td></tr></table>  
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Illustrations
+- [UnDraw](https://undraw.co/illustrations)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Open Source Events Project is associated with:
+<img align="right" src="static\images\events.png" width = "100" height = "80"><b>GirlScript Summer of Code</b>
 
-### Deployment
+- GirlScript Summer of Code is the 3 month long Open Source program  conducted by GirlScript Foundation, started in 2018, with an aim to help beginners get started with Open Source Development while encouraging diversity.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## License 📄
 
-### `npm run build` fails to minify
+This project is licensed under the MPL-2.0 License. See the [LICENSE](./LICENSE) file for details
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+## For the Future
+If you can help us with these. Please don't hesitate to open a [Pull Request](https://github.com/vigneshshettyin/Flask-Generate-Certificate/pulls).
+
+## Contributors ✨
+
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=vigneshshettyin/Flask-Generate-Certificate" />
+</a>
+
+<!--## Cool Developers🚧
+
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=vigneshshettyin/Flask-Generate-Certificate" />
+</a>-->
+
+## Show some ❤️ by starring the repository
+
+<table><tr><td valign="top" width="50%">
+
+
+[![Forkers repo roster for @vigneshshettyin/Flask-Generate-Certificate](https://reporoster.com/forks/vigneshshettyin/Flask-Generate-Certificate)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/network/members)
+
+
+</td><td valign="top" width="50%">
+
+
+[![Stargazers repo roster for @vigneshshettyin/Flask-Generate-Certificate](https://reporoster.com/stars/vigneshshettyin/Flask-Generate-Certificate)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/stargazers)
+
+
+</td></tr></table>  

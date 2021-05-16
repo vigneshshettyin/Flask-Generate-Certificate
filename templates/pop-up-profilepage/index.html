@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Profile Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/vendor/sweetalert2/dist/sweetalert2.min.css">
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+</head>
+<body>
+    <script>
+        (async () => {
+
+        const { value: formValues } = await Swal.fire({
+        title: 'Edit Your Profile',
+        imageUrl: "unnamed.png" ,
+        imageWidth: 250,
+        imageHeight: 220,
+        imageAlt: "Eagle Image",
+        html: 
+            '<input type="text" id="swal-input" class="swal2-input" placeholder="Your Name">' +
+            '<input type="email" id="swal-input" class="swal2-input" placeholder="Your Email">' ,
+        confirmButtonText: `Save`,  
+        showCancelButton: true,
+        preConfirm: () => {
+            return [
+            document.getElementById('swal-input').value
+            ]
+        }
+        })
+
+        if (formValues) {
+        Swal.fire({  icon: 'success',
+        title: 'Profile updated successfully'})
+        }
+
+        })()
+    </script>
+</body>
+</html>

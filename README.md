@@ -3,7 +3,7 @@
 </div>
 
 # 🚀 Certificate Generation and Verification System
-Certificate Generation and Verification System project aims in developing a computerized system to maintain and generate the certificate. It has an admin login through which the admin can monitor the whole system. It also has a facility where users after logging in to their account can monitor and generate a certificate for their particular user. Admin will manage user logins, will have the option to deactivate any user. Every time any changes are done an automated email will be sent depending on the update. Overall this project is being developed to help the users in the best way possible and also to reduce human efforts.
+Certificate Generation and Verification System project aims in developing a computerized system to maintain and generate the certificate. It has an admin login through which the admin can monitor the whole system. It also has a facility where users after logging in to their account can monitor and generate a certificate for their particular use. Admin will manage user logins, will have the option to deactivate any user. Every time any changes are done an automated email will be sent depending on the update. Overall this project is being developed to help the users in the best way possible and also to reduce human efforts.
 <br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -11,12 +11,14 @@ Certificate Generation and Verification System project aims in developing a comp
 [![GitHub forks](https://img.shields.io/github/forks/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/network/)
 [![GitHub stars](https://img.shields.io/github/stars/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/stargazers/)
 [![Issues](https://img.shields.io/github/issues/vigneshshettyin/Flask-Generate-Certificate.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+![Pull Requests](https://img.shields.io/github/issues-pr/vigneshshettyin/Flask-Generate-Certificate)
+![Maintenance](https://img.shields.io/maintenance/yes/2021?color=brightgreen&logo=github)
 [![MPL-2.0 License](https://img.shields.io/github/license/vigneshshettyin/Flask-Generate-Certificate.svg?style=flat-square)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/master/LICENSE)
-<!--[![CodeFactor](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate/badge)](https://www.codefactor.io/repository/github/vigneshshettyin/flask-generate-certificate)-->
 [![GitHub watchers](https://img.shields.io/github/watchers/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/watchers/)
 ![GitHub contributors](https://img.shields.io/github/contributors/vigneshshettyin/Flask-Generate-Certificate)
+![](https://img.shields.io/github/repo-size/vigneshshettyin/Flask-Generate-Certificate.svg?label=Repo%20size&style=flat-square)&nbsp;
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
-
 
 Feel free to use it as-is or customize it as much as you want.
 

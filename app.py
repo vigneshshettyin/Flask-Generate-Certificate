@@ -120,9 +120,7 @@ class Group(db.Model):
     date = db.Column(db.String(50), nullable=False)
     bg_image = db.Column(db.String(500), nullable=True)
     signature = db.Column(db.String(500), nullable=True)
-    category = db.relationship(
-        'Category', cascade='all,delete', backref='categories')
-    category_id = db.Column(db.Integer, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     certificates = db.relationship(
         'Certificate', cascade="all,delete", backref='certificates')
@@ -144,8 +142,8 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=True)
+    groups = db.relationship('Group', cascade='all,delete', backref='groups')
     last_update = db.Column(db.String(50), nullable=False, default=x)
-    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class QRCode(db.Model):
@@ -498,10 +496,11 @@ def certificate_generate():
         postc = Certificate.query.filter_by(number=certificateno).first()
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
+            postcat = Category.query.filter_by(id=posto.id).first()
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_url = qr_code.qr_code
-            rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno, pdf=True)
+            rendered_temp = render_template('certificate.html', postc=postc, posto=posto, postcat=postcat, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno, pdf=True)
             if not app.debug:
                 configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
                 file = pdfkit.from_string(
@@ -514,7 +513,7 @@ def certificate_generate():
                         rendered_temp, f"{certificateno}.pdf", css='static/css/certificate.css')
                 except OSError:
                     download_url = f"http://127.0.0.1:5000/download/{certificateno}.pdf"
-            return render_template('certificate.html', postc=postc, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
+            return render_template('certificate.html', postc=postc,postcat=postcat, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address, user=current_user)
@@ -526,9 +525,10 @@ def certificate_generate_string(number):
     if (postc != None):
         style = "display: none;"
         posto = Group.query.filter_by(id=postc.group_id).first()
+        postcat = Category.query.filter_by(id=posto.id).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_url = qr_code.qr_code
-        rendered_temp = render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url,favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
+        rendered_temp = render_template('certificate.html', postc=postc,postcat=postcat, posto=posto, qr_code=img_url,favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
         if not app.debug:
             configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
             file = pdfkit.from_string(
@@ -541,7 +541,7 @@ def certificate_generate_string(number):
                     rendered_temp, f"{number}.pdf", css='static/css/certificate.css')
             except OSError:
                 download_url = f"http://127.0.0.1:5000/download/{number}.pdf"
-        return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=download_url, pdf=False)
+        return render_template('certificate.html', postc=postc, posto=posto,postcat=postcat, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=download_url, pdf=False)
     else:
         return redirect('/')
 
@@ -905,7 +905,7 @@ def edit_certificates_page(grp_id, id):
         number = ''.join(random.choice(letters) for _ in range(4))
         number = 'CGV' + name[0:4].upper() + number
         userid = current_user.id
-        last_update = time
+        last_update = x
         if id == '0':
             postcheck = Certificate.query.filter_by(
                 email=email, coursename=coursename).first()
@@ -1016,8 +1016,8 @@ def upload_csv(grp_id):
                     os.mkdir("static/qr_codes")
                 except Exception:
                     pass
-                    img.save("static/qr_codes/"+f"{number}.png")
-                    img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
+                img.save("static/qr_codes/"+f"{number}.png")
+                img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
             new_qr.qr_code = f"{img_url}"
             new_qr.certificate_id = certificate.id
             db.session.add(new_qr)
@@ -1174,10 +1174,21 @@ def edit_org_page(id):
                 category_id = category.id
                 post = Group(name=name, date=date, category_id=category_id, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
-                upload_image(signature, folder="signatures", name=name)
-                upload_image(bg_image, folder="backgrounds", name=name)
-                sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
-                bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                if not app.debug:
+                    upload_image(signature, folder="signatures", name=name)
+                    upload_image(bg_image, folder="backgrounds", name=name)
+                    sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
+                    bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                else:
+                    try:
+                        os.mkdir("static/backgrounds")
+                        os.mkdir("static/signature")
+                    except Exception:
+                        pass
+                    signature.save(f"static/signature/{img_name}.png")
+                    bg_image.save(f"static/backgrounds/{img_name}.png")
+                    sign_url = f"http://127.0.0.1:5000/static/signature/{img_name}.png"
+                    bg_url = f"http://127.0.0.1:5000/static/backgrounds/{img_name}.png"
                 post.bg_image, post.signature = bg_url, sign_url
                 db.session.add(post)
                 db.session.commit()
@@ -1196,12 +1207,20 @@ def edit_org_page(id):
                 post.category_id = category_id
                 img_name = name.replace(" ", "+")
                 if signature:
-                    upload_image(signature, folder="signatures", name=name)
-                    sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
+                    if not app.debug:
+                        upload_image(signature, folder="signatures", name=name)
+                        sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
+                    else:
+                        signature.save(f"static/signature/{name}")
+                        sign_url = f"http://127.0.0.1:5000/static/signature/{name}"
                     post.signature = sign_url
                 if bg_image:
-                    upload_image(bg_image, folder="backgrounds", name=name)
-                    bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                    if not app.debug:
+                        upload_image(bg_image, folder="backgrounds", name=name)
+                        bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                    else:
+                        bg_image.save(f"static/backgrounds/{name}")
+                        bg_url = f"http://127.0.0.1:5000/static/backgrounds/{name}"
                     post.bg_image = bg_url
                 post.date = date
                 post.user_id = current_user.id

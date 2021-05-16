@@ -134,3 +134,4 @@ dmypy.json
 static/signature/
 static/backgrounds/
 static/qr_codes/
+*.pdf

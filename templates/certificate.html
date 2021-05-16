@@ -12,7 +12,7 @@
     <title>Certificate: {{ postc.number}}</title>
   </head>
   <body>
-    <div class="container">
+    <div class="container" style="background-image: url({{posto.bg_image}});">
         <div class="bgimage">
             <div class="Leftcorner">
                 <img src="https://i.imgur.com/b6K4QTl.png" alt="">
@@ -22,23 +22,23 @@
             </div>  
         </div>
         <div class="content">
-            <h1>CERTIFICATE OF TRAINING</h1>
+            <h1>CERTIFICATE OF {{postcat.name}}</h1>
             <div class="underline">
                 <p>{{ postc.name }}</p>
             </div>
-            <p style="font-family: 'Montserrat';font-style: italic;font-weight: bold;text-align: center;color:#252F5F;">has been certified at <span>{{ postc.last_update }}</span> <br>
-                while completing the training course entitled</p>  <!--replace the Thu Mar 09:43:09 2021 with updated time -->
+            <p style="font-family: 'Montserrat';font-style: italic;font-weight: bold;text-align: center;color:#252F5F;">{{postcat.content}}</p>  <!--replace the Thu Mar 09:43:09 2021 with updated time -->
             <div class="underline">
                 <p>{{ postc.coursename}}</p>
             </div>
             <div class="content-footer">
                 <div class="QrCode">
                     <img src="{{ qr_code }}" alt="">
-                    <p>ID:#{{ postc.number}}</p>
+                    <br>
+                    <p>ID:{{ postc.number}}</p>
                 </div>
                 <div class="signline">
-                    <img src="https://i.imgur.com/BJL4JVt.png" alt="">
-                    <p>{{ posto.subname }}</p>
+                    <img src="{{posto.signature}}" alt="">
+                    <p>{{ posto.name }}<br>{{ postc.last_update|truncate(10,true,"") }}</p>
                 </div>    
             </div>
             </div>

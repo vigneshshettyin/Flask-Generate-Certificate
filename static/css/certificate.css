@@ -27,10 +27,8 @@ body {
 	position: relative;
 	overflow: hidden;
 	min-height: 595.28px;
-    background-image: url(https://i.imgur.com/C2C7yUK.png);
     background-repeat:no-repeat;
     background-position: center center;
-    background-size: 300px 300px;
     width: 841.89px;
     min-width: 595.28px;
 }

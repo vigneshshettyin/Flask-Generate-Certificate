@@ -4,13 +4,14 @@ $("#add_group").click(function (e) {
     title: "Enter Group Details",
     html: `<form action="" method="POST" id="addGrpForm" enctype="multipart/form-data">
           <input type="text" id="name" name="name" class="swal2-input" placeholder="Name">
-          <select id="category" name="category" class="swal2-input">
+          <select id="category" name="category" class="swal2-select">
             <option value="saab" disabled selected>Choose a category</option>
           </select>
-          <input type="file" name="signature" class="swal2-file" id="signature" accept="image/*">
-          <input type="file" name="bg_image" class="swal2-file" id="bg_image" accept="image/*">
+          <input type="file" name="signature" class="swal2-file" id="signature" accept="image/png">
+          <input type="file" name="bg_image" class="swal2-file" id="bg_image" accept="image/png">
           </form>
         `,
+    footer: `Note : Use PNG images only`,
     confirmButtonText: "Create",
     focusConfirm: false,
     customClass: {
@@ -61,7 +62,7 @@ $("#add_group").click(function (e) {
       };
     },
     willClose: () => {
-          Swal.showLoading();
+      Swal.showLoading();
     },
     allowOutsideClick: () => !Swal.isLoading(),
   }).then((result) => {

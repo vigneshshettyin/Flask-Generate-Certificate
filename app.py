@@ -136,6 +136,7 @@ class Certificate(db.Model):
     coursename = db.Column(db.String(500), nullable=False)
     last_update = db.Column(db.String(50), nullable=False, default=x)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+    category_id = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     qrcode = db.relationship('QRCode', cascade="all,delete", backref='qrcode')
 
@@ -1016,8 +1017,8 @@ def upload_csv(grp_id):
                     os.mkdir("static/qr_codes")
                 except Exception:
                     pass
-                    img.save("static/qr_codes/"+f"{number}.png")
-                    img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
+                img.save("static/qr_codes/"+f"{number}.png")
+                img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
             new_qr.qr_code = f"{img_url}"
             new_qr.certificate_id = certificate.id
             db.session.add(new_qr)
@@ -1174,10 +1175,21 @@ def edit_org_page(id):
                 category_id = category.id
                 post = Group(name=name, date=date, category_id=category_id, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
-                upload_image(signature, folder="signatures", name=name)
-                upload_image(bg_image, folder="backgrounds", name=name)
-                sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
-                bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                if not app.debug:
+                    upload_image(signature, folder="signatures", name=name)
+                    upload_image(bg_image, folder="backgrounds", name=name)
+                    sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
+                    bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                else:
+                    try:
+                        os.mkdir("static/backgrounds")
+                        os.mkdir("static/signature")
+                    except Exception:
+                        pass
+                    signature.save(f"static/signature/{img_name}.png")
+                    bg_image.save(f"static/backgrounds/{img_name}.png")
+                    sign_url = f"http://127.0.0.1:5000/static/signature/{img_name}.png"
+                    bg_url = f"http://127.0.0.1:5000/static/backgrounds/{img_name}.png"
                 post.bg_image, post.signature = bg_url, sign_url
                 db.session.add(post)
                 db.session.commit()
@@ -1196,12 +1208,20 @@ def edit_org_page(id):
                 post.category_id = category_id
                 img_name = name.replace(" ", "+")
                 if signature:
-                    upload_image(signature, folder="signatures", name=name)
-                    sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
+                    if not app.debug:
+                        upload_image(signature, folder="signatures", name=name)
+                        sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
+                    else:
+                        signature.save(f"static/signature/{name}")
+                        sign_url = f"http://127.0.0.1:5000/static/signature/{name}"
                     post.signature = sign_url
                 if bg_image:
-                    upload_image(bg_image, folder="backgrounds", name=name)
-                    bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                    if not app.debug:
+                        upload_image(bg_image, folder="backgrounds", name=name)
+                        bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                    else:
+                        bg_image.save(f"static/backgrounds/{name}")
+                        bg_url = f"http://127.0.0.1:5000/static/backgrounds/{name}"
                     post.bg_image = bg_url
                 post.date = date
                 post.user_id = current_user.id

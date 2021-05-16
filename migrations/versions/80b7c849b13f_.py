@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: aeab603310e4
+Revision ID: 80b7c849b13f
 Revises: 
-Create Date: 2021-04-07 22:18:35.036231
+Create Date: 2021-05-16 10:32:58.255495
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'aeab603310e4'
+revision = '80b7c849b13f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,7 +24,7 @@ def upgrade():
     sa.Column('email', sa.String(length=50), nullable=False),
     sa.Column('phone', sa.String(length=50), nullable=False),
     sa.Column('message', sa.String(length=500), nullable=False),
-    sa.Column('ip', sa.String(length=20), nullable=False),
+    sa.Column('ip', sa.String(length=200), nullable=False),
     sa.Column('date', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -35,14 +35,14 @@ def upgrade():
     sa.Column('phone', sa.String(length=50), nullable=False),
     sa.Column('rating', sa.String(length=10), nullable=False),
     sa.Column('message', sa.String(length=500), nullable=False),
-    sa.Column('ip', sa.String(length=20), nullable=False),
+    sa.Column('ip', sa.String(length=200), nullable=False),
     sa.Column('date', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('newsletter',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('email', sa.String(length=50), nullable=False),
-    sa.Column('ip', sa.String(length=50), nullable=False),
+    sa.Column('ip', sa.String(length=200), nullable=False),
     sa.Column('date', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
@@ -80,14 +80,24 @@ def upgrade():
     sa.Column('last_login', sa.String(length=50), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('category',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=100), nullable=False),
+    sa.Column('content', sa.Text(), nullable=True),
+    sa.Column('last_update', sa.String(length=50), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('group',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=50), nullable=False),
-    sa.Column('subname', sa.String(length=50), nullable=False),
-    sa.Column('email', sa.String(length=50), nullable=False),
-    sa.Column('phone', sa.String(length=50), nullable=False),
     sa.Column('date', sa.String(length=50), nullable=False),
+    sa.Column('bg_image', sa.String(length=500), nullable=True),
+    sa.Column('signature', sa.String(length=500), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['category_id'], ['category.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -99,6 +109,7 @@ def upgrade():
     sa.Column('coursename', sa.String(length=500), nullable=False),
     sa.Column('last_update', sa.String(length=50), nullable=False),
     sa.Column('group_id', sa.Integer(), nullable=True),
+    sa.Column('category_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['group_id'], ['group.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
@@ -121,6 +132,7 @@ def downgrade():
     op.drop_table('qr_code')
     op.drop_table('certificate')
     op.drop_table('group')
+    op.drop_table('category')
     op.drop_table('users')
     op.drop_table('transactions')
     op.drop_table('token')

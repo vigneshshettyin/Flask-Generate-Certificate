@@ -120,9 +120,7 @@ class Group(db.Model):
     date = db.Column(db.String(50), nullable=False)
     bg_image = db.Column(db.String(500), nullable=True)
     signature = db.Column(db.String(500), nullable=True)
-    category = db.relationship(
-        'Category', cascade='all,delete', backref='categories')
-    category_id = db.Column(db.Integer, nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     certificates = db.relationship(
         'Certificate', cascade="all,delete", backref='certificates')
@@ -145,8 +143,8 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=True)
+    groups = db.relationship('Group', cascade='all,delete', backref='groups')
     last_update = db.Column(db.String(50), nullable=False, default=x)
-    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class QRCode(db.Model):

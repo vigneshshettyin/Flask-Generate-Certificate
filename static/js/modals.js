@@ -4,7 +4,7 @@ $("#add_group").click(function (e) {
     title: "Enter Group Details",
     html: `<form action="" method="POST" id="addGrpForm" enctype="multipart/form-data">
           <input type="text" id="name" name="name" class="swal2-input" placeholder="Name">
-          <select id="category" name="category" class="swal2-select">
+          <select id="category" name="category" class="swal2-input">
             <option value="saab" disabled selected>Choose a category</option>
           </select>
           <input type="file" name="signature" class="swal2-file" id="signature" accept="image/png">

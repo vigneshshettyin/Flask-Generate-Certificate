@@ -146,6 +146,7 @@ class Category(db.Model):
     last_update = db.Column(db.String(50), nullable=False, default=x)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+
 class QRCode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     certificate_num = db.Column(db.String(50), nullable=False)
@@ -197,6 +198,17 @@ class Transactions(db.Model):
     error_source = db.Column(db.String(127), nullable=True)
     txn_timestamp = db.Column(
         db.DateTime(), default=datetime.now(IST), nullable=False)
+
+
+class APIKey(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(50), nullable=False)
+    group_name = db.Column(db.String(50), nullable=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
+    usage_limit = db.Column(db.Integer, nullable=True)
+    is_valid = db.Column(db.Boolean, nullable=False, default=False)
+    is_approved = db.Column(db.Boolean, nullable=False, default=False)
+    date_generated = db.Column(db.String(50), nullable=False)
 
 
 # Admin Required Decorator
@@ -264,6 +276,7 @@ def upload_doc(file, bucket="cgv", **kwargs):
 
     return response
 
+
 def delete_from_s3(file, bucket='cgv'):
     """
     Function to delete objects from S3 bucket
@@ -271,6 +284,8 @@ def delete_from_s3(file, bucket='cgv'):
     s3_client.delete_object(Bucket=bucket, Key=file)
 
 # For Gravatar
+
+
 def avatar(email, size):
     digest = hashlib.md5(email.lower().encode('utf-8')).hexdigest()
     return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
@@ -477,7 +492,7 @@ def certificate_verify():
             return render_template('Redesign-verify2.html', postc=postc, posto=posto, favTitle=favTitle, ip=ip_address)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
-    return render_template('Redesign-verify2.html', favTitle=favTitle, ip=ip_address,user=current_user)
+    return render_template('Redesign-verify2.html', favTitle=favTitle, ip=ip_address, user=current_user)
 
 
 @app.route("/certificate/generate", methods=['GET', 'POST'])
@@ -500,9 +515,11 @@ def certificate_generate():
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_url = qr_code.qr_code
-            rendered_temp = render_template('certificate.html', postc=postc, posto=posto, postcat=postcat, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno, pdf=True)
+            rendered_temp = render_template('certificate.html', postc=postc, posto=posto, postcat=postcat,
+                                            qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno, pdf=True)
             if not app.debug:
-                configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
+                configr = pdfkit.configuration(
+                    wkhtmltopdf='/app/bin/wkhtmltopdf')
                 file = pdfkit.from_string(
                     rendered_temp, False, css='static/css/certificate.css', configuration=configr)
                 upload_doc(file, number=certificateno, localhost=False)
@@ -513,7 +530,7 @@ def certificate_generate():
                         rendered_temp, f"{certificateno}.pdf", css='static/css/certificate.css')
                 except OSError:
                     download_url = f"http://127.0.0.1:5000/download/{certificateno}.pdf"
-            return render_template('certificate.html', postc=postc,postcat=postcat, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
+            return render_template('certificate.html', postc=postc, postcat=postcat, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address, user=current_user)
@@ -528,7 +545,8 @@ def certificate_generate_string(number):
         postcat = Category.query.filter_by(id=posto.id).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_url = qr_code.qr_code
-        rendered_temp = render_template('certificate.html', postc=postc,postcat=postcat, posto=posto, qr_code=img_url,favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
+        rendered_temp = render_template('certificate.html', postc=postc, postcat=postcat, posto=posto,
+                                        qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
         if not app.debug:
             configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
             file = pdfkit.from_string(
@@ -541,7 +559,7 @@ def certificate_generate_string(number):
                     rendered_temp, f"{number}.pdf", css='static/css/certificate.css')
             except OSError:
                 download_url = f"http://127.0.0.1:5000/download/{number}.pdf"
-        return render_template('certificate.html', postc=postc, posto=posto,postcat=postcat, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=download_url, pdf=False)
+        return render_template('certificate.html', postc=postc, posto=posto, postcat=postcat, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=download_url, pdf=False)
     else:
         return redirect('/')
 
@@ -823,6 +841,7 @@ def view_org_page():
             user_id=current_user.id).order_by(Group.id).all()
     return render_template('org_table.html', post=post, favTitle=favTitle, user=current_user)
 
+
 @app.route("/view/categories", methods=['GET', 'POST'])
 @login_required
 def view_category_page():
@@ -927,7 +946,8 @@ def edit_certificates_page(grp_id, id):
                     buffer.seek(0)
                     try:
                         if not app.debug:
-                            upload_image(buffer, number=number, folder="qr_codes")
+                            upload_image(buffer, number=number,
+                                         folder="qr_codes")
                             img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
                         else:
                             try:
@@ -994,7 +1014,8 @@ def upload_csv(grp_id):
     for row in csv_reader:
         number = ''.join(random.choice(string.ascii_letters) for _ in range(4))
         number = 'CGV' + row[0][0:4].upper() + number
-        certificate = Certificate(number=number, name=row[0], email=row[1], coursename=row[2], user_id=current_user.id, group_id=grp_id, last_update=time)
+        certificate = Certificate(
+            number=number, name=row[0], email=row[1], coursename=row[2], user_id=current_user.id, group_id=grp_id, last_update=time)
         db.session.add(certificate)
         db.session.commit()
         # Create QR Code for this certificate
@@ -1022,12 +1043,14 @@ def upload_csv(grp_id):
             new_qr.certificate_id = certificate.id
             db.session.add(new_qr)
             db.session.commit()
-                
+
         except Exception as e:
             print(e)
     return jsonify(result=True, status=200)
 
 # For Certificate
+
+
 def row_to_list(obj):
     lst = []
     lst.append(obj.number)
@@ -1037,15 +1060,17 @@ def row_to_list(obj):
     lst.append(obj.last_update)
     return lst
 
+
 @app.route("/download/<string:grp_id>/certificate")
 def export_certificate_csv(grp_id):
-    all_certificates = Certificate.query.filter_by(group_id=grp_id).order_by(Certificate.id)
-    if all_certificates.count()<=0:
+    all_certificates = Certificate.query.filter_by(
+        group_id=grp_id).order_by(Certificate.id)
+    if all_certificates.count() <= 0:
         flash("No certificates available in this group", "danger")
         return redirect(f"/view/{grp_id}/certificates")
     si = io.StringIO()
     cw = csv.writer(si, delimiter=",")
-    cw.writerow(["Number", "Name", "Email" , "Course Name", "Date Created"])
+    cw.writerow(["Number", "Name", "Email", "Course Name", "Date Created"])
     for row in all_certificates:
         row = row_to_list(row)
         cw.writerow(row)
@@ -1053,7 +1078,7 @@ def export_certificate_csv(grp_id):
     output.headers["Content-Disposition"] = f"attachment; filename=group{grp_id}.csv"
     output.headers["Content-type"] = "text/csv"
     return output
-    
+
 
 @app.route("/activate/user/<string:id>", methods=['GET', 'POST'])
 @login_required
@@ -1099,12 +1124,22 @@ def change_permissions(perm, id):
         flash("You are not authorised to change permissions", "danger")
     return redirect(url_for('view_users_page'))
 
+
 @app.route('/get-all-categories', methods=['GET'])
 @login_required
 def get_all_categories():
     categories = Category.query.filter_by(user_id=current_user.id).all()
     data = {'category': [category.name for category in categories]}
     return jsonify(data)
+
+
+@app.route('/get-all-groups', methods=['GET'])
+@login_required
+def get_all_groups():
+    groups = Group.query.filter_by(user_id=current_user.id).all()
+    data = {'group': [[group.id, group.name] for group in groups]}
+    return jsonify(data)
+
 
 @app.route("/edit/category/<string:id>", methods=['GET', 'POST'])
 @login_required
@@ -1114,10 +1149,11 @@ def edit_category_page(id):
         name = data["name"]
         content = data["content"]
         if id == '0':
-            if Category.query.filter_by(name=name).first():
+            if Category.query.filter_by(name=name, content=content).first():
                 return jsonify(category_duplicate=True)
             try:
-                post = Category(name=name, content=content, last_update=time, user_id=current_user.id)
+                post = Category(name=name, content=content,
+                                last_update=time, user_id=current_user.id)
                 db.session.add(post)
                 db.session.commit()
                 return jsonify(category_success=True)
@@ -1172,7 +1208,8 @@ def edit_org_page(id):
             try:
                 category = Category.query.filter_by(name=category_name).first()
                 category_id = category.id
-                post = Group(name=name, date=date, category_id=category_id, user_id=current_user.id)
+                post = Group(name=name, date=date,
+                             category_id=category_id, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
                 if not app.debug:
                     upload_image(signature, folder="signatures", name=name)
@@ -1192,7 +1229,7 @@ def edit_org_page(id):
                 post.bg_image, post.signature = bg_url, sign_url
                 db.session.add(post)
                 db.session.commit()
-                category.group_id =post.id
+                category.group_id = post.id
                 db.session.add(category)
                 db.session.commit()
                 return jsonify(result=True, status=200)
@@ -1258,9 +1295,9 @@ def delete_org_page(id):
 @admin_required
 def delete_users_page(id):
     delete_users_page = Users.query.filter_by(id=id).first()
-    if (delete_users_page.email == config("admin_email")) or delete_users_page.is_staff:        
+    if (delete_users_page.email == config("admin_email")) or delete_users_page.is_staff:
         flash("You can't delete administrator!", "danger")
-    else:        
+    else:
         db.session.delete(delete_users_page)
         db.session.commit()
         flash("User deleted successfully!", "success")
@@ -1478,7 +1515,9 @@ def page_not_found(e):
 def user_not_authorized(e):
     return render_template('401.html'), 401
 
-#for feedback
+# for feedback
+
+
 def rowToListFeedback(obj):
     lst = []
     name = obj.name
@@ -1498,11 +1537,11 @@ def rowToListFeedback(obj):
 def ToCsv():
     allfeedback = Feedback.query.all()
     if len(allfeedback) == 0:
-        flash("No Feedback available","danger")
+        flash("No Feedback available", "danger")
         return redirect("/view/feedbacks")
     si = io.StringIO()
     cw = csv.writer(si, delimiter=",")
-    cw.writerow(["Name",  "Email" , "Rating Out of 5" , "Message"])
+    cw.writerow(["Name",  "Email", "Rating Out of 5", "Message"])
     for row in allfeedback:
         row = rowToListFeedback(row)
         cw.writerow(row)
@@ -1511,7 +1550,9 @@ def ToCsv():
     output.headers["Content-type"] = "text/csv"
     return output
 
-#for contact
+# for contact
+
+
 def rowToListContact(obj):
     lst = []
     name = obj.name
@@ -1535,11 +1576,11 @@ def rowToListContact(obj):
 def ContactToCsv():
     allfeedback = Contact.query.all()
     if len(allfeedback) == 0:
-        flash("No Contacts available","danger")
+        flash("No Contacts available", "danger")
         return redirect("/view/contacts")
     si = io.StringIO()
     cw = csv.writer(si, delimiter=",")
-    cw.writerow(["Name", "Email" , "Number", "Message" , "Date" , "IP"])
+    cw.writerow(["Name", "Email", "Number", "Message", "Date", "IP"])
     for row in allfeedback:
         row = rowToListContact(row)
         cw.writerow(row)
@@ -1549,7 +1590,7 @@ def ContactToCsv():
     return output
 
 
-#for Newsletter
+# for Newsletter
 def rowToListNewsletter(obj):
     lst = []
     email = obj.email
@@ -1567,11 +1608,11 @@ def rowToListNewsletter(obj):
 def NewsletterToCsv():
     allfeedback = Newsletter.query.all()
     if len(allfeedback) == 0:
-        flash("No Newsletter available","danger")
+        flash("No Newsletter available", "danger")
         return redirect("/view/newsletters")
     si = io.StringIO()
     cw = csv.writer(si, delimiter=",")
-    cw.writerow(["Email" , "IP", "Date"])
+    cw.writerow(["Email", "IP", "Date"])
     for row in allfeedback:
         row = rowToListNewsletter(row)
         cw.writerow(row)
@@ -1579,6 +1620,66 @@ def NewsletterToCsv():
     output.headers["Content-Disposition"] = f"attachment; filename=NewsLetter.csv"
     output.headers["Content-type"] = "text/csv"
     return output
+
+# API PART STARTS HERE
+
+
+@app.route('/api-keys/view', methods=['GET'])
+@login_required
+def view_all_api_keys():
+    if current_user.is_staff:
+        postc = APIKey.query.order_by(APIKey.id).all()
+        return render_template('api_admin_table.html', user=current_user, favTitle=favTitle, postc=postc)
+    groups = Group.query.filter_by(user_id=current_user.id).all()
+    postc = []
+    for grp in groups:
+        data = APIKey.query.filter_by(group_id=grp.id).first()
+        if data:
+            postc.append(data)
+    return render_template('api_users_table.html', user=current_user, favTitle=favTitle, postc=postc)
+
+
+def create_random_api():
+    data = list(string.ascii_uppercase) + \
+        list(string.ascii_lowercase) + list(string.digits) + \
+        ['@', '#', '$', '%', '&', '_']
+    key = ''.join(random.choice(data) for _ in range(20))
+    api_key = 'CGV.'+key
+    return api_key
+
+
+@app.route('/api-key/generate/<int:grp_id>', methods=['POST'])
+@login_required
+def generate_api_key(grp_id):
+    if APIKey.query.filter_by(group_id=grp_id).first():
+        return jsonify(key_error="You've already generated an API Key for this organization.")
+    try:
+        group_name = Group.query.filter_by(id=grp_id).first().name
+        new_api = APIKey(key=create_random_api(),
+                         group_id=grp_id, group_name=group_name, usage_limit=0, date_generated=x)
+        db.session.add(new_api)
+        db.session.commit()
+        return jsonify(key_success='API Key has been generated successfully. An admin should approve it within 8 hours.')
+    except Exception as e:
+        print(e)
+        return jsonify(key_error='Something went wrong while generating API Key for you.')
+
+
+@app.route('/api-key/approve/<int:grp_id>', methods=['GET', 'POST'])
+def approve_api_key(grp_id):
+    try:
+        api_key = APIKey.query.filter_by(group_id=grp_id).first()
+        data = json_lib.loads(request.data)
+        api_key.usage_limit = data['usage_limit']
+        api_key.is_approved, api_key.is_valid = True, True
+        db.session.add(api_key)
+        db.session.commit()
+        return jsonify(key_approved='API Key has been approved successfully!')
+    except Exception:
+        return jsonify(key_error='SOmething went wrong while approving the API Key!')
+
+
+# API PART ENDS HERE
 
 if __name__ == '__main__':
     app.run(debug=True)

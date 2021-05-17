@@ -140,8 +140,6 @@ function editGrp(postId) {
         preConfirm: () => {
           const name = Swal.getPopup().querySelector("#name").value;
           const category = Swal.getPopup().querySelector("#category").value;
-          const signature = Swal.getPopup().querySelector("#signature").value;
-          const bg_image = Swal.getPopup().querySelector("#bg_image").value;
           $("#signature").change(function () {
             var reader = new FileReader();
             reader.readAsDataURL(this.files[0]);
@@ -533,4 +531,121 @@ function editCategory(postId) {
         }
       });
     });
+}
+
+// for generating API
+function generateAPI() {
+  Swal.fire({
+    title: "Select Group",
+    html: `<form action="" method="POST" id="generateAPI">
+          <select id="group" name="group" class="swal2-input">
+            <option value="" disabled selected>Choose a group</option>
+          </select>
+        </form>
+        `,
+    confirmButtonText: "Generate",
+    focusConfirm: false,
+    customClass: {
+      confirmButton: "btn btn-primary btn-lg",
+    },
+    showLoaderOnConfirm: true,
+    willOpen: () => {
+      fetch(`/get-all-groups`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          $.each(data.group, function (key, name) {
+            //Use the Option() constructor to create a new HTMLOptionElement.
+            var option = new Option(name[1], name[0]);
+            //Convert the HTMLOptionElement into a JQuery object that can be used with the append method.
+            $(option).html(name[1]);
+            //Append the option to our Select element.
+            $("#group").append(option);
+          });
+        });
+    },
+    preConfirm: () => {
+      const group = Swal.getPopup().querySelector("#group").value;
+      if (!group) {
+        Swal.showValidationMessage(`Group is missing`);
+      }
+      return {
+        group: group,
+      };
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then((result) => {
+    fetch(`/api-key/generate/${result.value.group}`, {
+      method: "POST",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.key_success) {
+          window.location.reload();
+          new Notify({
+            title: "Success",
+            text: `${data.key_success}`,
+            status: "success",
+          });
+        } else {
+          new Notify({
+            title: "Error",
+            text: `${data.key_error}`,
+            status: "error",
+          });
+        }
+      });
+  });
+}
+
+// approve api key
+function approveAPI(grpId) {
+  Swal.fire({
+    title: "Set Usage Limit",
+    html: `<form action="" method="POST" id="generateAPI">
+          <input type="number" id="usage_limit" name="usage_limit" class="swal2-input" placeholder="Usage">
+        </form>
+        `,
+    confirmButtonText: "Approve",
+    focusConfirm: false,
+    customClass: {
+      confirmButton: "btn btn-success btn-lg",
+    },
+    showLoaderOnConfirm: true,
+    preConfirm: () => {
+      const usage_limit = Swal.getPopup().querySelector("#usage_limit").value;
+      if (!usage_limit) {
+        Swal.showValidationMessage(`Usage Limit is missing`);
+      }
+      return {
+        usage_limit: usage_limit,
+      };
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then((result) => {
+    fetch(`/api-key/approve/${grpId}`, {
+      method: "POST",
+      body: JSON.stringify({
+        usage_limit: result.value.usage_limit,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.key_approved) {
+          window.location.reload();
+          new Notify({
+            title: "Success",
+            text: `${data.key_approved}`,
+            status: "success",
+          });
+        } else {
+          new Notify({
+            title: "Error",
+            text: `${data.key_error}`,
+            status: "error",
+          });
+        }
+      });
+  });
 }

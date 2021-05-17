@@ -868,7 +868,7 @@ def view_certificate_page(grp_id):
             group_id=grp_id).order_by(Certificate.id)
     else:
         post = Certificate.query.filter_by(
-            group_id=grp_id, email=current_user.email).order_by(Certificate.id)
+            group_id=grp_id).order_by(Certificate.id)
     return render_template('certificate_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user, grp_id=grp_id)
 
 
@@ -1677,6 +1677,70 @@ def approve_api_key(grp_id):
         return jsonify(key_approved='API Key has been approved successfully!')
     except Exception:
         return jsonify(key_error='SOmething went wrong while approving the API Key!')
+
+
+@app.route('/v1/api', methods=['GET'])
+def get_groups_data():
+    # Here we'll have an argument like ?group=1
+    header_api_key = request.headers.get('API-KEY')
+    # If api key is not passed in request header
+    if not header_api_key:
+        data = {
+            'status': 401,
+            'message': "You're not authorised to access the resource. Please add API-KEY in request header."
+        }
+        return jsonify(data), 401
+    group_id = request.args.get('group')
+    # If group id is not passed in request url
+    if not group_id:
+        data = {
+            'status': '406',
+            'message': "Welcome to CGV API V1. There is no content to send for this request, please add argument like ?group=id in the request url"
+        }
+        return jsonify(data), 406
+    api_key = APIKey.query.filter_by(key=header_api_key).first()
+    # Check if api key exists and is valid
+    if api_key and api_key.is_valid:
+        certificates = Certificate.query.filter_by(group_id=group_id).all()
+        # Check if certificate exists with the mentioned group id
+        if certificates:
+            response_data = []
+            for cert in certificates:
+                data = {
+                    'user_name': cert.name,
+                    'course_name': cert.coursename,
+                    'group_name': Group.query.filter_by(id=cert.group_id).first().name,
+                    'cert_number': cert.number,
+                    'cert_link': f'https://cgv.in.net/certify/{cert.number}',
+                    'date_generated': cert.last_update[:10]
+                }
+                response_data.append(data)
+                # Decrease the limit by 1 and if it becomes 0, make the api key invalid
+            api_key.usage_limit -= 1
+            if api_key.usage_limit == 0:
+                api_key.is_valid = False
+            db.session.add(api_key)
+            db.session.commit()
+            # Success Response
+            return jsonify(response_data), 200
+        # If no certificates with the group id
+        data = {
+            'status': 404,
+            'message': 'We either could not find the group or there is no certificate in the group'
+        }
+        # Decrease the limit by 1 and if it becomes 0, make the api key invalid
+        api_key.usage_limit -= 1
+        if api_key.usage_limit == 0:
+            api_key.is_valid = False
+        db.session.add(api_key)
+        db.session.commit()
+        return jsonify(data), 404
+    # Invalid API Key
+    data = {
+        'status': 403,
+        'message': "Please add a valid API Key in the request header."
+    }
+    return jsonify(data), 403
 
 
 # API PART ENDS HERE

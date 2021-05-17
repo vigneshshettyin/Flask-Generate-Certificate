@@ -1,6 +1,6 @@
 alembic==1.6.2
 aniso8601==9.0.1
-autopep8==1.5.6
+autopep8==1.5.7
 blinker==1.4
 boto3==1.17.73
 botocore==1.20.73
@@ -11,13 +11,13 @@ colorama==0.4.4
 Flask==1.1.2
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
-Flask-Migrate==2.7.0
+Flask-Migrate==3.0.0
 Flask-RESTful==0.3.8
 Flask-Script==2.0.6
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.0
 gunicorn==20.1.0
-idna==2.7
+idna==2.10
 itsdangerous==2.0.0
 Jinja2==3.0.0
 jmespath==0.10.0
@@ -40,7 +40,7 @@ qrcode==6.1
 random-password-generator==2.1.2
 razorpay==1.2.0
 requests==2.25.1
-s3transfer==0.3.6
+s3transfer==0.4.2
 six==1.16.0
 SQLAlchemy==1.4.15
 starkbank-ecdsa==1.1.0

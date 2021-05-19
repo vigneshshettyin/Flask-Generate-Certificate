@@ -1679,10 +1679,10 @@ def approve_api_key(grp_id):
         return jsonify(key_error='SOmething went wrong while approving the API Key!')
 
 
-@app.route('/v1/api', methods=['GET'])
+@app.route('/v1/api/certificates', methods=['GET'])
 def get_groups_data():
     # Here we'll have an argument like ?group=1
-    header_api_key = request.headers.get('API-KEY')
+    header_api_key = request.headers.get('X-API-KEY')
     # If api key is not passed in request header
     if not header_api_key:
         data = {

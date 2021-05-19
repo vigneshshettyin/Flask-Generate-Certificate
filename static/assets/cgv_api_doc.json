@@ -1,0 +1,137 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CGV Certificate API",
+    "description": "CGV API to fetch certificates data in a group",
+    "contact": {
+      "email": "vigneshshetty.in@gmail.com"
+    },
+    "license": {
+      "name": "Mozilla Public License 2.0",
+      "url": "https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/LICENSE"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://cgv.in.net/v1/api",
+      "description": "Production server (uses live data)"
+    },
+    {
+      "url": "http://127.0.0.1:5000/v1/api",
+      "description": "Local server (uses test data)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "public",
+      "description": "Accessible for Organizations"
+    }
+  ],
+  "paths": {
+    "/certificates": {
+      "get": {
+        "tags": [
+          "public"
+        ],
+        "summary": "fetches certificates in a group",
+        "description": "By passing in the appropriate options, you can fetch certificates issued by a group\n",
+        "operationId": "fetchCertificates",
+        "parameters": [
+          {
+            "name": "group",
+            "in": "query",
+            "description": "pass a group id for looking up certificates issued by the group",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-API-KEY",
+            "in": "header",
+            "description": "API Key issued by CGV",
+            "required": true,
+            "style": "simple",
+            "explode": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "results matching criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Certificates"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "api key not passed in header"
+          },
+          "403": {
+            "description": "invalid api key"
+          },
+          "404": {
+            "description": "invalid group id or no certificates in group"
+          },
+          "406": {
+            "description": "group not passed as query"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Certificates": {
+        "required": [
+          "cert_link",
+          "cert_number",
+          "course_name",
+          "date_generated",
+          "group_name",
+          "user_name"
+        ],
+        "type": "object",
+        "properties": {
+          "user_name": {
+            "type": "string",
+            "example": "Vignesh Shetty"
+          },
+          "course_name": {
+            "type": "string",
+            "example": "Flask for Beginners"
+          },
+          "group_name": {
+            "type": "string",
+            "example": "Google India"
+          },
+          "cert_number": {
+            "type": "string",
+            "example": "CGVVIGNabcd"
+          },
+          "cert_link": {
+            "type": "string",
+            "format": "url",
+            "example": "https://cgv.in.net/certify/CGVVIGNabcd"
+          },
+          "date_generated": {
+            "type": "string",
+            "format": "date",
+            "example": "2021-05-17"
+          }
+        }
+      }
+    }
+  }
+}

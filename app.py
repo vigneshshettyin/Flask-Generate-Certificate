@@ -828,7 +828,7 @@ def dashboard_page():
     postct = len(Contact.query.order_by(Contact.id).all())
     postf = len(Feedback.query.order_by(Feedback.id).all())
     postn = len(Newsletter.query.order_by(Newsletter.id).all())
-    return render_template('dashboard.html', favTitle=favTitle, postc=postc, postct=postct, postf=postf, postn=postn, user=current_user, )
+    return render_template('dashboard.html', favTitle=favTitle, postc=postc, postct=postct, postf=postf, postn=postn, user=current_user)
 
 
 @app.route("/view/groups", methods=['GET', 'POST'])
@@ -1744,6 +1744,36 @@ def get_groups_data():
 
 
 # API PART ENDS HERE
+
+@login_required
+@app.route('/<int:id>/profile/edit', methods=['GET', 'POST'])
+def profile(id):
+    name = request.form.get("name")
+    profile_pic = request.files.get("profile_pic")
+    try:
+        user = Users.query.filter_by(id=id).first()
+        if name:
+            user.name = name
+        img_name = name.replace(" ", "+")
+        if profile_pic:
+            if not app.debug:
+                upload_image(profile_pic, folder="profile_pics", name=name)
+                img_url = f"https://cgv.s3.us-east-2.amazonaws.com/profile_pics/{img_name}"
+            else:
+                try:
+                    os.mkdir("static/profile_pics")
+                except Exception:
+                    pass
+                profile_pic.save(f"static/profile_pics/{img_name}.png")
+                img_url = f"http://127.0.0.1:5000/static/profile_pics/{img_name}.png"
+            user.profile_image = img_url
+        db.session.add(user)
+        db.session.commit()
+        return jsonify(result=True), 200
+    except Exception as e:
+        print(e)
+        return jsonify(result=False), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

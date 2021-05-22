@@ -14,13 +14,13 @@
 
         const { value: formValues } = await Swal.fire({
         title: 'Edit Your Profile',
-        imageUrl: "unnamed.png" ,
+        imageUrl: "{{user.profile_image}}" ,
         imageWidth: 250,
         imageHeight: 220,
         imageAlt: "Eagle Image",
         html: 
-            '<input type="text" id="swal-input" class="swal2-input" placeholder="Your Name">' +
-            '<input type="email" id="swal-input" class="swal2-input" placeholder="Your Email">' ,
+            '<input type="text" id="swal-input" class="swal2-input" placeholder="Your Name" value="{{user.name}}">' +
+            '<input type="email" id="swal-input" class="swal2-input" placeholder="Your Email", value={{user.email}}>' ,
         confirmButtonText: `Save`,  
         showCancelButton: true,
         preConfirm: () => {

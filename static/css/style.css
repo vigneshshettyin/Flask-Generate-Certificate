@@ -478,7 +478,7 @@ outline: 0px;
 #hero {
   background: #f5f8fd;
   background-size: cover;
-  margin-left: 38px;
+  height: 100vh;
 }
 .dark-mode #hero
 {

@@ -7,39 +7,28 @@
                 </div>
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            
-                        <a class="btn btn-success btn-icon-split mb-2" id="gen_api" onclick="generateAPI()" style="cursor: pointer">
-                                        <span class="icon text-white-50">
-                                           <i class="fa fa-key" aria-hidden="true"></i>
-                                        </span>
-                                        <span class="text">Generate API Key</span>
-                        </a>
-                    <a class="btn btn-primary btn-icon-split float-right" id="api_doc" style="cursor: pointer" href="#swagger-ui">
-                        <span class="icon text-white-50">
-                           <i class="fa fa-book" aria-hidden="true"></i>
-                        </span>
-                        <span class="text">Read Documentation</span>                                    
-                    </a>
-                        </div>
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
-                                        <th>#</th>
-                                        <th>API KEY</th>
-                                        <th>Usage Left</th>
-                                        <th>Valid</th>
-                                        <th>Date Generated</th>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Organisation Email</th>
+                                            <th>API KEY</th>
+                                            <th>Approval</th>
+                                            <th>Date Generated</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
 {#                                    Start loop#}
 {% for post in postc %}
                                         <tr>
                                             <td>{{ post.id}}</td>
+                                            <td>{{ post.email}}</td>
                                             <td>{{ post.key}}</td>
-                                            <td>{{ post.usage_limit}}</td>
-                                            <td class="{{'bg-success' if post.is_valid else 'bg-danger'}} font-weight-bold text-white">{{ post.is_valid }}</td>
+                                            <td class="text-center"><a onclick="approvePublicAPI('{{post.id}}')" style="cursor: pointer" class="btn {{'btn-success' if post.is_approved else 'btn-danger'}} btn-circle">
+                                        <i class="fas {{'fa-check' if post.is_approved else 'fa-times'}}"></i>
+                                        </a></td>
                                             <td>{{ post.date_generated|truncate(19,true,"") }}</td>
                                         </tr>
 
@@ -51,10 +40,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card shadow mb-4">
-                    <div id="swagger-ui"></div>
-                    </div>
+
                 </div>
+                
                 <!-- /.container-fluid -->
                 {% with errors = get_flashed_messages(category_filter=["danger"]) %}
                     {% if errors %}
@@ -82,22 +70,7 @@
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
-                    <script src="{{ url_for('static', filename='js/swagger-ui-bundle.js') }}"></script>
-                    <script src="{{ url_for('static', filename='js/swagger-ui-standalone-preset.js') }}"></script>
 
-                    <script>
-                    window.onload = function() {
-                    const ui = SwaggerUIBundle({
-                        url: "{{ url_for('static', filename='assets/cgv_api_doc.json') }}",
-                        dom_id: '#swagger-ui',
-                        presets: [
-                        SwaggerUIBundle.presets.apis,
-                        SwaggerUIStandalonePreset
-                        ]
-                    })
-
-                    window.ui = ui
-                    }
-                    </script>
                         
             {% endblock %}
+

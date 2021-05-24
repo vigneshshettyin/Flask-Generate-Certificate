@@ -1,0 +1,104 @@
+{% extends "layout.html" %} {% block body %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <div style="padding: 5px"></div>
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <a
+        class="btn btn-info btn-icon-split mb-2 ml-2"
+        href="{{ url_for('generate_pub_api_key') }}"
+      >
+        <span class="icon text-white-50">
+          <i class="fa fa-key" aria-hidden="true"></i>
+        </span>
+        <span class="text">Generate Public API Key</span>
+      </a>
+      <a
+        class="btn btn-primary btn-icon-split float-right"
+        id="api_doc"
+        style="cursor: pointer"
+        href="#swagger-ui"
+      >
+        <span class="icon text-white-50">
+          <i class="fa fa-book" aria-hidden="true"></i>
+        </span>
+        <span class="text">Read Documentation</span>
+      </a>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table
+          class="table table-bordered"
+          id="dataTable"
+          width="100%"
+          cellspacing="0"
+        >
+          <thead>
+            <th>#</th>
+            <th>API KEY</th>
+            <th>Email</th>
+            <th>Valid</th>
+            <th>Date Generated</th>
+          </thead>
+          <tbody>
+            {# Start loop#} {% for post in postc %}
+            <tr>
+              <td>{{ post.id}}</td>
+              <td>{{ post.key}}</td>
+              <td>{{ post.email}}</td>
+              <td
+                class="{{'bg-success' if post.is_valid else 'bg-danger'}} font-weight-bold text-white"
+              >
+                {{ post.is_valid }}
+              </td>
+              <td>{{ post.date_generated|truncate(19,true,"") }}</td>
+            </tr>
+
+            {# end loop#} {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card shadow mb-4">
+    <div id="swagger-ui"></div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+{% with errors = get_flashed_messages(category_filter=["danger"]) %} {% if
+errors %} {% for error in errors %}
+<script>
+  new Notify({
+    title: "Error",
+    text: `{{error|safe}}`,
+    status: "error",
+  });
+</script>
+{% endfor %} {% endif %} {% endwith %} {% with messages =
+get_flashed_messages(category_filter=["success"]) %} {% if messages %} {% for
+message in messages %}
+<script>
+  new Notify({
+    title: "Success",
+    text: `{{message|safe}}`,
+    status: "success",
+  });
+</script>
+{% endfor %} {% endif %} {% endwith %}
+<script src="{{ url_for('static', filename='js/swagger-ui-bundle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/swagger-ui-standalone-preset.js') }}"></script>
+
+<script>
+  window.onload = function () {
+    const ui = SwaggerUIBundle({
+      url: "{{ url_for('static', filename='assets/cgv_api_doc.json') }}",
+      dom_id: "#swagger-ui",
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+    });
+
+    window.ui = ui;
+  };
+</script>
+
+{% endblock %}

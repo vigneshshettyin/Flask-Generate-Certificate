@@ -51,10 +51,9 @@ Apart from that you can also use cloud platforms to deploy the project once you 
 
 ## Live Deployment 📦
 
-Click Here to view the deployment!
+Deploy it live on web!
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://certify-us.herokuapp.com/)
-<br>
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/vigneshshettyin/Flask-Generate-Certificate/tree/master)<br>
 <br>
 
 ## Mockup & Demo 🛠️

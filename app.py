@@ -1695,7 +1695,7 @@ def generate_api_key(grp_id):
         return jsonify(key_error='Something went wrong while generating API Key for you.')
 
 
-@app.route('/api-key/generate/public-api', methods=['GET','POST'])
+@app.route('/api-key/generate/public-api', methods=['GET'])
 @login_required
 def generate_pub_api_key():
     if PublicAPIKey.query.filter_by(email=current_user.email).first():
@@ -1728,7 +1728,7 @@ def approve_private_api_key(grp_id):
         return jsonify(key_error='Something went wrong while approving the API Key!')
 
 
-@app.route('/api-key/public/approve/<int:api_id>', methods=['GET', 'POST'])
+@app.route('/api-key/public/approve/<int:api_id>', methods=['GET'])
 def approve_public_api_key(api_id):
     try:
         api_key = PublicAPIKey.query.filter_by(id=api_id).first()
@@ -1796,6 +1796,44 @@ def get_groups_data():
         db.session.add(api_key)
         db.session.commit()
         return jsonify(data), 404
+    # Invalid API Key
+    data = {
+        'status': 403,
+        'message': "Please add a valid API Key in the request header."
+    }
+    return jsonify(data), 403
+
+
+@app.route('/v1/api/certificates/all', methods=['GET'])
+def get_all_certificates():
+    header_api_key = request.headers.get('X-API-KEY')
+    if not header_api_key:
+        data = {
+            'status': 401,
+            'message': "You're not authorised to access the resource. Please add API-KEY in request header."
+        }
+        return jsonify(data), 401
+    api_key = PublicAPIKey.query.filter_by(key=header_api_key).first()
+    if api_key and api_key.is_valid:
+        user_id = Users.query.filter_by(email=api_key.email).first().id
+        groups = Group.query.filter_by(user_id=user_id).all()
+        response_data = []
+        for grp in groups:
+            grp_data = []
+            certificates = Certificate.query.filter_by(group_id=grp.id).all()
+            for cert in certificates:
+                data = {
+                    'user_name': cert.name,
+                    'course_name': cert.coursename,
+                    'group_name': Group.query.filter_by(id=cert.group_id).first().name,
+                    'cert_number': cert.number,
+                    'cert_link': f'https://cgv.in.net/certify/{cert.number}',
+                    'date_generated': cert.last_update[:10]
+                }
+                grp_data.append(data)
+            response_data.append({grp.name: grp_data})
+        return jsonify(response_data), 200
+    
     # Invalid API Key
     data = {
         'status': 403,

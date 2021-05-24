@@ -14,7 +14,7 @@
         </span>
         <span class="text">Generate Public API Key</span>
       </a>
-      <a
+      <!-- <a
         class="btn btn-primary btn-icon-split float-right"
         id="api_doc"
         style="cursor: pointer"
@@ -24,7 +24,7 @@
           <i class="fa fa-book" aria-hidden="true"></i>
         </span>
         <span class="text">Read Documentation</span>
-      </a>
+      </a> -->
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -89,7 +89,7 @@ message in messages %}
 <script src="{{ url_for('static', filename='js/swagger-ui-bundle.js') }}"></script>
 <script src="{{ url_for('static', filename='js/swagger-ui-standalone-preset.js') }}"></script>
 
-<script>
+<!-- <script>
   window.onload = function () {
     const ui = SwaggerUIBundle({
       url: "{{ url_for('static', filename='assets/cgv_api_doc.json') }}",
@@ -99,6 +99,6 @@ message in messages %}
 
     window.ui = ui;
   };
-</script>
+</script> -->
 
 {% endblock %}

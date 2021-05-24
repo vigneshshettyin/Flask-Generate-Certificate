@@ -649,3 +649,26 @@ function approveAPI(grpId) {
       });
   });
 }
+
+function approvePublicAPI(api_id) {
+  fetch(`/api-key/public/approve/${api_id}`, {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.key_approved) {
+        window.location.reload();
+        new Notify({
+          title: "Success",
+          text: `${data.key_approved}`,
+          status: "success",
+        });
+      } else {
+        new Notify({
+          title: "Error",
+          text: `${data.key_error}`,
+          status: "error",
+        });
+      }
+    });
+}

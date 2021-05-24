@@ -28,6 +28,7 @@ from decouple import config
 import boto3
 import io
 import csv
+from flask_migrate import Migrate
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -49,8 +50,17 @@ app.config['MAIL_USERNAME'] = config('email_username')
 app.config['MAIL_PASSWORD'] = config('email_password')
 app.config['MAIL_DEBUG'] = False
 
+app.config.from_object(config("app_settings"))
+
+
 db = SQLAlchemy(app)
 mail = Mail(app)
+
+
+if db.engine.url.drivername == 'sqlite':
+    migrate = Migrate(app, db, render_as_batch=True)
+else:
+    migrate = Migrate(app, db)
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
@@ -206,6 +216,15 @@ class APIKey(db.Model):
     group_name = db.Column(db.String(50), nullable=True)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     usage_limit = db.Column(db.Integer, nullable=True)
+    is_valid = db.Column(db.Boolean, nullable=False, default=False)
+    is_approved = db.Column(db.Boolean, nullable=False, default=False)
+    date_generated = db.Column(db.String(50), nullable=False)
+
+
+class PublicAPIKey(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), nullable=False)
+    key = db.Column(db.String(50), nullable=False)
     is_valid = db.Column(db.Boolean, nullable=False, default=False)
     is_approved = db.Column(db.Boolean, nullable=False, default=False)
     date_generated = db.Column(db.String(50), nullable=False)
@@ -1624,19 +1643,29 @@ def NewsletterToCsv():
 # API PART STARTS HERE
 
 
-@app.route('/api-keys/view', methods=['GET'])
+@app.route('/api-keys/view/private', methods=['GET'])
 @login_required
-def view_all_api_keys():
+def view_all_private_api_keys():
     if current_user.is_staff:
         postc = APIKey.query.order_by(APIKey.id).all()
-        return render_template('api_admin_table.html', user=current_user, favTitle=favTitle, postc=postc)
+        return render_template('private_api_admin_table.html', user=current_user, favTitle=favTitle, postc=postc)
     groups = Group.query.filter_by(user_id=current_user.id).all()
     postc = []
     for grp in groups:
         data = APIKey.query.filter_by(group_id=grp.id).first()
         if data:
             postc.append(data)
-    return render_template('api_users_table.html', user=current_user, favTitle=favTitle, postc=postc)
+    return render_template('private_api_users_table.html', user=current_user, favTitle=favTitle, postc=postc)
+
+
+@app.route('/api-keys/view/public', methods=['GET'])
+@login_required
+def view_all_public_api_keys():
+    if current_user.is_staff:
+        postc = PublicAPIKey.query.order_by(PublicAPIKey.id).all()
+        return render_template('public_api_admin_table.html', user=current_user, favTitle=favTitle, postc=postc)
+    postc = PublicAPIKey.query.filter_by(email=current_user.email).all()
+    return render_template('public_api_users_table.html', user=current_user, favTitle=favTitle, postc=postc)
 
 
 def create_random_api():
@@ -1652,6 +1681,7 @@ def create_random_api():
 @login_required
 def generate_api_key(grp_id):
     if APIKey.query.filter_by(group_id=grp_id).first():
+        
         return jsonify(key_error="You've already generated an API Key for this organization.")
     try:
         group_name = Group.query.filter_by(id=grp_id).first().name
@@ -1665,8 +1695,27 @@ def generate_api_key(grp_id):
         return jsonify(key_error='Something went wrong while generating API Key for you.')
 
 
-@app.route('/api-key/approve/<int:grp_id>', methods=['GET', 'POST'])
-def approve_api_key(grp_id):
+@app.route('/api-key/generate/public-api', methods=['GET'])
+@login_required
+def generate_pub_api_key():
+    if PublicAPIKey.query.filter_by(email=current_user.email).first():
+        flash("You've already generated a Public API Key for this account.", 'danger')
+    try:
+        new_api = PublicAPIKey(key=create_random_api(),
+                         email=current_user.email, date_generated=x)
+        db.session.add(new_api)
+        db.session.commit()
+        flash('Public API Key has been generated successfully. An admin should approve it within 8 hours.', 'success')
+        
+    except Exception as e:
+        print(e)
+        flash('Something went wrong while generating API Key for you.', 'danger')
+    return redirect(url_for('view_all_public_api_keys'))
+
+
+
+@app.route('/api-key/private/approve/<int:grp_id>', methods=['GET', 'POST'])
+def approve_private_api_key(grp_id):
     try:
         api_key = APIKey.query.filter_by(group_id=grp_id).first()
         data = json_lib.loads(request.data)
@@ -1676,7 +1725,19 @@ def approve_api_key(grp_id):
         db.session.commit()
         return jsonify(key_approved='API Key has been approved successfully!')
     except Exception:
-        return jsonify(key_error='SOmething went wrong while approving the API Key!')
+        return jsonify(key_error='Something went wrong while approving the API Key!')
+
+
+@app.route('/api-key/public/approve/<int:api_id>', methods=['GET'])
+def approve_public_api_key(api_id):
+    try:
+        api_key = PublicAPIKey.query.filter_by(id=api_id).first()
+        api_key.is_approved, api_key.is_valid = True, True
+        db.session.add(api_key)
+        db.session.commit()
+        return jsonify(key_approved='API Key has been approved successfully!')
+    except Exception:
+        return jsonify(key_error='Something went wrong while approving the API Key!')
 
 
 @app.route('/v1/api/certificates', methods=['GET'])
@@ -1735,6 +1796,44 @@ def get_groups_data():
         db.session.add(api_key)
         db.session.commit()
         return jsonify(data), 404
+    # Invalid API Key
+    data = {
+        'status': 403,
+        'message': "Please add a valid API Key in the request header."
+    }
+    return jsonify(data), 403
+
+
+@app.route('/v1/api/certificates/all', methods=['GET'])
+def get_all_certificates():
+    header_api_key = request.headers.get('X-API-KEY')
+    if not header_api_key:
+        data = {
+            'status': 401,
+            'message': "You're not authorised to access the resource. Please add API-KEY in request header."
+        }
+        return jsonify(data), 401
+    api_key = PublicAPIKey.query.filter_by(key=header_api_key).first()
+    if api_key and api_key.is_valid:
+        user_id = Users.query.filter_by(email=api_key.email).first().id
+        groups = Group.query.filter_by(user_id=user_id).all()
+        response_data = []
+        for grp in groups:
+            grp_data = []
+            certificates = Certificate.query.filter_by(group_id=grp.id).all()
+            for cert in certificates:
+                data = {
+                    'user_name': cert.name,
+                    'course_name': cert.coursename,
+                    'group_name': Group.query.filter_by(id=cert.group_id).first().name,
+                    'cert_number': cert.number,
+                    'cert_link': f'https://cgv.in.net/certify/{cert.number}',
+                    'date_generated': cert.last_update[:10]
+                }
+                grp_data.append(data)
+            response_data.append({grp.name: grp_data})
+        return jsonify(response_data), 200
+    
     # Invalid API Key
     data = {
         'status': 403,

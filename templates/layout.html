@@ -221,9 +221,15 @@
           </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('view_all_api_keys')}}">
+          <a class="nav-link" href="{{url_for('view_all_public_api_keys')}}">
             <i class="fas fa-key"></i>
-            <span>API KEYS</span>
+            <span>PUBLIC API KEYS</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('view_all_private_api_keys')}}">
+            <i class="fas fa-key"></i>
+            <span>PRIVATE API KEYS</span>
           </a>
         </li>
 

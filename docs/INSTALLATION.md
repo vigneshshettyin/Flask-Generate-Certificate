@@ -27,19 +27,19 @@ $ pip3 install -r requirements.txt
 
 * To initialise a new database
   ```
-    python manage.py db init
+  flaskdb init
   ```
 * To migrate changes in the database
   ```
-  python manage.py db migrate
+  flask db migrate
   ```
 * To update the database with the new migrations
   ```
-  python manage.py db upgrade
+  flask db upgrade
   ```
 * To degrade the database
   ```
-  python manage.py db downgrade
+  flask db downgrade
   ```
 **Note** : Users need to run the upgrade command only during the project setup since the initial migrations have already been done. It just need to be applied using the `python manage.py db upgrade` command.
 

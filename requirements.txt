@@ -1,4 +1,4 @@
-alembic==1.6.3
+alembic==1.6.5
 aniso8601==9.0.1
 autopep8==1.5.7
 blinker==1.4

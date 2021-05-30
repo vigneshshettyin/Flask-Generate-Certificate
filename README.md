@@ -42,7 +42,7 @@ There are two ways of using the project:
 
 Apart from that you can also use cloud platforms to deploy the project once you can get it running locally:
 
-## 1. [Deploying on Heroku](#).<br>
+## 1. [Deploying on Heroku](https://stackabuse.com/deploying-a-flask-application-to-heroku/).<br>
 ## 2. [Deploying on AWS](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/AWS.md).<br>
 ## 3. [Deploying on Azure](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Azure.md).<br>
 ## 4. [Deploying on Google Cloud](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Google_Cloud.md).<br>

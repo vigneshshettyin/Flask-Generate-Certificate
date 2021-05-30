@@ -44,9 +44,9 @@ Apart from that you can also use cloud platforms to deploy the project once you 
 
 ## 1. [Deploying on Heroku](#).<br>
 ## 2. [Deploying on AWS](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/AWS.md).<br>
-## 3. [Deploying on Azure](#).<br>
-## 4. [Deploying on Google Cloud](#).<br>
-## 5. [Deploying on Digital Ocean](#).<br>
+## 3. [Deploying on Azure](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Azure.md).<br>
+## 4. [Deploying on Google Cloud](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Google_Cloud.md).<br>
+## 5. [Deploying on Digital Ocean](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Digital_Ocean.md).<br>
 
 
 ## Live Deployment 📦

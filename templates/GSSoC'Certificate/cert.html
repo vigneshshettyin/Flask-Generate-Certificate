@@ -17,6 +17,8 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            background: linear-gradient(263.96deg, #D8A343 18.74%, #F3D16F 41.66%, #D39D3D 61.42%, #F5D170 81.6%, #C6892F 99.47%);
+
         }
         
         .wrapper {
@@ -41,19 +43,27 @@
         #canvas {
             width: 100%;
             height: auto;
-            background-color: pink;
+            background-color:linear-gradient(263.96deg, #D8A343 18.74%, #F3D16F 41.66%, #D39D3D 61.42%, #F5D170 81.6%, #C6892F 99.47%);
             z-index: 0;
+            box-shadow: 0 0 15px 1px rgba(0, 0, 0, 1);
         }
     </style>
 </head>
 <body>
+    <div>
+        <br>
+    </div>
     <div class="wrapper">
         <div class="container">
           <div class="canvas-container">
-            <canvas id="canvas" height="768px" width="1080px"></canvas>
-            <center><a href="#" id="download-btn">Download</a></center>
-            <br>
             <form class="form" action="#">
+                <div class="row">
+                    <div class="col">
+                        <label for="Name">Certificate Link:</label>
+                        <input type="text" class="form-control" id="certificatelink">
+                    </div>
+                </div>
+                <br>
                 <div class="row">
                     <div class="col">
                         <label for="Name">Name:</label>
@@ -98,9 +108,12 @@
                         <input type="text" class="form-control" id="y-ID">
                     </div>
                 </div>
-                <br>
-                
             </form>
+            <br>
+            <canvas id="canvas" height="768px" width="1080px"></canvas>
+            <br>
+            <center><a href="#" id="download-btn" class="btn btn-primary">Download</a></center>
+            <br>
              <!-- use below for displaying the coordinates -->
             <!-- <center>
                 <div class="Coordinates">
@@ -118,6 +131,7 @@
     <script type="text/javascript">
         const canvas = document.getElementById('canvas')
         const ctx = canvas.getContext('2d')
+        const cetificateLinkInput = document.getElementById('certificatelink')
         const nameInput = document.getElementById('name')
         const XnameInput = document.getElementById('x-name')
         const YnameInput = document.getElementById('y-name')
@@ -130,21 +144,27 @@
         const downloadBtn = document.getElementById('download-btn')
 
         const image1 = new Image()
-        image1.src = 'https://res.cloudinary.com/vigneshshettyin/image/upload/v1622360509/zoy6pcfjkojyv4xkynsl.png'  //certificate cdn link :-> https://res.cloudinary.com/vigneshshettyin/image/upload/v1622360509/zoy6pcfjkojyv4xkynsl.png
+        // image1.src = 'https://res.cloudinary.com/vigneshshettyin/image/upload/v1622360509/zoy6pcfjkojyv4xkynsl.png'  //certificate cdn link :-> https://res.cloudinary.com/vigneshshettyin/image/upload/v1622360509/zoy6pcfjkojyv4xkynsl.png
+        image1.setAttribute('crossorigin', 'anonymous');
         image1.onload = function () {
             drawImage()
         }
 
 
         const image2 = new Image()
-        image2.src = 'https://res.cloudinary.com/vigneshshettyin/image/upload/v1622353628/elguevuycepnlkf6qymh.png'
+        // image2.src = 'https://res.cloudinary.com/vigneshshettyin/image/upload/v1622353628/elguevuycepnlkf6qymh.png'
+        image2.setAttribute('crossorigin', 'anonymous');
         image2.onload = function () {
             drawImage()
         }
 
         function drawImage() {
             // ctx.clearRect(0, 0, canvas.width, canvas.height)
+            const link1 = cetificateLinkInput.value
+            image1.src=link1
             ctx.drawImage(image1, 0, 0, canvas.width, canvas.height)
+            const link2 = qrcodelinkInput.value
+            image2.src=link2
             ctx.drawImage(image2, XqrcodelinkInput.value, YqrcodelinkInput.value, 130, 130)   //QrcodeLink
             ctx.font = 'normal 50px Poppins'
             ctx.fillStyle = '#F9920C'
@@ -153,6 +173,11 @@
             ctx.fillStyle = '#000000'
             ctx.fillText('ID:#' + certificateIdInput.value, XcertificateIdInput.value, YcertificateIdInput.value)  //certificateID
         }
+
+
+        cetificateLinkInput.addEventListener('input', function () {
+            drawImage()
+        })
 
         nameInput.addEventListener('input', function () {
             drawImage()

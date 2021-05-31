@@ -25,6 +25,7 @@
             width: 100%;
             height: 100%;
             position: absolute;
+            background: linear-gradient(263.96deg,  #FFFFFF 0%, #FFFFFF 41.66%, #FFFFFF 61.42%, #FFFFFF 81.6%, #FFFFFF 99.47%);
         }
         
         .container {
@@ -41,8 +42,9 @@
         #canvas {
             width: 100%;
             height: auto;
-            background-color: pink;
+            background: linear-gradient(263.96deg,  #FFFFFF 0%, #FFFFFF 41.66%, #FFFFFF  61.42%, #FFFFFF 81.6%, #FFFFFF 99.47%);
             z-index: 0;
+            box-shadow: 0 0 15px 1px rgba(0, 0, 0, 1);
         }
     </style>
 </head>
@@ -50,10 +52,15 @@
     <div class="wrapper">
         <div class="container">
           <div class="canvas-container">
-            <canvas id="canvas" height="768px" width="1080px"></canvas>
-            <center><a href="#" id="download-btn">Download</a></center>
-            <br>
             <form class="form" action="#">
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <label for="Name">Certificate Link:</label>
+                        <input type="text" class="form-control" id="certificatelink">
+                    </div>
+                </div>
+                <br>
                 <div class="row">
                     <div class="col">
                         <label for="Name">Name:</label>
@@ -65,7 +72,7 @@
                     </div>
                     <div class="col">
                         <label for="Name-coordinates">Y-Coordinate for name:</label>
-                        <input type="text" class="form-control" id="y-name" placeholder="410">
+                        <input type="text" class="form-control" id="y-name" placeholder="400">
                     </div>
                 </div>
                 <br>
@@ -76,7 +83,7 @@
                     </div>
                     <div class="col">
                         <label for="CourseName-coordinates">X-coordinate for coursename:</label>
-                        <input type="text" class="form-control" id="x-coursename" placeholder="380">
+                        <input type="text" class="form-control" id="x-coursename" placeholder="290">
                     </div>
                     <div class="col">
                         <label for="CourseName-coordinates">Y-Coordinate for coursename:</label>
@@ -116,6 +123,12 @@
                 <br>
                 
             </form>
+            <br>
+            <canvas id="canvas" height="768px" width="1080px"></canvas>
+            <br>
+            <center><a href="#" id="download-btn" class="btn btn-dark">Download</a></center>
+            <br>
+            
              <!-- use below for displaying the coordinates -->
             <!-- <center>
                 <div class="Coordinates">
@@ -133,6 +146,7 @@
     <script type="text/javascript">
         const canvas = document.getElementById('canvas')
         const ctx = canvas.getContext('2d')
+        const cetificateLinkInput = document.getElementById('certificatelink')
         const nameInput = document.getElementById('name')
         const XnameInput = document.getElementById('x-name')
         const YnameInput = document.getElementById('y-name')
@@ -148,30 +162,41 @@
         const downloadBtn = document.getElementById('download-btn')
 
         const image1 = new Image()
-        image1.src = 'https://res.cloudinary.com/vigneshshettyin/image/upload/v1622374713/ykohcg1cownorlr9newt.png'  //certificate cdn link :-> https://res.cloudinary.com/vigneshshettyin/image/upload/v1622374713/ykohcg1cownorlr9newt.png
+        // image1.src = 'https://res.cloudinary.com/vigneshshettyin/image/upload/v1622374713/ykohcg1cownorlr9newt.png'  //certificate cdn link :-> https://res.cloudinary.com/vigneshshettyin/image/upload/v1622374713/ykohcg1cownorlr9newt.png
+        image1.setAttribute('crossorigin', 'anonymous');
         image1.onload = function () {
             drawImage()
         }
 
 
         const image2 = new Image()
-        image2.src = 'https://res.cloudinary.com/vigneshshettyin/image/upload/v1622353628/elguevuycepnlkf6qymh.png'
+        // image2.src = 'https://res.cloudinary.com/vigneshshettyin/image/upload/v1622353628/elguevuycepnlkf6qymh.png'
+        image2.setAttribute('crossorigin', 'anonymous');
         image2.onload = function () {
             drawImage()
         }
 
         function drawImage() {
             // ctx.clearRect(0, 0, canvas.width, canvas.height)
+            const link1 = cetificateLinkInput.value
+            image1.src=link1
             ctx.drawImage(image1, 0, 0, canvas.width, canvas.height)
+            const link2 = qrcodelinkInput.value
+            image2.src=link2
             ctx.drawImage(image2, XqrcodelinkInput.value, YqrcodelinkInput.value, 130, 130)   //QrcodeLink  
             ctx.font = '40px Calibri'
             ctx.fillStyle = '#9C9B9B'
             ctx.fillText(nameInput.value, XnameInput.value, YnameInput.value)  //nampeInput
             ctx.fillText(coursenameInput.value, XcoursenameInput.value, YcoursenameInput.value) //courseInput
-            ctx.font = 'bolder 15px Calibri'
+            ctx.font = 'bolder 25px Calibri'
             ctx.fillStyle = '#000000'
             ctx.fillText('ID:#' + certificateIdInput.value, XcertificateIdInput.value, YcertificateIdInput.value)  //certificateID
         }
+
+
+        cetificateLinkInput.addEventListener('input', function () {
+            drawImage()
+        })
 
         nameInput.addEventListener('input', function () {
             drawImage()

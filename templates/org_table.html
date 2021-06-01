@@ -1,77 +1,89 @@
-{% extends "layout.html" %}
-{% block body %}
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                <div style="padding: 5px">
+{% extends "layout.html" %} {% block body %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <div style="padding: 5px"></div>
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table
+          class="table table-bordered"
+          id="dataTable"
+          width="100%"
+          cellspacing="0"
+        >
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Certficate Design</th>
+              <th>Name Coordinates</th>
+              <th>QR Code Coordinates</th>
+              <th>Cert Number Coordinates</th>
+              <th>Last Updated</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {# Start loop#} {% for post in post %}
+            <tr>
+              <td>{{ post.id}}</td>
+              <td>
+                <a href="{{ url_for('view_certificate_page', grp_id=post.id) }}"
+                  >{{ post.name}}</a
+                >
+              </td>
+              <td>
+                <a href="{{post.bg_image}}">{{ post.bg_image|truncate(20) }}</a>
+              </td>
+              <td>{{ post.certx }}:{{ post.certy }}</td>
+              <td>{{ post.qrx }}:{{ post.qry }}</td>
+              <td>{{ post.certnox }}:{{ post.certnoy }}</td>
+              <td>{{ post.date|truncate(16,true,"") }}</td>
+              <td>
+                <a
+                  style="cursor: pointer"
+                  class="btn btn-success btn-circle editGrpBtn"
+                  data-post-id="{{post.id}}"
+                  onclick="editGrp('{{post.id}}')"
+                  ><i class="fas fa-edit"></i
+                ></a>
+              </td>
+              <td>
+                <a
+                  href="/delete/group/{{ post.id }}"
+                  class="btn btn-danger btn-circle"
+                  ><i class="fas fa-trash"></i
+                ></a>
+              </td>
+            </tr>
 
-                </div>
-                    <!-- DataTales Example -->
-                    <div class="card shadow mb-4">
-                    
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Name</th>
-                                            <th>Category</th>
-                                            <th>Backgroud Image</th>
-                                            <th>Signature Image</th>
-                                            <th>Last Updated</th>
-                                            <th>Edit</th>
-                                            <th>Delete</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-{#                                    Start loop#}
-{% for post in post %}
-                                        <tr>
-                                            <td>{{ post.id}}</td>
-                                            <td><a href="{{ url_for('view_certificate_page', grp_id=post.id) }}">{{ post.name}}</a></td>
-                                            <td>{{ post.category_id}}</td>
-                                            <td><a href="{{post.bg_image}}">{{ post.bg_image|truncate(30) }}</a></td>
-                                            <td><a href="{{post.signature}}">{{ post.signature|truncate(30) }}</a></td>
-                                            <td>{{ post.date|truncate(19,true,"") }}</td>
-                                            <td><a style="cursor: pointer;" class="btn btn-success btn-circle editGrpBtn" data-post-id="{{post.id}}" onclick="editGrp('{{post.id}}')"><i class="fas fa-edit"></i></a></td>
-                                            <td><a href="/delete/group/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
-                                        </tr>
-
-{#                                    end loop#}
-{% endfor %}
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <!-- /.container-fluid -->
-                {% with errors = get_flashed_messages(category_filter=["danger"]) %}
-                    {% if errors %}
-                    {% for error in errors %}
-                    <script>
-                        new Notify ({
-                        title: 'Error',
-                        text: `{{error|safe}}`,
-                        status: 'error'
-                        })
-                    </script>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
-                    {% if messages %}
-                    {% for message in messages %}
-                    <script>
-                        new Notify ({
-                            title: 'Success',
-                            text: `{{message|safe}}`,
-                            status: 'success'
-                            })
-                        </script>                      
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-            {% endblock %}
+            {# end loop#} {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+{% with errors = get_flashed_messages(category_filter=["danger"]) %} {% if
+errors %} {% for error in errors %}
+<script>
+  new Notify({
+    title: "Error",
+    text: `{{error|safe}}`,
+    status: "error",
+  });
+</script>
+{% endfor %} {% endif %} {% endwith %} {% with messages =
+get_flashed_messages(category_filter=["success"]) %} {% if messages %} {% for
+message in messages %}
+<script>
+  new Notify({
+    title: "Success",
+    text: `{{message|safe}}`,
+    status: "success",
+  });
+</script>
+{% endfor %} {% endif %} {% endwith %} {% endblock %}

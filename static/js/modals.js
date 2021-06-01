@@ -4,11 +4,13 @@ $("#add_group").click(function (e) {
     title: "Enter Group Details",
     html: `<form action="" method="POST" id="addGrpForm" enctype="multipart/form-data">
           <input type="text" id="name" name="name" class="swal2-input" placeholder="Name">
-          <select id="category" name="category" class="swal2-input">
-            <option value="saab" disabled selected>Choose a category</option>
-          </select>
-          <input type="file" name="signature" class="swal2-file" id="signature" accept="image/png">
           <input type="file" name="bg_image" class="swal2-file" id="bg_image" accept="image/png">
+          <input type="number" id="certx" name="certx" class="swal2-input" placeholder="Name (x-axis)">
+          <input type="number" id="certy" name="certy" class="swal2-input" placeholder="Name (y-axis)">
+          <input type="number" id="qrx" name="qrx" class="swal2-input" placeholder="QR Code (x-axis)">
+          <input type="number" id="qry" name="qry" class="swal2-input" placeholder="QR Code (y-axis)">
+          <input type="number" id="certnox" name="certnox" class="swal2-input" placeholder="Certificate No (x-axis)">
+          <input type="number" id="certnoy" name="certnoy" class="swal2-input" placeholder="Certificate No (y-axis)">
           </form>
         `,
     footer: `Note : Use PNG images only`,
@@ -18,47 +20,44 @@ $("#add_group").click(function (e) {
       confirmButton: "btn btn-primary btn-lg",
     },
     showLoaderOnConfirm: true,
-    willOpen: () => {
-      fetch(`/get-all-categories`, {
-        method: "GET",
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          $.each(data.category, function (key, name) {
-            //Use the Option() constructor to create a new HTMLOptionElement.
-            var option = new Option(name, name);
-            //Convert the HTMLOptionElement into a JQuery object that can be used with the append method.
-            $(option).html(name);
-            //Append the option to our Select element.
-            $("#category").append(option);
-          });
-        });
-    },
     preConfirm: () => {
       const name = Swal.getPopup().querySelector("#name").value;
-      const category = Swal.getPopup().querySelector("#category").value;
-      const signature = Swal.getPopup().querySelector("#signature").value;
       const bg_image = Swal.getPopup().querySelector("#bg_image").value;
-      $("#signature").change(function () {
-        var reader = new FileReader();
-        reader.readAsDataURL(this.files[0]);
-      });
+      const certx = Swal.getPopup().querySelector("#certx").value;
+      const certy = Swal.getPopup().querySelector("#certy").value;
+      const qrx = Swal.getPopup().querySelector("#qrx").value;
+      const qry = Swal.getPopup().querySelector("#qry").value;
+      const certnox = Swal.getPopup().querySelector("#certnox").value;
+      const certnoy = Swal.getPopup().querySelector("#certnoy").value;
       $("#bg_image").change(function () {
         var reader = new FileReader();
         reader.readAsDataURL(this.files[0]);
       });
       if (!name) {
         Swal.showValidationMessage(`Name is missing`);
-      } else if (!category) {
-        Swal.showValidationMessage(`Category is missing`);
-      } else if (!signature) {
-        Swal.showValidationMessage(`Signature is missing.`);
       } else if (!bg_image) {
         Swal.showValidationMessage(`Background Image is missing`);
+      } else if (!certx) {
+        Swal.showValidationMessage(`Name (x-axis) is missing`);
+      } else if (!certy) {
+        Swal.showValidationMessage(`Name (y-axis) is missing`);
+      } else if (!qrx) {
+        Swal.showValidationMessage(`QR Code (x-axis) is missing`);
+      } else if (!qry) {
+        Swal.showValidationMessage(`QR Code (y-axis) is missing`);
+      } else if (!certnox) {
+        Swal.showValidationMessage(`Certificate No (x-axis) is missing`);
+      } else if (!certnoy) {
+        Swal.showValidationMessage(`Certificate No (y-axis) is missing`);
       }
       return {
         name: name,
-        category: category,
+        certx: certx,
+        certy: certy,
+        qrx: qrx,
+        qry: qry,
+        certnox: certnox,
+        certnoy: certnoy,
       };
     },
     willClose: () => {
@@ -68,12 +67,15 @@ $("#add_group").click(function (e) {
   }).then((result) => {
     if (result.value) {
       var formData = new FormData();
-      var signature = $("#signature")[0].files[0];
       var bg_image = $("#bg_image")[0].files[0];
-      formData.append("signature", signature);
       formData.append("bg_image", bg_image);
+      formData.append("certx", result.value.certx);
+      formData.append("certy", result.value.certy);
+      formData.append("qrx", result.value.qrx);
+      formData.append("qry", result.value.qry);
+      formData.append("certnox", result.value.certnox);
+      formData.append("certnoy", result.value.certnoy);
       formData.append("name", result.value.name);
-      formData.append("category", result.value.category);
       $.ajax({
         method: "post",
         url: `/edit/group/0`,
@@ -111,11 +113,13 @@ function editGrp(postId) {
         title: "Update Group Details",
         html: `<form action="" method="POST" id="editGrpForm">
           <input type="text" id="name" name="name" class="swal2-input" value="${data.post.name}" placeholder="Name">
-          <select id="category" name="category" class="swal2-input">
-            <option value="${data.post.category}" disabled selected>${data.post.category}</option>
-          </select>
-          <input type="file" name="signature" class="swal2-file" id="signature" accept="image/*">
-          <input type="file" name="bg_image" class="swal2-file" id="bg_image" accept="image/*">
+          <input type="file" name="bg_image" class="swal2-file" id="bg_image" accept="image/png">
+          <input type="number" value="${data.post.certx}" id="certx" name="certx" class="swal2-input" placeholder="Name (x-axis)">
+          <input type="number" value="${data.post.certy}" id="certy" name="certy" class="swal2-input" placeholder="Name (y-axis)">
+          <input type="number" value="${data.post.qrx}" id="qrx" name="qrx" class="swal2-input" placeholder="QR Code (x-axis)">
+          <input type="number" value="${data.post.qry}" id="qry" name="qry" class="swal2-input" placeholder="QR Code (y-axis)">
+          <input type="number" value="${data.post.certnox}" id="certnox" name="certnox" class="swal2-input" placeholder="Certificate No (x-axis)">
+          <input type="number" value="${data.post.certnoy}" id="certnoy" name="certnoy" class="swal2-input" placeholder="Certificate No (y-axis)">
         </form>
         `,
         confirmButtonText: "Update",
@@ -124,38 +128,44 @@ function editGrp(postId) {
           confirmButton: "btn btn-primary btn-lg",
         },
         showLoaderOnConfirm: true,
-        willOpen: () => {
-          fetch(`/get-all-categories`, {
-            method: "GET",
-          })
-            .then((res) => res.json())
-            .then((cat) => {
-              $.each(cat.category, function (key, name) {
-                var option = new Option(name, name);
-                $(option).html(name);
-                $("#category").append(option);
-              });
-            });
-        },
         preConfirm: () => {
           const name = Swal.getPopup().querySelector("#name").value;
-          const category = Swal.getPopup().querySelector("#category").value;
-          $("#signature").change(function () {
-            var reader = new FileReader();
-            reader.readAsDataURL(this.files[0]);
-          });
+          const bg_image = Swal.getPopup().querySelector("#bg_image").value;
+          const certx = Swal.getPopup().querySelector("#certx").value;
+          const certy = Swal.getPopup().querySelector("#certy").value;
+          const qrx = Swal.getPopup().querySelector("#qrx").value;
+          const qry = Swal.getPopup().querySelector("#qry").value;
+          const certnox = Swal.getPopup().querySelector("#certnox").value;
+          const certnoy = Swal.getPopup().querySelector("#certnoy").value;
           $("#bg_image").change(function () {
             var reader = new FileReader();
             reader.readAsDataURL(this.files[0]);
           });
           if (!name) {
             Swal.showValidationMessage(`Name is missing`);
-          } else if (!category) {
-            Swal.showValidationMessage(`Category is missing`);
+          } else if (!bg_image) {
+            Swal.showValidationMessage(`Background Image is missing`);
+          } else if (!certx) {
+            Swal.showValidationMessage(`Name (x-axis) is missing`);
+          } else if (!certy) {
+            Swal.showValidationMessage(`Name (y-axis) is missing`);
+          } else if (!qrx) {
+            Swal.showValidationMessage(`QR Code (x-axis) is missing`);
+          } else if (!qry) {
+            Swal.showValidationMessage(`QR Code (y-axis) is missing`);
+          } else if (!certnox) {
+            Swal.showValidationMessage(`Certificate No (x-axis) is missing`);
+          } else if (!certnoy) {
+            Swal.showValidationMessage(`Certificate No (y-axis) is missing`);
           }
           return {
             name: name,
-            category: category,
+            certx: certx,
+            certy: certy,
+            qrx: qrx,
+            qry: qry,
+            certnox: certnox,
+            certnoy: certnoy,
           };
         },
         willClose: () => {
@@ -165,12 +175,15 @@ function editGrp(postId) {
       }).then((result) => {
         if (result.value) {
           var formData = new FormData();
-          var signature = $("#signature")[0].files[0];
           var bg_image = $("#bg_image")[0].files[0];
-          formData.append("signature", signature);
           formData.append("bg_image", bg_image);
           formData.append("name", result.value.name);
-          formData.append("category", result.value.category);
+          formData.append("certx", result.value.certx);
+          formData.append("certy", result.value.certy);
+          formData.append("qrx", result.value.qrx);
+          formData.append("qry", result.value.qry);
+          formData.append("certnox", result.value.certnox);
+          formData.append("certnoy", result.value.certnoy);
           $.ajax({
             method: "post",
             url: `/edit/group/${postId}`,
@@ -225,8 +238,6 @@ function addCertificate(grp_id) {
         Swal.showValidationMessage(`Email address is missing.`);
       } else if (String(email).search(pattern) == -1) {
         Swal.showValidationMessage(`Enter a valid email address`);
-      } else if (!course) {
-        Swal.showValidationMessage(`Course is missing`);
       }
       return {
         email: email,

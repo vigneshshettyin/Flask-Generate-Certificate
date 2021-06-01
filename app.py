@@ -28,6 +28,9 @@ from decouple import config
 import boto3
 import io
 import csv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 from flask_migrate import Migrate
 
 
@@ -79,6 +82,18 @@ RAZORPAY_KEY_SECRET = config("razorpay_key_secret")
 s3_client = boto3.client('s3', aws_access_key_id=config(
     "S3_KEY"), aws_secret_access_key=config("S3_SECRET_ACCESS_KEY"))
 
+cloudinary.config(
+    cloud_name="***",
+    api_key="***",
+    api_secret="***"
+)
+
+
+def upload(file, **options):
+    res = cloudinary.uploader.upload(file)
+    return res['secure_url']
+
+
 # Google Login Credentials
 # FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
 # FB_TOKEN_URL = config('facebook_token_url')
@@ -129,8 +144,12 @@ class Group(db.Model):
     name = db.Column(db.String(50), nullable=False)
     date = db.Column(db.String(50), nullable=False)
     bg_image = db.Column(db.String(500), nullable=True)
-    signature = db.Column(db.String(500), nullable=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    certx = db.Column(db.Integer, nullable=False)
+    certy = db.Column(db.Integer, nullable=False)
+    qrx = db.Column(db.Integer, nullable=False)
+    qry = db.Column(db.Integer, nullable=False)
+    certnox = db.Column(db.Integer, nullable=False)
+    certnoy = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     certificates = db.relationship(
         'Certificate', cascade="all,delete", backref='certificates')
@@ -146,15 +165,6 @@ class Certificate(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     qrcode = db.relationship('QRCode', cascade="all,delete", backref='qrcode')
-
-
-class Category(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=True)
-    groups = db.relationship('Group', cascade='all,delete', backref='groups')
-    last_update = db.Column(db.String(50), nullable=False, default=x)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 class QRCode(db.Model):
@@ -514,6 +524,45 @@ def certificate_verify():
     return render_template('Redesign-verify2.html', favTitle=favTitle, ip=ip_address, user=current_user)
 
 
+# @app.route("/certificate/generate", methods=['GET', 'POST'])
+# def certificate_generate():
+#     if (host == True):
+#         try:
+#             ip_address = request.environ['HTTP_X_FORWARDED_FOR']
+#         except KeyError:
+#             ip_address = request.remote_addr
+#         except Exception:
+#             ip_address = ipc
+#     else:
+#         ip_address = ipc
+#     if (request.method == 'POST'):
+#         certificateno = request.form.get('certificateno')
+#         postc = Certificate.query.filter_by(number=certificateno).first()
+#         if (postc != None):
+#             posto = Group.query.filter_by(id=postc.group_id).first()
+#             qr_code = QRCode.query.filter_by(
+#                 certificate_num=certificateno).first()
+#             img_url = qr_code.qr_code
+#             rendered_temp = render_template('certificate.html', postc=postc, posto=posto,
+#                                             qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno, pdf=True)
+#             if not app.debug:
+#                 configr = pdfkit.configuration(
+#                     wkhtmltopdf='/app/bin/wkhtmltopdf')
+#                 file = pdfkit.from_string(
+#                     rendered_temp, False, css='static/css/certificate.css', configuration=configr)
+#                 upload_doc(file, number=certificateno, localhost=False)
+#                 download_url = f"https://cgv.s3.us-east-2.amazonaws.com/certificates/{certificateno}.pdf"
+#             else:
+#                 try:
+#                     pdfkit.from_string(
+#                         rendered_temp, f"{certificateno}.pdf", css='static/css/certificate.css')
+#                 except OSError:
+#                     download_url = f"http://127.0.0.1:5000/download/{certificateno}.pdf"
+#             return render_template('certificate.html', postc=postc, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
+#         elif (postc == None):
+#             flash("No details found. Contact your organization!", "danger")
+#     return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address, user=current_user)
+
 @app.route("/certificate/generate", methods=['GET', 'POST'])
 def certificate_generate():
     if (host == True):
@@ -530,30 +579,41 @@ def certificate_generate():
         postc = Certificate.query.filter_by(number=certificateno).first()
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
-            postcat = Category.query.filter_by(id=posto.id).first()
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_url = qr_code.qr_code
-            rendered_temp = render_template('certificate.html', postc=postc, posto=posto, postcat=postcat,
-                                            qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno, pdf=True)
-            if not app.debug:
-                configr = pdfkit.configuration(
-                    wkhtmltopdf='/app/bin/wkhtmltopdf')
-                file = pdfkit.from_string(
-                    rendered_temp, False, css='static/css/certificate.css', configuration=configr)
-                upload_doc(file, number=certificateno, localhost=False)
-                download_url = f"https://cgv.s3.us-east-2.amazonaws.com/certificates/{certificateno}.pdf"
-            else:
-                try:
-                    pdfkit.from_string(
-                        rendered_temp, f"{certificateno}.pdf", css='static/css/certificate.css')
-                except OSError:
-                    download_url = f"http://127.0.0.1:5000/download/{certificateno}.pdf"
-            return render_template('certificate.html', postc=postc, postcat=postcat, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, ip=ip_address, download_url=download_url)
+            return render_template('certificate.html', postc=postc, posto=posto,
+                                   qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address, user=current_user)
 
+
+# @app.route("/certify/<string:number>", methods=['GET'])
+# def certificate_generate_string(number):
+#     postc = Certificate.query.filter_by(number=number).first()
+#     if (postc != None):
+#         style = "display: none;"
+#         posto = Group.query.filter_by(id=postc.group_id).first()
+#         qr_code = QRCode.query.filter_by(certificate_num=number).first()
+#         img_url = qr_code.qr_code
+#         rendered_temp = render_template('certificate.html', postc=postc, posto=posto,
+#                                         qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
+#         if not app.debug:
+#             configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
+#             file = pdfkit.from_string(
+#                 rendered_temp, False, css='static/css/certificate.css', configuration=configr)
+#             upload_doc(file, number=number, localhost=False)
+#             download_url = f"https://cgv.s3.us-east-2.amazonaws.com/certificates/{number}.pdf"
+#         else:
+#             try:
+#                 pdfkit.from_string(
+#                     rendered_temp, f"{number}.pdf", css='static/css/certificate.css')
+#             except OSError:
+#                 download_url = f"http://127.0.0.1:5000/download/{number}.pdf"
+#         return render_template('certificate.html', postc=postc, posto=posto, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=download_url, pdf=False)
+#     else:
+#         return redirect('/')
 
 @app.route("/certify/<string:number>", methods=['GET'])
 def certificate_generate_string(number):
@@ -561,24 +621,10 @@ def certificate_generate_string(number):
     if (postc != None):
         style = "display: none;"
         posto = Group.query.filter_by(id=postc.group_id).first()
-        postcat = Category.query.filter_by(id=posto.id).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_url = qr_code.qr_code
-        rendered_temp = render_template('certificate.html', postc=postc, postcat=postcat, posto=posto,
-                                        qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style, pdf=True)
-        if not app.debug:
-            configr = pdfkit.configuration(wkhtmltopdf='/app/bin/wkhtmltopdf')
-            file = pdfkit.from_string(
-                rendered_temp, False, css='static/css/certificate.css', configuration=configr)
-            upload_doc(file, number=number, localhost=False)
-            download_url = f"https://cgv.s3.us-east-2.amazonaws.com/certificates/{number}.pdf"
-        else:
-            try:
-                pdfkit.from_string(
-                    rendered_temp, f"{number}.pdf", css='static/css/certificate.css')
-            except OSError:
-                download_url = f"http://127.0.0.1:5000/download/{number}.pdf"
-        return render_template('certificate.html', postc=postc, posto=posto, postcat=postcat, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, download_url=download_url, pdf=False)
+        return render_template('certificate.html', postc=postc, posto=posto,
+                               qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style)
     else:
         return redirect('/')
 
@@ -861,16 +907,6 @@ def view_org_page():
     return render_template('org_table.html', post=post, favTitle=favTitle, user=current_user)
 
 
-@app.route("/view/categories", methods=['GET', 'POST'])
-@login_required
-def view_category_page():
-    if current_user.is_staff:
-        category = Category.query.order_by(Category.id).all()
-    else:
-        category = Category.query.filter_by(user_id=current_user.id).all()
-    return render_template('category_table.html', post=category, favTitle=favTitle, user=current_user)
-
-
 @app.route("/view/users", methods=['GET', 'POST'])
 @login_required
 @admin_required
@@ -965,9 +1001,10 @@ def edit_certificates_page(grp_id, id):
                     buffer.seek(0)
                     try:
                         if not app.debug:
-                            upload_image(buffer, number=number,
-                                         folder="qr_codes")
-                            img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+                            # upload_image(buffer, number=number,
+                            #              folder="qr_codes")
+                            # img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+                            img_url = upload(buffer)
                         else:
                             try:
                                 os.mkdir("static/qr_codes")
@@ -1144,14 +1181,6 @@ def change_permissions(perm, id):
     return redirect(url_for('view_users_page'))
 
 
-@app.route('/get-all-categories', methods=['GET'])
-@login_required
-def get_all_categories():
-    categories = Category.query.filter_by(user_id=current_user.id).all()
-    data = {'category': [category.name for category in categories]}
-    return jsonify(data)
-
-
 @app.route('/get-all-groups', methods=['GET'])
 @login_required
 def get_all_groups():
@@ -1160,96 +1189,43 @@ def get_all_groups():
     return jsonify(data)
 
 
-@app.route("/edit/category/<string:id>", methods=['GET', 'POST'])
-@login_required
-def edit_category_page(id):
-    if request.method == 'POST':
-        data = json_lib.loads(request.data)
-        name = data["name"]
-        content = data["content"]
-        if id == '0':
-            if Category.query.filter_by(name=name, content=content).first():
-                return jsonify(category_duplicate=True)
-            try:
-                post = Category(name=name, content=content,
-                                last_update=time, user_id=current_user.id)
-                db.session.add(post)
-                db.session.commit()
-                return jsonify(category_success=True)
-            except Exception:
-                return jsonify(category_error=True)
-
-        else:
-            try:
-                post = Category.query.filter_by(id=id).first()
-                post.name = name
-                post.content = content
-                post.last_update = time
-                post.user_id = current_user.id
-                db.session.commit()
-                return jsonify(category_success=True)
-            except Exception:
-                return jsonify(category_error=True)
-    cat = Category.query.filter_by(id=id).first()
-    post = {
-        "id": cat.id,
-        "name": cat.name,
-        "content": cat.content,
-    }
-    return jsonify(favTitle=favTitle, id=id, post=post)
-
-
-@app.route("/delete/category/<string:id>", methods=['GET', 'POST'])
-@login_required
-def delete_cat_page(id):
-    try:
-        delete_cat_page = Category.query.filter_by(id=id).first()
-        db.session.delete(delete_cat_page)
-        db.session.commit()
-        flash("Category deleted successfully!", "success")
-    except Exception:
-        flash("Something went wrong!", "error")
-    return redirect('/view/categories')
-
-
 @app.route("/edit/group/<string:id>", methods=['GET', 'POST'])
 @login_required
 def edit_org_page(id):
     if request.method == 'POST':
+
         name = request.form.get("name")
-        category_name = request.form.get("category")
-        signature = request.files.get("signature")
+        certx = request.form.get("certx")
+        certy = request.form.get("certy")
+        print(certx, certy)
+        qrx = request.form.get("qrx")
+        qry = request.form.get("qry")
+        certnox = request.form.get("certnox")
+        certnoy = request.form.get("certnoy")
+
         bg_image = request.files.get("bg_image")
         date = x
         if id == '0':
             if Group.query.filter_by(name=name, user_id=current_user.id).first():
                 return jsonify(group_duplicate=True)
             try:
-                category = Category.query.filter_by(name=category_name).first()
-                category_id = category.id
-                post = Group(name=name, date=date,
-                             category_id=category_id, user_id=current_user.id)
+                post = Group(name=name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
+                             certnox=certnox, certnoy=certnoy, date=date, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
                 if not app.debug:
-                    upload_image(signature, folder="signatures", name=name)
-                    upload_image(bg_image, folder="backgrounds", name=name)
-                    sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
-                    bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                    # upload_image(bg_image, folder="backgrounds", name=name)
+                    # bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}.png"
+                    bg_url = upload(bg_image)
                 else:
                     try:
                         os.mkdir("static/backgrounds")
-                        os.mkdir("static/signature")
                     except Exception:
                         pass
-                    signature.save(f"static/signature/{img_name}.png")
                     bg_image.save(f"static/backgrounds/{img_name}.png")
-                    sign_url = f"http://127.0.0.1:5000/static/signature/{img_name}.png"
                     bg_url = f"http://127.0.0.1:5000/static/backgrounds/{img_name}.png"
-                post.bg_image, post.signature = bg_url, sign_url
+                post.bg_image = bg_url
                 db.session.add(post)
                 db.session.commit()
-                category.group_id = post.id
-                db.session.add(category)
                 db.session.commit()
                 return jsonify(result=True, status=200)
             except Exception:
@@ -1258,38 +1234,38 @@ def edit_org_page(id):
             try:
                 post = Group.query.filter_by(id=id).first()
                 post.name = name
-                category = Category.query.filter_by(name=category_name).first()
-                category_id = category.id
-                post.category_id = category_id
                 img_name = name.replace(" ", "+")
-                if signature:
-                    if not app.debug:
-                        upload_image(signature, folder="signatures", name=name)
-                        sign_url = f"https://cgv.s3.us-east-2.amazonaws.com/signatures/{img_name}"
-                    else:
-                        signature.save(f"static/signature/{name}")
-                        sign_url = f"http://127.0.0.1:5000/static/signature/{name}"
-                    post.signature = sign_url
                 if bg_image:
                     if not app.debug:
-                        upload_image(bg_image, folder="backgrounds", name=name)
-                        bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}"
+                        # upload_image(bg_image, folder="backgrounds", name=name)
+                        # bg_url = f"https://cgv.s3.us-east-2.amazonaws.com/backgrounds/{img_name}.png"
+                        bg_url = upload(bg_image)
                     else:
                         bg_image.save(f"static/backgrounds/{name}")
                         bg_url = f"http://127.0.0.1:5000/static/backgrounds/{name}"
-                    post.bg_image = bg_url
+                post.bg_image = bg_url
                 post.date = date
+                post.certx = certx
+                post.certy = certy
+                post.qrx = qrx
+                post.qry = qry
+                post.certnox = certnox
+                post.certnoy = certnoy
                 post.user_id = current_user.id
                 db.session.commit()
                 return jsonify(result=True, status=200)
             except Exception:
                 return jsonify(result=False, status=500)
     grp = Group.query.filter_by(id=id).first()
-    category = Category.query.filter_by(id=grp.category_id).first()
     post = {
         "id": grp.id,
         "name": grp.name,
-        "category": category.name
+        "certx": grp.certx,
+        "certy": grp.certy,
+        "qrx": grp.qrx,
+        "qry": grp.qry,
+        "certnox": grp.certnox,
+        "certnoy": grp.certnoy,
     }
     return jsonify(favTitle=favTitle, id=id, post=post)
 
@@ -1681,7 +1657,7 @@ def create_random_api():
 @login_required
 def generate_api_key(grp_id):
     if APIKey.query.filter_by(group_id=grp_id).first():
-        
+
         return jsonify(key_error="You've already generated an API Key for this organization.")
     try:
         group_name = Group.query.filter_by(id=grp_id).first().name
@@ -1689,7 +1665,7 @@ def generate_api_key(grp_id):
                          group_id=grp_id, group_name=group_name, usage_limit=0, date_generated=x)
         db.session.add(new_api)
         db.session.commit()
-        return jsonify(key_success='API Key has been generated successfully. An admin should approve it within 8 hours.')
+        return jsonify(key_success='API Key has been generated successfully. within 8 hours.')
     except Exception as e:
         print(e)
         return jsonify(key_error='Something went wrong while generating API Key for you.')
@@ -1702,16 +1678,15 @@ def generate_pub_api_key():
         flash("You've already generated a Public API Key for this account.", 'danger')
     try:
         new_api = PublicAPIKey(key=create_random_api(),
-                         email=current_user.email, date_generated=x)
+                               email=current_user.email, date_generated=x)
         db.session.add(new_api)
         db.session.commit()
         flash('Public API Key has been generated successfully. An admin should approve it within 8 hours.', 'success')
-        
+
     except Exception as e:
         print(e)
         flash('Something went wrong while generating API Key for you.', 'danger')
     return redirect(url_for('view_all_public_api_keys'))
-
 
 
 @app.route('/api-key/private/approve/<int:grp_id>', methods=['GET', 'POST'])
@@ -1833,7 +1808,7 @@ def get_all_certificates():
                 grp_data.append(data)
             response_data.append({grp.name: grp_data})
         return jsonify(response_data), 200
-    
+
     # Invalid API Key
     data = {
         'status': 403,

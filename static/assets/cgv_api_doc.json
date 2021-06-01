@@ -1,10 +1,10 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "CGV Certificate API",
-    "description": "CGV API to fetch certificates data in a group",
+    "title": "CGV API V1",
+    "description": "",
     "contact": {
-      "email": "vigneshshetty.in@gmail.com"
+      "email": "dev-testing@vigneshcodes.in"
     },
     "license": {
       "name": "Mozilla Public License 2.0",

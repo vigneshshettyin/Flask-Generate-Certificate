@@ -4,14 +4,15 @@ autopep8==1.5.7
 blinker==1.4
 boto3==1.17.78
 botocore==1.20.78
-certifi==2021.5.30
+certifi==2020.12.5
 chardet==4.0.0
 click==8.0.1
+cloudinary==1.25.0
 colorama==0.4.4
 Flask==2.0.1
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
-Flask-Migrate==3.0.1
+Flask-Migrate==3.0.0
 Flask-RESTful==0.3.9
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.0
@@ -32,6 +33,7 @@ psycopg2==2.8.6
 pycodestyle==2.7.0
 python-dateutil==2.8.1
 python-decouple==3.4
+python-dotenv==0.17.1
 python-editor==1.0.4
 python-http-client==3.3.2
 pytz==2021.1

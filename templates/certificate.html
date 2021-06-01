@@ -1,71 +1,318 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>{{postc.name}} CERTIFICATE FROM {{posto.name}}</title>
+    <style>
+      body {
+        font-size: 100%;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background: linear-gradient(
+          263.96deg,
+          #d8a343 18.74%,
+          #f3d16f 41.66%,
+          #d39d3d 61.42%,
+          #f5d170 81.6%,
+          #c6892f 99.47%
+        );
+      }
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/certificate.css')}}">
+      .wrapper {
+        display: table;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+      }
 
-    <title>Certificate: {{ postc.number}}</title>
+      .container {
+        display: table-cell;
+        vertical-align: middle;
+      }
+
+      .canvas-container {
+        position: relative;
+        max-width: 1024px;
+        min-width: 320px;
+        margin: 0 auto;
+      }
+      #canvas {
+        width: 100%;
+        height: auto;
+        background-color: linear-gradient(
+          263.96deg,
+          #d8a343 18.74%,
+          #f3d16f 41.66%,
+          #d39d3d 61.42%,
+          #f5d170 81.6%,
+          #c6892f 99.47%
+        );
+        z-index: 0;
+        box-shadow: 0 0 15px 1px rgba(0, 0, 0, 1);
+      }
+    </style>
   </head>
-  <body>
-    <div class="container" style="background-image: url({{posto.bg_image}});">
-        <div class="bgimage">
-            <div class="Leftcorner">
-                <img src="https://i.imgur.com/b6K4QTl.png" alt="">
-            </div>      
-            <div class="rightcorner">
-                <img src="https://i.imgur.com/nvngFDs.png" alt="">
-            </div>  
-        </div>
-        <div class="content">
-            <h1>CERTIFICATE OF {{postcat.name}}</h1>
-            <div class="underline">
-                <p>{{ postc.name }}</p>
-            </div>
-            <p style="font-family: 'Montserrat';font-style: italic;font-weight: bold;text-align: center;color:#252F5F;">{{postcat.content}}</p>  <!--replace the Thu Mar 09:43:09 2021 with updated time -->
-            <div class="underline">
-                <p>{{ postc.coursename}}</p>
-            </div>
-            <div class="content-footer">
-                <div class="QrCode">
-                    <img src="{{ qr_code }}" alt="">
-                    <br>
-                    <p>ID:{{ postc.number}}</p>
-                </div>
-                <div class="signline">
-                    <img src="{{posto.signature}}" alt="">
-                    <p>{{ posto.name }}<br>{{ postc.last_update|truncate(10,true,"") }}</p>
-                </div>    
-            </div>
-            </div>
-            
-        </div>    
+  <body onload="drawImage()">
+    <div>
+      <br />
     </div>
-    <br><div><center>
-  {% if not pdf %}
-<a href="{{download_url}}"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-download-alt"></span> Download Certificate</button></a><br>
-<br>
-<a href="https://www.addtoany.com/share#url=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;title=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/a2a.svg" width="32" height="32" style="background-color:#4169e1"></a>
-<a href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/twitter.svg" width="32" height="32" style="background-color:#4169e1"></a>
-<a href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/linkedin.svg" width="32" height="32" style="background-color:royalblue"></a>
-<a href="https://www.addtoany.com/add_to/email?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/email.svg" width="32" height="32" style="background-color:royalblue"></a>
-<a href="https://www.addtoany.com/add_to/google_gmail?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/gmail.svg" width="32" height="32" style="background-color:royalblue"></a>
-<a href="https://www.addtoany.com/add_to/telegram?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/telegram.svg" width="32" height="32" style="background-color:royalblue"></a>
-<a href="https://www.addtoany.com/add_to/copy_link?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website" target="_blank"><img src="https://static.addtoany.com/buttons/link.svg" width="32" height="32" style="background-color:royalblue"></a>
-</center></div>
-<!-- AddToAny END -->
-
-  {% endif %}
+    <div class="wrapper">
+      <div class="container">
+        <div class="canvas-container">
+          <form class="form" action="#" style="display: none">
+            <div class="row">
+              <div class="col">
+                <label for="Name">Certificate Link:</label>
+                <input
+                  value="{{posto.bg_image}}"
+                  type="text"
+                  class="form-control"
+                  id="certificatelink"
+                />
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col">
+                <label for="Name">Name:</label>
+                <input
+                  value="{{postc.name}}"
+                  type="text"
+                  style="font-family: 'Poppins'"
+                  class="form-control"
+                  id="name"
+                />
+              </div>
+              <div class="col">
+                <label for="Name-coordinates">X-coordinate for name:</label>
+                <input
+                  value="{{posto.certx}}"
+                  type="text"
+                  class="form-control"
+                  id="x-name"
+                />
+              </div>
+              <div class="col">
+                <label for="Name-coordinates">Y-Coordinate for name:</label>
+                <input
+                  value="{{posto.certy}}"
+                  type="text"
+                  class="form-control"
+                  id="y-name"
+                />
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col">
+                <label for="pwd">Qr Code Link:</label>
+                <input
+                  value="{{qr_code}}"
+                  type="url"
+                  class="form-control"
+                  id="QrCode"
+                />
+              </div>
+              <div class="col">
+                <label for="QrCode-coordinates">X-coordinate for QrCode:</label>
+                <input
+                  value="{{posto.qrx}}"
+                  type="text"
+                  class="form-control"
+                  id="x-qrcode"
+                />
+              </div>
+              <div class="col">
+                <label for="QrCode-coordinates">Y-Coordinate for QrCode:</label>
+                <input
+                  value="{{posto.qry}}"
+                  type="text"
+                  class="form-control"
+                  id="y-qrcode"
+                />
+              </div>
+            </div>
+            <br />
+            <div class="row">
+              <div class="col">
+                <label for="pwd">Certificateid:</label>
+                <input
+                  value="{{postc.number}}"
+                  type="text"
+                  class="form-control"
+                  id="certificateId"
+                />
+              </div>
+              <div class="col">
+                <label for="ID-coordinates">X-coordinate for ID:</label>
+                <input
+                  value="{{posto.certnox}}"
+                  type="text"
+                  class="form-control"
+                  id="x-ID"
+                />
+              </div>
+              <div class="col">
+                <label for="ID-coordinates">Y-Coordinate for ID:</label>
+                <input
+                  value="{{posto.certnoy}}"
+                  type="text"
+                  class="form-control"
+                  id="y-ID"
+                />
+              </div>
+            </div>
+          </form>
+          <br />
+          <canvas id="canvas" height="768px" width="1080px"></canvas>
+          <br />
+          <center>
+            <div style="padding: 10px">
+              <a href="#" id="download-btn" class="btn btn-primary"
+                ><img
+                  style="width: 25px; height: 25px"
+                  src="https://res.cloudinary.com/vigneshshettyin/image/upload/v1622546211/d8awtgi0dxrkf8c7n229.png"
+                  alt="DownloadButton"
+                />
+                Download Certificate</a
+              >
             </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+            <div style="padding: 10px">
+              <a
+                href="https://www.addtoany.com/share#url=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;title={{pos}}"
+                target="_blank"
+                ><img
+                  src="https://static.addtoany.com/buttons/a2a.svg"
+                  width="32"
+                  height="32"
+                  style="background-color: #4169e1"
+              /></a>
+              <a
+                href="https://www.addtoany.com/add_to/twitter?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website"
+                target="_blank"
+                ><img
+                  src="https://static.addtoany.com/buttons/twitter.svg"
+                  width="32"
+                  height="32"
+                  style="background-color: #4169e1"
+              /></a>
+              <a
+                href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website"
+                target="_blank"
+                ><img
+                  src="https://static.addtoany.com/buttons/linkedin.svg"
+                  width="32"
+                  height="32"
+                  style="background-color: royalblue"
+              /></a>
+              <a
+                href="https://www.addtoany.com/add_to/email?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website"
+                target="_blank"
+                ><img
+                  src="https://static.addtoany.com/buttons/email.svg"
+                  width="32"
+                  height="32"
+                  style="background-color: royalblue"
+              /></a>
+              <a
+                href="https://www.addtoany.com/add_to/google_gmail?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website"
+                target="_blank"
+                ><img
+                  src="https://static.addtoany.com/buttons/gmail.svg"
+                  width="32"
+                  height="32"
+                  style="background-color: royalblue"
+              /></a>
+              <a
+                href="https://www.addtoany.com/add_to/telegram?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website"
+                target="_blank"
+                ><img
+                  src="https://static.addtoany.com/buttons/telegram.svg"
+                  width="32"
+                  height="32"
+                  style="background-color: royalblue"
+              /></a>
+              <a
+                href="https://www.addtoany.com/add_to/copy_link?linkurl=https%3A%2F%2F{{ site_url }}/certify/{{ postc.number }}&amp;linkname=CGV%20Website"
+                target="_blank"
+                ><img
+                  src="https://static.addtoany.com/buttons/link.svg"
+                  width="32"
+                  height="32"
+                  style="background-color: royalblue"
+              /></a>
+            </div>
+          </center>
+          <br />
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      const cetificateLinkInput = document.getElementById("certificatelink");
+      const nameInput = document.getElementById("name");
+      const XnameInput = document.getElementById("x-name");
+      const YnameInput = document.getElementById("y-name");
+      const certificateIdInput = document.getElementById("certificateId");
+      const XcertificateIdInput = document.getElementById("x-ID");
+      const YcertificateIdInput = document.getElementById("y-ID");
+      const qrcodelinkInput = document.getElementById("QrCode");
+      const XqrcodelinkInput = document.getElementById("x-qrcode");
+      const YqrcodelinkInput = document.getElementById("y-qrcode");
+      const downloadBtn = document.getElementById("download-btn");
+
+      const image1 = new Image();
+      image1.src = "{{posto.bg_image}}";
+      image1.setAttribute("crossorigin", "anonymous");
+
+      const image2 = new Image();
+      image2.src = "{{qr_code}}";
+      image2.setAttribute("crossorigin", "anonymous");
+
+      function drawImage() {
+        ctx.drawImage(image1, 0, 0, canvas.width, canvas.height);
+        const link2 = qrcodelinkInput.value;
+        image2.src = link2;
+        ctx.drawImage(
+          image2,
+          XqrcodelinkInput.value,
+          YqrcodelinkInput.value,
+          130,
+          130
+        ); //QrcodeLink
+        ctx.font = "normal 50px Poppins";
+        ctx.fillStyle = "#F9920C";
+        ctx.fillText(nameInput.value, XnameInput.value, YnameInput.value);
+        ctx.font = "bolder 15px Calibri";
+        ctx.fillStyle = "#000000";
+        ctx.fillText(
+          "ID:#" + certificateIdInput.value,
+          XcertificateIdInput.value,
+          YcertificateIdInput.value
+        );
+      }
+      downloadBtn.addEventListener("click", function () {
+        downloadBtn.href = canvas.toDataURL("image/png");
+        downloadBtn.download = "Certificate - " + nameInput.value;
+      });
+    </script>
   </body>
 </html>

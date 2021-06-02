@@ -1,4 +1,5 @@
-# 🚀 Certificate Generation and Verification System
+
+<h1 align="center">🚀 Certificate Generation and Verification System</h1> 
 
 ![](https://res.cloudinary.com/vigneshshettyin/image/upload/v1622133162/rnw9cgp9birmmrjhlvf3.png)
 
@@ -33,28 +34,22 @@ If you created something awesome and want to contribute then feel free to open P
 
 # Getting Started 🚀
 
-## How To Use 🔧
+## How To Deploy It Locally 🔧
 
-There are two ways of using the project:
+| 1. [Conventional Way](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/INSTALLATION.md)| 2. [Using Docker](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/DOCKER.md) |
+|:-------------------------:|:-------------------------:|
 
-## 1. [Conventional Way](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/INSTALLATION.md)
-## 2. [Using Docker](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/DOCKER.md)
+## How To Deploy It On Cloud Services 🔧
 
-Apart from that you can also use cloud platforms to deploy the project once you can get it running locally:
+| 1. [Heroku](https://stackabuse.com/deploying-a-flask-application-to-heroku/)| 2. [AWS](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/AWS.md) | 3. [Digital Ocean](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Digital_Ocean.md) | 4. [Azure](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Azure.md) | 5. [G-Cloud](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Google_Cloud.md) |
+|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|:-------------------------:|
 
-## 1. [Deploying on Heroku](https://stackabuse.com/deploying-a-flask-application-to-heroku/).<br>
-## 2. [Deploying on AWS](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/AWS.md).<br>
-## 3. [Deploying on Azure](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Azure.md).<br>
-## 4. [Deploying on Google Cloud](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Google_Cloud.md).<br>
-## 5. [Deploying on Digital Ocean](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/docs/Digital_Ocean.md).<br>
-
-
-## Live Deployment 📦
+<!-- ## Live Deployment 📦
 
 Deploy it live on web!
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/vigneshshettyin/Flask-Generate-Certificate/tree/master)<br>
-<br>
+<br> -->
 
 ## Mockup & Demo 🛠️
 

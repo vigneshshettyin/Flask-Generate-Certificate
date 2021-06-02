@@ -635,7 +635,7 @@ function approveAPI(grpId) {
     },
     allowOutsideClick: () => !Swal.isLoading(),
   }).then((result) => {
-    fetch(`/api-key/approve/${grpId}`, {
+    fetch(`/api-key/private/approve/${grpId}`, {
       method: "POST",
       body: JSON.stringify({
         usage_limit: result.value.usage_limit,

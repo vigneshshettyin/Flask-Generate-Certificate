@@ -5,8 +5,6 @@ from oauthlib.oauth2 import WebApplicationClient
 from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory, make_response
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
-# import requests_oauthlib
-# from requests_oauthlib.compliance_fixes import facebook_compliance_fix
 from passlib.hash import sha256_crypt
 from password_generator import PasswordGenerator
 from flask_mail import Mail, Message
@@ -32,6 +30,9 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from flask_migrate import Migrate
+# Facebook Login
+# import requests_oauthlib
+# from requests_oauthlib.compliance_fixes import facebook_compliance_fix
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -94,11 +95,13 @@ def upload(file, **options):
     return res['secure_url']
 
 
-# Google Login Credentials
+# Facebook Login Credentials
 # FB_AUTHORIZATION_BASE_URL = "https://www.facebook.com/dialog/oauth"
 # FB_TOKEN_URL = config('facebook_token_url')
 # FB_CLIENT_ID = config("facebook_app_id")
 # FB_CLIENT_SECRET = config("facebook_secret")
+
+# Google Login Credentials
 GOOGLE_CLIENT_ID = config("google_client_id")
 GOOGLE_CLIENT_SECRET = config("google_client_secret")
 GOOGLE_DISCOVERY_URL = (
@@ -1086,8 +1089,9 @@ def upload_csv(grp_id):
         buffer.seek(0)
         try:
             if not app.debug:
-                upload_image(buffer, number=number, folder="qr_codes")
-                img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+                # upload_image(buffer, number=number, folder="qr_codes")
+                # img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
+                img_url = upload(buffer)
             else:
                 try:
                     os.mkdir("static/qr_codes")
@@ -1832,8 +1836,9 @@ def profile(id):
         img_name = name.replace(" ", "+")
         if profile_pic:
             if not app.debug:
-                upload_image(profile_pic, folder="profile_pics", name=name)
-                img_url = f"https://cgv.s3.us-east-2.amazonaws.com/profile_pics/{img_name}"
+                # upload_image(profile_pic, folder="profile_pics", name=name)
+                # img_url = f"https://cgv.s3.us-east-2.amazonaws.com/profile_pics/{img_name}"
+                img_url = upload(profile_pic)
             else:
                 try:
                     os.mkdir("static/profile_pics")

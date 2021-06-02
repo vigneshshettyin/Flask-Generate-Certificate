@@ -1,79 +1,84 @@
-{% extends "layout.html" %}
-{% block body %}
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                <a href="/downloadcontact" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Download Response</a>
-                <div style="padding: 5px">
+{% extends "layout.html" %} {% block body %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <a
+    href="/downloadcontact"
+    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+    ><i class="fas fa-download fa-sm text-white-50"></i> Download Response</a
+  >
+  <div style="padding: 5px"></div>
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table
+          class="table table-bordered"
+          id="dataTable"
+          width="100%"
+          cellspacing="0"
+        >
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Phone Number</th>
+              <th>Email</th>
+              <th>Message</th>
+              <th>IP</th>
+              <th>Date</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {# Start loop#} {% for post in post %}
+            <tr>
+              <td>{{ post.id}}</td>
+              <td>{{ post.name}}</td>
+              <td>{{ post.phone }}</td>
+              <td>{{ post.email }}</td>
+              <td>
+                <a
+                  href="/view/messages/{{ post.id }}"
+                  class="btn btn-primary btn-circle"
+                  ><i class="fa fa-eye" aria-hidden="true"></i
+                ></a>
+              </td>
+              <td>{{ post.ip }}</td>
+              <td>{{ post.date }}</td>
+              <td>
+                <a
+                  href="/delete/contact/{{ post.id }}"
+                  class="btn btn-danger btn-circle"
+                  ><i class="fas fa-trash"></i
+                ></a>
+              </td>
+            </tr>
 
-                </div>
-                    <!-- DataTales Example -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Name</th>
-                                            <th>Phone Number</th>
-                                            <th>Email</th>
-                                            <th>Message</th>
-                                            <th>IP</th>
-                                            <th>Date</th>
-                                            <th>Delete</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-{#                                    Start loop#}
-{% for post in post %}
-                                        <tr>
-                                            <td>{{ post.id}}</td>
-                                            <td>{{ post.name}}</td>
-                                            <td>{{ post.phone }}</td>
-                                            <td>{{ post.email }}</td>
-                                            <td><a href="/view/messages/{{ post.id }}" class="btn btn-primary btn-circle"><i class="fa fa-eye" aria-hidden="true"></i></a></td>
-                                            <td>{{ post.ip }}</td>
-                                            <td>{{ post.date }}</td>
-                                            <td><a href="/delete/contact/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
-                                        </tr>
-
-{#                                    end loop#}
-{% endfor %}
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <!-- /.container-fluid -->
-                {% with errors = get_flashed_messages(category_filter=["danger"]) %}
-                    {% if errors %}
-                    {% for error in errors %}
-                    <script>
-                        new Notify ({
-                        title: 'Error',
-                        text: `{{error|safe}}`,
-                        status: 'error'
-                        })
-                    </script>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
-                    {% if messages %}
-                    {% for message in messages %}
-                    <script>
-                        new Notify ({
-                            title: 'Success',
-                            text: `{{message|safe}}`,
-                            status: 'success'
-                            })
-                        </script>                      
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-            {% endblock %}
+            {# end loop#} {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /.container-fluid -->
+{% with errors = get_flashed_messages(category_filter=["danger"]) %} {% if
+errors %} {% for error in errors %}
+<script>
+  new Notify({
+    title: "Error",
+    text: `{{error|safe}}`,
+    status: "error",
+  });
+</script>
+{% endfor %} {% endif %} {% endwith %} {% with messages =
+get_flashed_messages(category_filter=["success"]) %} {% if messages %} {% for
+message in messages %}
+<script>
+  new Notify({
+    title: "Success",
+    text: `{{message|safe}}`,
+    status: "success",
+  });
+</script>
+{% endfor %} {% endif %} {% endwith %} {% endblock %}

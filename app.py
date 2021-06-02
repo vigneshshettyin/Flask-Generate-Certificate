@@ -144,11 +144,18 @@ class Token(db.Model):
     status = db.Column(db.String(50), nullable=False, default='A')
 
 
+class Fonts(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+
+
 class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     date = db.Column(db.String(50), nullable=False)
     bg_image = db.Column(db.String(500), nullable=True)
+    font_size = db.Column(db.Integer, nullable=False)
+    font_name = db.Column(db.String(250), nullable=False)
     certx = db.Column(db.Integer, nullable=False)
     certy = db.Column(db.Integer, nullable=False)
     qrx = db.Column(db.Integer, nullable=False)
@@ -1855,6 +1862,22 @@ def profile(id):
     except Exception as e:
         print(e)
         return jsonify(result=False), 500
+
+
+@app.route('/get-all-fonts', methods=['GET'])
+@login_required
+def get_all_fonts():
+    fonts = Fonts.query.order_by(Fonts.id).all()
+    data = {'font': [fonts.name for fonts in fonts]}
+    return jsonify(data)
+
+
+@app.route("/view/fonts", methods=['GET', 'POST'])
+@login_required
+@admin_required
+def view_fonts_page():
+    post = Fonts.query.order_by(Fonts.id).all()
+    return render_template('font_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user)
 
 
 if __name__ == '__main__':

@@ -27,7 +27,7 @@ $ pip3 install -r requirements.txt
 
 * To initialise a new database
   ```
-  flaskdb init
+  flask db init
   ```
 * To migrate changes in the database
   ```

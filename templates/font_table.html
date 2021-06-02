@@ -1,12 +1,13 @@
 {% extends "layout.html" %} {% block body %}
 <!-- Begin Page Content -->
 <div class="container-fluid">
-  <a
-    href="/downloadfeedback"
-    class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"
-    ><i class="fas fa-download fa-sm text-white-50"></i> Download Response</a
-  >
-  <div style="padding: 5px"></div>
+  <div style="padding-bottom: 5px">
+    <a class="d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+      ><i class="fas fa-font fa-sm text-white-50"></i> Add New Font</a
+    >
+  </div>
+
+  <!-- <div style="padding: 5px"></div> -->
   <!-- DataTales Example -->
   <div class="card shadow mb-4">
     <div class="card-body">
@@ -20,13 +21,7 @@
           <thead>
             <tr>
               <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Rating</th>
-              <th>Feedback</th>
-              <th>IP</th>
-              <th>Date</th>
+              <th>Font Name</th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -35,15 +30,9 @@
             <tr>
               <td>{{ post.id}}</td>
               <td>{{ post.name}}</td>
-              <td>{{ post.email }}</td>
-              <td>{{ post.phone }}</td>
-              <td>{{ post.rating }}</td>
-              <td>{{ post.message }}</td>
-              <td>{{ post.ip }}</td>
-              <td>{{ post.date }}</td>
               <td>
                 <a
-                  href="/delete/feedback/{{ post.id }}"
+                  href="/delete/font/{{ post.id }}"
                   class="btn btn-danger btn-circle"
                   ><i class="fas fa-trash"></i
                 ></a>

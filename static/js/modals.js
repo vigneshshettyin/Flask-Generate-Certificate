@@ -11,6 +11,10 @@ $("#add_group").click(function (e) {
           <input type="number" id="qry" name="qry" class="swal2-input" placeholder="QR Code (y-axis)">
           <input type="number" id="certnox" name="certnox" class="swal2-input" placeholder="Certificate No (x-axis)">
           <input type="number" id="certnoy" name="certnoy" class="swal2-input" placeholder="Certificate No (y-axis)">
+          <select id="category" name="font_name" class="swal2-input">
+          <option value="saab" disabled selected>Select the font</option>
+          </select>
+          <input type="number" id="font_size" name="font_size" class="swal2-input" placeholder="Font Size">
           </form>
         `,
     footer: `Note : Use PNG images only`,
@@ -20,6 +24,22 @@ $("#add_group").click(function (e) {
       confirmButton: "btn btn-primary btn-lg",
     },
     showLoaderOnConfirm: true,
+    willOpen: () => {
+      fetch(`/get-all-fonts`, {
+        method: "GET",
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          $.each(data.font, function (key, name) {
+            //Use the Option() constructor to create a new HTMLOptionElement.
+            var option = new Option(name, name);
+            //Convert the HTMLOptionElement into a JQuery object that can be used with the append method.
+            $(option).html(name);
+            //Append the option to our Select element.
+            $("#category").append(option);
+          });
+        });
+    },
     preConfirm: () => {
       const name = Swal.getPopup().querySelector("#name").value;
       const bg_image = Swal.getPopup().querySelector("#bg_image").value;
@@ -29,6 +49,8 @@ $("#add_group").click(function (e) {
       const qry = Swal.getPopup().querySelector("#qry").value;
       const certnox = Swal.getPopup().querySelector("#certnox").value;
       const certnoy = Swal.getPopup().querySelector("#certnoy").value;
+      const font_size = Swal.getPopup().querySelector("#font_size").value;
+      const category = Swal.getPopup().querySelector("#category").value;
       $("#bg_image").change(function () {
         var reader = new FileReader();
         reader.readAsDataURL(this.files[0]);
@@ -49,6 +71,10 @@ $("#add_group").click(function (e) {
         Swal.showValidationMessage(`Certificate No (x-axis) is missing`);
       } else if (!certnoy) {
         Swal.showValidationMessage(`Certificate No (y-axis) is missing`);
+      } else if (!font_size) {
+        Swal.showValidationMessage(`Font Size is missing`);
+      } else if (!category) {
+        Swal.showValidationMessage(`Font Name is missing`);
       }
       return {
         name: name,

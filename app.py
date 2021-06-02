@@ -27,9 +27,9 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from flask_migrate import Migrate
+import io
 # AWS S3 Bucket
 # import boto3
-# import io
 # Facebook Login
 # import requests_oauthlib
 # from requests_oauthlib.compliance_fixes import facebook_compliance_fix

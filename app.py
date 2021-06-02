@@ -1,4 +1,3 @@
-import pdfkit
 import os
 from flask.globals import current_app
 from oauthlib.oauth2 import WebApplicationClient
@@ -23,16 +22,19 @@ import qrcode
 from flask_login import UserMixin
 from functools import wraps
 from decouple import config
-import boto3
-import io
 import csv
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from flask_migrate import Migrate
+# AWS S3 Bucket
+# import boto3
+# import io
 # Facebook Login
 # import requests_oauthlib
 # from requests_oauthlib.compliance_fixes import facebook_compliance_fix
+# Pdf Conversion
+# import pdfkit
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'

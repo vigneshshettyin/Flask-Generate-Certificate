@@ -79,13 +79,13 @@ RAZORPAY_KEY_ID = config("razorpay_key_id")
 RAZORPAY_KEY_SECRET = config("razorpay_key_secret")
 
 # S3 Client
-s3_client = boto3.client('s3', aws_access_key_id=config(
-    "S3_KEY"), aws_secret_access_key=config("S3_SECRET_ACCESS_KEY"))
+# s3_client = boto3.client('s3', aws_access_key_id=config(
+#     "S3_KEY"), aws_secret_access_key=config("S3_SECRET_ACCESS_KEY"))
 
 cloudinary.config(
-    cloud_name="***",
-    api_key="***",
-    api_secret="***"
+    cloud_name=config("CLOUDINARY_CLOUD_NAME"),
+    api_key=config("CLOUDINARY_API_KEY"),
+    api_secret=config("CLOUDINARY_API_SECRET")
 )
 
 
@@ -266,51 +266,51 @@ def send_email_now(email, subject, from_email, from_email_name, template_name, *
         return False
 
 
-def upload_image(file, bucket="cgv", **kwargs):
-    """
-    Function to upload an image to an S3 bucket
-    """
-    if kwargs["folder"] == "qr_codes":
-        response = s3_client.put_object(
-            Bucket=bucket,
-            Key=f'{kwargs["folder"]}/{kwargs["number"]}.png',
-            Body=file,
-            ContentType='image/png',
-        )
-    else:
-        response = s3_client.put_object(
-            Bucket=bucket,
-            Key=f'{kwargs["folder"]}/{kwargs["name"]}',
-            Body=file,
-            ContentType='image/png',
-        )
+# def upload_image(file, bucket="cgv", **kwargs):
+#     """
+#     Function to upload an image to an S3 bucket
+#     """
+#     if kwargs["folder"] == "qr_codes":
+#         response = s3_client.put_object(
+#             Bucket=bucket,
+#             Key=f'{kwargs["folder"]}/{kwargs["number"]}.png',
+#             Body=file,
+#             ContentType='image/png',
+#         )
+#     else:
+#         response = s3_client.put_object(
+#             Bucket=bucket,
+#             Key=f'{kwargs["folder"]}/{kwargs["name"]}',
+#             Body=file,
+#             ContentType='image/png',
+#         )
 
-    return response
-
-
-def upload_doc(file, bucket="cgv", **kwargs):
-    """
-    Function to upload a raw file to an S3 bucket
-    """
-    if kwargs["localhost"]:
-        with open(file, "rb") as f:
-            response = s3_client.upload_fileobj(
-                f, bucket, f'certificates/{kwargs["number"]}.pdf')
-    else:
-        response = s3_client.put_object(
-            Bucket=bucket,
-            Key=f'certificates/{kwargs["number"]}.pdf',
-            Body=file,
-        )
-
-    return response
+#     return response
 
 
-def delete_from_s3(file, bucket='cgv'):
-    """
-    Function to delete objects from S3 bucket
-    """
-    s3_client.delete_object(Bucket=bucket, Key=file)
+# def upload_doc(file, bucket="cgv", **kwargs):
+#     """
+#     Function to upload a raw file to an S3 bucket
+#     """
+#     if kwargs["localhost"]:
+#         with open(file, "rb") as f:
+#             response = s3_client.upload_fileobj(
+#                 f, bucket, f'certificates/{kwargs["number"]}.pdf')
+#     else:
+#         response = s3_client.put_object(
+#             Bucket=bucket,
+#             Key=f'certificates/{kwargs["number"]}.pdf',
+#             Body=file,
+#         )
+
+#     return response
+
+
+# def delete_from_s3(file, bucket='cgv'):
+#     """
+#     Function to delete objects from S3 bucket
+#     """
+#     s3_client.delete_object(Bucket=bucket, Key=file)
 
 # For Gravatar
 
@@ -1691,6 +1691,7 @@ def generate_pub_api_key():
 
 @app.route('/api-key/private/approve/<int:grp_id>', methods=['GET', 'POST'])
 def approve_private_api_key(grp_id):
+    print("I cam here")
     try:
         api_key = APIKey.query.filter_by(group_id=grp_id).first()
         data = json_lib.loads(request.data)

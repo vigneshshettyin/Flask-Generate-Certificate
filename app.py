@@ -592,10 +592,11 @@ def certificate_generate():
         postc = Certificate.query.filter_by(number=certificateno).first()
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
+            postf = Fonts.query.filter_by(name=posto.font_name).first()
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_url = qr_code.qr_code
-            return render_template('certificate.html', postc=postc, posto=posto,
+            return render_template('certificate.html', postf=postf, postc=postc, posto=posto,
                                    qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
@@ -634,9 +635,10 @@ def certificate_generate_string(number):
     if (postc != None):
         style = "display: none;"
         posto = Group.query.filter_by(id=postc.group_id).first()
+        postf = Fonts.query.filter_by(name=posto.font_name).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_url = qr_code.qr_code
-        return render_template('certificate.html', postc=postc, posto=posto,
+        return render_template('certificate.html', postf=postf, postc=postc, posto=posto,
                                qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style)
     else:
         return redirect('/')
@@ -1283,7 +1285,7 @@ def edit_org_page(id):
         "certnox": grp.certnox,
         "certnoy": grp.certnoy,
         "font_size": grp.font_size,
-        "font_name" : grp.font_name,
+        "font_name": grp.font_name,
     }
     return jsonify(favTitle=favTitle, id=id, post=post)
 

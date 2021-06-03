@@ -40,6 +40,7 @@
           <thead>
             <th>#</th>
             <th>API KEY</th>
+            <th>Group</th>
             <th>Usage Left</th>
             <th>Valid</th>
             <th>Date Generated</th>
@@ -49,6 +50,7 @@
             <tr>
               <td>{{ post.id}}</td>
               <td>{{ post.key}}</td>
+              <td>{{ post.group_name}}</td>
               <td>{{ post.usage_limit}}</td>
               <td
                 class="{{'bg-success' if post.is_valid else 'bg-danger'}} font-weight-bold text-white"

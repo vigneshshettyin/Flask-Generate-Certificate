@@ -28,6 +28,8 @@ import cloudinary.uploader
 import cloudinary.api
 from flask_migrate import Migrate
 import io
+from flask_cors import CORS
+
 # AWS S3 Bucket
 # import boto3
 # Facebook Login
@@ -47,6 +49,8 @@ def check(email):
 # end
 
 app = Flask(__name__)
+CORS(app, resources={r"v1/api/*": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config.from_object(config("app_settings"))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -235,6 +239,7 @@ class Transactions(db.Model):
 class APIKey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
     group_name = db.Column(db.String(50), nullable=True)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
     usage_limit = db.Column(db.Integer, nullable=True)
@@ -1674,7 +1679,7 @@ def generate_api_key(grp_id):
         return jsonify(key_error="You've already generated an API Key for this organization.")
     try:
         group_name = Group.query.filter_by(id=grp_id).first().name
-        new_api = APIKey(key=create_random_api(),
+        new_api = APIKey(key=create_random_api(), user_id=current_user.id,
                          group_id=grp_id, group_name=group_name, usage_limit=0, date_generated=x)
         db.session.add(new_api)
         db.session.commit()
@@ -1704,7 +1709,6 @@ def generate_pub_api_key():
 
 @app.route('/api-key/private/approve/<int:grp_id>', methods=['GET', 'POST'])
 def approve_private_api_key(grp_id):
-    print("I cam here")
     try:
         api_key = APIKey.query.filter_by(group_id=grp_id).first()
         data = json_lib.loads(request.data)
@@ -1737,7 +1741,7 @@ def get_groups_data():
     if not header_api_key:
         data = {
             'status': 401,
-            'message': "You're not authorised to access the resource. Please add API-KEY in request header."
+            'message': "You're not authorized to access the resource. Please add X-API-KEY in request header."
         }
         return jsonify(data), 401
     group_id = request.args.get('group')
@@ -1750,7 +1754,7 @@ def get_groups_data():
         return jsonify(data), 406
     api_key = APIKey.query.filter_by(key=header_api_key).first()
     # Check if api key exists and is valid
-    if api_key and api_key.is_valid:
+    if api_key and api_key.is_valid and api_key.group_id == group_id:
         certificates = Certificate.query.filter_by(group_id=group_id).all()
         # Check if certificate exists with the mentioned group id
         if certificates:
@@ -1759,7 +1763,7 @@ def get_groups_data():
                 data = {
                     'user_name': cert.name,
                     'course_name': cert.coursename,
-                    'group_name': Group.query.filter_by(id=cert.group_id).first().name,
+                    'group_name': api_key.group_name,
                     'cert_number': cert.number,
                     'cert_link': f'https://cgv.in.net/certify/{cert.number}',
                     'date_generated': cert.last_update[:10]
@@ -1799,7 +1803,7 @@ def get_all_certificates():
     if not header_api_key:
         data = {
             'status': 401,
-            'message': "You're not authorised to access the resource. Please add API-KEY in request header."
+            'message': "You're not authorised to access the resource. Please add X-API-KEY in request header."
         }
         return jsonify(data), 401
     api_key = PublicAPIKey.query.filter_by(key=header_api_key).first()
@@ -1830,6 +1834,120 @@ def get_all_certificates():
     }
     return jsonify(data), 403
 
+
+@app.post('/v1/api/certificates')
+def post_new_certificate():
+    # Here we'll have an argument like ?group=1
+    header_api_key = request.headers.get('X-API-KEY')
+    # If api key is not passed in request header
+    if not header_api_key:
+        data = {
+            'status': 401,
+            'message': "You're not authorised to access the resource. Please add X-API-KEY in request header."
+        }
+        return jsonify(data), 401
+    group_id = request.args.get('group')
+    # If group id is not passed in request url
+    if not group_id:
+        data = {
+            'status': '406',
+            'message': "Welcome to CGV API V1. There is no content to send for this request, please add argument like ?group=id in the request url"
+        }
+        return jsonify(data), 406
+    api_key = APIKey.query.filter_by(key=header_api_key).first()
+    if api_key and api_key.is_valid:
+        if api_key.group_id == int(group_id):
+            data = request.json
+            if data:
+                if not data.get("name"):
+                    return jsonify({'status': 400, 'message': "Please enter user's name"}), 400
+                if not data.get("email"):
+                    return jsonify({'status': 400, 'message': "Please enter user's email"}), 400
+                if not data.get("course"):
+                    return jsonify({'status': 400, 'message': 'Please enter course'}), 400
+            else:
+                return jsonify({'status': 400, 'message': 'Empty Body'}), 400
+            name = data["name"]
+            course = data["course"]
+            email = data["email"]
+            postcheck = Certificate.query.filter_by(
+                email=email, coursename=course).first()
+            if not postcheck:
+                letters = string.ascii_letters
+                number = ''.join(random.choice(letters) for _ in range(4))
+                number = 'CGV' + name[0:4].upper() + number
+                try:
+                    new_cert = Certificate(name=name, number=number, email=email, coursename=course,
+                                           user_id=api_key.user_id, group_id=group_id, last_update=x)
+                    db.session.add(new_cert)
+                    db.session.commit()
+                    # Create QR Code for this certificate
+                    link = f'{config("site_url")}/certify/{number}'
+                    new_qr = QRCode(certificate_num=number, link=link)
+                    qr_image = qrcode.QRCode(version=1, box_size=10, border=5)
+                    qr_image.add_data(link)
+                    qr_image.make(fit=True)
+                    img = qr_image.make_image(fill='black', back_color='white')
+                    buffer = io.BytesIO()
+                    img.save(buffer, format="PNG")
+                    buffer.seek(0)
+                    try:
+                        if not app.debug:
+                            img_url = upload(buffer)
+                        else:
+                            try:
+                                os.mkdir("static/qr_codes")
+                            except Exception:
+                                pass
+                            img.save("static/qr_codes/"+f"{number}.png")
+                            img_url = f"http://127.0.0.1:5000/static/qr_codes/{number}.png"
+                        new_qr.qr_code = f"{img_url}"
+                        new_qr.certificate_id = new_cert.id
+                        db.session.add(new_qr)
+                        db.session.commit()
+                    except Exception as e:
+                        print(e)
+                    subject = "Certificate Generated With Certificate Number : " + \
+                        str(number)
+                    send_email_now(email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
+                                   'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
+                    data = {
+                        'status': '200',
+                        'message': "Certificate has been generated successfully.",
+                        'certificate': {
+                            'user_name': new_cert.name,
+                            'course_name': new_cert.coursename,
+                            'group_name': api_key.group_name,
+                            'cert_number': new_cert.number,
+                            'cert_link': f'https://cgv.in.net/certify/{new_cert.number}',
+                            'date_generated': new_cert.last_update[:10]
+                        }
+                    }
+                    return jsonify(data), 200
+                except Exception:
+                    data = {
+                        'status': '500',
+                        'message': "Server encountered some error while generating certificate.",
+                    }
+                    return jsonify(data), 500
+            else:
+                data = {
+                    'status': 409,
+                    'message': "Certificate already exists"
+                }
+                return jsonify(data), 409
+        else:
+            data = {
+                'status': 401,
+                'message': "You're not authorised to add certificate in this group."
+            }
+            return jsonify(data), 409
+    # Invalid API Key
+    data = {
+        'status': 403,
+        'message': "Please add a valid API Key in the request header."
+    }
+    return jsonify(data), 403
 
 # API PART ENDS HERE
 

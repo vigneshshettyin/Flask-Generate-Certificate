@@ -2,7 +2,7 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
   <div style="padding-bottom: 5px">
-    <a class="d-sm-inline-block btn btn-sm btn-primary shadow-sm"
+    <a id="add_font" class="d-sm-inline-block btn btn-sm btn-primary shadow-sm"
       ><i class="fas fa-font fa-sm text-white-50"></i> Add New Font</a
     >
   </div>
@@ -22,6 +22,7 @@
             <tr>
               <th>#</th>
               <th>Font Name</th>
+              <th>Font CDN</th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -30,6 +31,7 @@
             <tr>
               <td>{{ post.id}}</td>
               <td>{{ post.name}}</td>
+              <td>{{ post.font_cdn|truncate(20) }}</td>
               <td>
                 <a
                   href="/delete/font/{{ post.id }}"

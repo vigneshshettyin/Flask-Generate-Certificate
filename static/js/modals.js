@@ -709,3 +709,66 @@ function approvePublicAPI(api_id) {
       }
     });
 }
+
+$("#add_font").click(function (e) {
+  Swal.fire({
+    title: "Enter Font Details",
+    html: `<form action="" method="POST" id="addGrpForm" enctype="multipart/form-data">
+          <input type="text" id="name" name="name" class="swal2-input" placeholder="Name">
+          <input type="text" id="font" name="font" class="swal2-input" placeholder="Font CDN">
+          </form>
+        `,
+    footer: `Note : Get CDN From Google Fonts`,
+    confirmButtonText: "Create",
+    focusConfirm: false,
+    customClass: {
+      confirmButton: "btn btn-primary btn-lg",
+    },
+    showLoaderOnConfirm: true,
+    preConfirm: () => {
+      const name = Swal.getPopup().querySelector("#name").value;
+      const font = Swal.getPopup().querySelector("#font").value;
+      if (!name) {
+        Swal.showValidationMessage(`Font Name is missing`);
+      } else if (!bg_image) {
+        Swal.showValidationMessage(`Font CDN is missing`);
+      }
+      return {
+        name: name,
+        font: font,
+      };
+    },
+    willClose: () => {
+      Swal.showLoading();
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then((result) => {
+    if (result.value) {
+      var formData = new FormData();
+      formData.append("name", result.value.name);
+      formData.append("font", result.value.font);
+      $.ajax({
+        method: "post",
+        url: `/add/fonts`,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (resp) {
+          new Notify({
+            title: "Success",
+            text: `Font has been added successfully!`,
+            status: "success",
+          });
+          window.location.reload();
+        },
+        error: function (resp) {
+          new Notify({
+            title: "Error",
+            text: `Sorry, we encountered an error while creating the new font.`,
+            status: "error",
+          });
+        },
+      });
+    }
+  });
+});

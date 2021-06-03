@@ -147,6 +147,7 @@ class Token(db.Model):
 class Fonts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    font_cdn = db.Column(db.String(500), nullable=True)
 
 
 class Group(db.Model):
@@ -1290,9 +1291,9 @@ def delete_org_page(id):
     try:
         db.session.delete(delete_org_page)
         db.session.commit()
-        delete_from_s3(file=f'signatures/{delete_org_page.name}')
-        delete_from_s3(file=f'backgrounds/{delete_org_page.name}')
-        flash("Organization deleted successfully!", "success")
+        # delete_from_s3(file=f'signatures/{delete_org_page.name}')
+        # delete_from_s3(file=f'backgrounds/{delete_org_page.name}')
+        flash("Group deleted successfully!", "success")
     except Exception:
         flash("Something went wrong!", "error")
     return redirect('/view/groups')
@@ -1878,6 +1879,28 @@ def get_all_fonts():
 def view_fonts_page():
     post = Fonts.query.order_by(Fonts.id).all()
     return render_template('font_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user)
+
+
+@app.route("/add/fonts", methods=['GET', 'POST'])
+@login_required
+def add_font(id):
+    if request.method == 'POST':
+        name = request.form.get("name")
+        font = request.form.get("font")
+        post = Group(name=name,  font=font)
+        db.session.add(post)
+        db.session.commit()
+        return jsonify(result=True, status=200)
+
+
+@app.route("/delete/font/<string:id>", methods=['GET', 'POST'])
+@login_required
+def delete_font_page(id):
+    delete_font_page = Fonts.query.filter_by(id=id).first()
+    db.session.delete(delete_font_page)
+    db.session.commit()
+    flash("Font deleted successfully!", "success")
+    return redirect('/view/fonts')
 
 
 if __name__ == '__main__':

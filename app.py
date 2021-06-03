@@ -1207,23 +1207,23 @@ def get_all_groups():
 @login_required
 def edit_org_page(id):
     if request.method == 'POST':
-
         name = request.form.get("name")
         certx = request.form.get("certx")
         certy = request.form.get("certy")
-        print(certx, certy)
         qrx = request.form.get("qrx")
         qry = request.form.get("qry")
         certnox = request.form.get("certnox")
         certnoy = request.form.get("certnoy")
-
+        font_size = request.form.get("font_size")
+        font_name = request.form.get("font_name")
+        print(font_name, font_size)
         bg_image = request.files.get("bg_image")
         date = x
         if id == '0':
             if Group.query.filter_by(name=name, user_id=current_user.id).first():
                 return jsonify(group_duplicate=True)
             try:
-                post = Group(name=name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
+                post = Group(name=name, font_size=font_size, font_name=font_name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
                              certnox=certnox, certnoy=certnoy, date=date, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
                 if not app.debug:
@@ -1263,6 +1263,8 @@ def edit_org_page(id):
                 post.certy = certy
                 post.qrx = qrx
                 post.qry = qry
+                post.font_name = font_name
+                post.font_size = font_size
                 post.certnox = certnox
                 post.certnoy = certnoy
                 post.user_id = current_user.id
@@ -1280,6 +1282,8 @@ def edit_org_page(id):
         "qry": grp.qry,
         "certnox": grp.certnox,
         "certnoy": grp.certnoy,
+        "font_size": grp.font_size,
+        "font_name" : grp.font_name,
     }
     return jsonify(favTitle=favTitle, id=id, post=post)
 

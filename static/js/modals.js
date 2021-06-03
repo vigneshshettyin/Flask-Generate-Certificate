@@ -84,6 +84,8 @@ $("#add_group").click(function (e) {
         qry: qry,
         certnox: certnox,
         certnoy: certnoy,
+        font_size: font_size,
+        category: category,
       };
     },
     willClose: () => {
@@ -102,6 +104,8 @@ $("#add_group").click(function (e) {
       formData.append("certnox", result.value.certnox);
       formData.append("certnoy", result.value.certnoy);
       formData.append("name", result.value.name);
+      formData.append("font_size", result.value.font_size);
+      formData.append("font_name", result.value.category);
       $.ajax({
         method: "post",
         url: `/edit/group/0`,
@@ -146,6 +150,10 @@ function editGrp(postId) {
           <input type="number" value="${data.post.qry}" id="qry" name="qry" class="swal2-input" placeholder="QR Code (y-axis)">
           <input type="number" value="${data.post.certnox}" id="certnox" name="certnox" class="swal2-input" placeholder="Certificate No (x-axis)">
           <input type="number" value="${data.post.certnoy}" id="certnoy" name="certnoy" class="swal2-input" placeholder="Certificate No (y-axis)">
+          <select id="category" name="font_name" class="swal2-input">
+          <option value="${data.post.font_name}" disabled selected>${data.post.font_name}</option>
+          </select>
+          <input type="number" value="${data.post.font_size}" id="font_size" name="font_size" class="swal2-input" placeholder="Font Size">
         </form>
         `,
         confirmButtonText: "Update",
@@ -154,6 +162,22 @@ function editGrp(postId) {
           confirmButton: "btn btn-primary btn-lg",
         },
         showLoaderOnConfirm: true,
+        willOpen: () => {
+          fetch(`/get-all-fonts`, {
+            method: "GET",
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              $.each(data.font, function (key, name) {
+                //Use the Option() constructor to create a new HTMLOptionElement.
+                var option = new Option(name, name);
+                //Convert the HTMLOptionElement into a JQuery object that can be used with the append method.
+                $(option).html(name);
+                //Append the option to our Select element.
+                $("#category").append(option);
+              });
+            });
+        },
         preConfirm: () => {
           const name = Swal.getPopup().querySelector("#name").value;
           const bg_image = Swal.getPopup().querySelector("#bg_image").value;
@@ -163,6 +187,8 @@ function editGrp(postId) {
           const qry = Swal.getPopup().querySelector("#qry").value;
           const certnox = Swal.getPopup().querySelector("#certnox").value;
           const certnoy = Swal.getPopup().querySelector("#certnoy").value;
+          const font_size = Swal.getPopup().querySelector("#font_size").value;
+          const category = Swal.getPopup().querySelector("#category").value;
           $("#bg_image").change(function () {
             var reader = new FileReader();
             reader.readAsDataURL(this.files[0]);
@@ -183,6 +209,10 @@ function editGrp(postId) {
             Swal.showValidationMessage(`Certificate No (x-axis) is missing`);
           } else if (!certnoy) {
             Swal.showValidationMessage(`Certificate No (y-axis) is missing`);
+          } else if (!font_size) {
+            Swal.showValidationMessage(`Font Size is missing`);
+          } else if (!category) {
+            Swal.showValidationMessage(`Font Name is missing`);
           }
           return {
             name: name,
@@ -192,6 +222,8 @@ function editGrp(postId) {
             qry: qry,
             certnox: certnox,
             certnoy: certnoy,
+            font_size: font_size,
+            category: category,
           };
         },
         willClose: () => {
@@ -210,6 +242,8 @@ function editGrp(postId) {
           formData.append("qry", result.value.qry);
           formData.append("certnox", result.value.certnox);
           formData.append("certnoy", result.value.certnoy);
+          formData.append("font_size", result.value.font_size);
+          formData.append("font_name", result.value.category);
           $.ajax({
             method: "post",
             url: `/edit/group/${postId}`,
@@ -709,3 +743,66 @@ function approvePublicAPI(api_id) {
       }
     });
 }
+
+$("#add_font").click(function (e) {
+  Swal.fire({
+    title: "Enter Font Details",
+    html: `<form action="" method="POST" id="addGrpForm" enctype="multipart/form-data">
+          <input type="text" id="name" name="name" class="swal2-input" placeholder="Name">
+          <input type="text" id="font" name="font" class="swal2-input" placeholder="Font CDN">
+          </form>
+        `,
+    footer: `Note : Get CDN From Google Fonts`,
+    confirmButtonText: "Create",
+    focusConfirm: false,
+    customClass: {
+      confirmButton: "btn btn-primary btn-lg",
+    },
+    showLoaderOnConfirm: true,
+    preConfirm: () => {
+      const name = Swal.getPopup().querySelector("#name").value;
+      const font = Swal.getPopup().querySelector("#font").value;
+      if (!name) {
+        Swal.showValidationMessage(`Font Name is missing`);
+      } else if (!font) {
+        Swal.showValidationMessage(`Font CDN is missing`);
+      }
+      return {
+        name: name,
+        font: font,
+      };
+    },
+    willClose: () => {
+      Swal.showLoading();
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then((result) => {
+    if (result.value) {
+      var formData = new FormData();
+      formData.append("name", result.value.name);
+      formData.append("font", result.value.font);
+      $.ajax({
+        method: "POST",
+        url: `/add/fonts`,
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (resp) {
+          new Notify({
+            title: "Success",
+            text: `Font has been added successfully!`,
+            status: "success",
+          });
+          window.location.reload();
+        },
+        error: function (resp) {
+          new Notify({
+            title: "Error",
+            text: `Sorry, we encountered an error while creating the new font.`,
+            status: "error",
+          });
+        },
+      });
+    }
+  });
+});

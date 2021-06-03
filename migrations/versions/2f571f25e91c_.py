@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5c027f8caf84
+Revision ID: 2f571f25e91c
 Revises: 
-Create Date: 2021-06-02 06:51:28.633177
+Create Date: 2021-06-03 08:46:07.907574
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5c027f8caf84'
+revision = '2f571f25e91c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,6 +37,12 @@ def upgrade():
     sa.Column('message', sa.String(length=500), nullable=False),
     sa.Column('ip', sa.String(length=200), nullable=False),
     sa.Column('date', sa.String(length=50), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('fonts',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=100), nullable=False),
+    sa.Column('font_cdn', sa.String(length=500), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('newsletter',
@@ -94,6 +100,8 @@ def upgrade():
     sa.Column('name', sa.String(length=50), nullable=False),
     sa.Column('date', sa.String(length=50), nullable=False),
     sa.Column('bg_image', sa.String(length=500), nullable=True),
+    sa.Column('font_size', sa.Integer(), nullable=False),
+    sa.Column('font_name', sa.String(length=250), nullable=False),
     sa.Column('certx', sa.Integer(), nullable=False),
     sa.Column('certy', sa.Integer(), nullable=False),
     sa.Column('qrx', sa.Integer(), nullable=False),
@@ -152,6 +160,7 @@ def downgrade():
     op.drop_table('token')
     op.drop_table('public_api_key')
     op.drop_table('newsletter')
+    op.drop_table('fonts')
     op.drop_table('feedback')
     op.drop_table('contact')
     # ### end Alembic commands ###

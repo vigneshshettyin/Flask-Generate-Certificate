@@ -29,6 +29,7 @@
             <tr>
               <th>#</th>
               <th>Font Name</th>
+              <th>Font CDN</th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -37,6 +38,7 @@
             <tr>
               <td>{{ post.id}}</td>
               <td>{{ post.name}}</td>
+              <td>{{ post.font_cdn|truncate(20) }}</td>
               <td>
                 <a
                   href="/delete/font/{{ post.id }}"

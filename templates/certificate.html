@@ -8,10 +8,7 @@
       rel="stylesheet"
     />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap"
-      rel="stylesheet"
-    />
+    <link href="{{postf.font_cdn}}" rel="stylesheet" />
     <title>{{postc.name}} CERTIFICATE FROM {{posto.name}}</title>
     <style>
       body {
@@ -50,7 +47,7 @@
         max-width: 1024px;
         min-width: 320px;
         margin: 0 auto;
-        font-family: 'Poppins';
+        font-family: "{{posto.font_name}}";
       }
       #canvas {
         width: 100%;
@@ -299,7 +296,7 @@
           130,
           130
         ); //QrcodeLink
-        ctx.font = "normal 50px Poppins";
+        ctx.font = "normal {{posto.font_size}}px {{posto.font_name}}";
         ctx.fillStyle = "#F9920C";
         ctx.fillText(nameInput.value, XnameInput.value, YnameInput.value);
         ctx.font = "bolder 15px Calibri";

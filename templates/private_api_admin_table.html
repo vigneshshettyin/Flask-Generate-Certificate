@@ -1,78 +1,74 @@
-{% extends "layout.html" %}
-{% block body %}
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-                <div style="padding: 5px">
+{% extends "layout.html" %} {% block body %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <div style="padding: 5px"></div>
+  <!-- DataTales Example -->
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table
+          class="table table-bordered"
+          id="dataTable"
+          width="100%"
+          cellspacing="0"
+        >
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Organisation Name</th>
+              <th>API KEY</th>
+              <th>Usage Left</th>
+              <th>Approval</th>
+              <th>Date Generated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {# Start loop#} {% for post in postc %}
+            <tr>
+              <td>{{ post.id}}</td>
+              <td>{{ post.group_name}}</td>
+              <td>{{ post.key}}</td>
+              <td>{{ post.usage_limit }}</td>
+              <td class="text-center">
+                <a
+                  onclick="approveAPI('{{post.group_id}}')"
+                  style="cursor: pointer"
+                  class="btn {{'btn-success' if post.is_approved else 'btn-danger'}} btn-circle"
+                >
+                  <i
+                    class="fas {{'fa-check' if post.is_approved else 'fa-times'}}"
+                  ></i>
+                </a>
+              </td>
+              <td>{{ post.date_generated|truncate(19,true,"") }}</td>
+            </tr>
 
-                </div>
-                    <!-- DataTales Example -->
-                    <div class="card shadow mb-4">
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Organisation Name</th>
-                                            <th>API KEY</th>
-                                            <th>Usage Left</th>
-                                            <th>Approval</th>
-                                            <th>Date Generated</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-{#                                    Start loop#}
-{% for post in postc %}
-                                        <tr>
-                                            <td>{{ post.id}}</td>
-                                            <td>{{ post.group_name}}</td>
-                                            <td>{{ post.key}}</td>
-                                            <td>{{ post.usage_limit }}</td>
-                                            <td class="text-center"><a onclick="approveAPI('{{post.group_id}}')" style="cursor: pointer" class="btn {{'btn-success' if post.is_approved else 'btn-danger'}} btn-circle">
-                                        <i class="fas {{'fa-check' if post.is_approved else 'fa-times'}}"></i>
-                                        </a></td>
-                                            <td>{{ post.date_generated|truncate(19,true,"") }}</td>
-                                        </tr>
+            {# end loop#} {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
-{#                                    end loop#}
-{% endfor %}
-
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                
-                <!-- /.container-fluid -->
-                {% with errors = get_flashed_messages(category_filter=["danger"]) %}
-                    {% if errors %}
-                    {% for error in errors %}
-                    <script>
-                        new Notify ({
-                        title: 'Error',
-                        text: `{{error|safe}}`,
-                        status: 'error'
-                        })
-                    </script>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
-                    {% if messages %}
-                    {% for message in messages %}
-                    <script>
-                        new Notify ({
-                            title: 'Success',
-                            text: `{{message|safe}}`,
-                            status: 'success'
-                            })
-                        </script>                      
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-
-                        
-            {% endblock %}
-
+<!-- /.container-fluid -->
+{% with errors = get_flashed_messages(category_filter=["danger"]) %} {% if
+errors %} {% for error in errors %}
+<script>
+  new Notify({
+    title: "Error",
+    text: `{{error|safe}}`,
+    status: "error",
+  });
+</script>
+{% endfor %} {% endif %} {% endwith %} {% with messages =
+get_flashed_messages(category_filter=["success"]) %} {% if messages %} {% for
+message in messages %}
+<script>
+  new Notify({
+    title: "Success",
+    text: `{{message|safe}}`,
+    status: "success",
+  });
+</script>
+{% endfor %} {% endif %} {% endwith %} {% endblock %}

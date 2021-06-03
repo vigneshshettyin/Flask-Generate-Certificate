@@ -151,6 +151,7 @@ class Token(db.Model):
 class Fonts(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    font_cdn = db.Column(db.String(500), nullable=True)
 
 
 class Group(db.Model):
@@ -596,10 +597,11 @@ def certificate_generate():
         postc = Certificate.query.filter_by(number=certificateno).first()
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
+            postf = Fonts.query.filter_by(name=posto.font_name).first()
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_url = qr_code.qr_code
-            return render_template('certificate.html', postc=postc, posto=posto,
+            return render_template('certificate.html', postf=postf, postc=postc, posto=posto,
                                    qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
@@ -638,9 +640,10 @@ def certificate_generate_string(number):
     if (postc != None):
         style = "display: none;"
         posto = Group.query.filter_by(id=postc.group_id).first()
+        postf = Fonts.query.filter_by(name=posto.font_name).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
         img_url = qr_code.qr_code
-        return render_template('certificate.html', postc=postc, posto=posto,
+        return render_template('certificate.html', postf=postf, postc=postc, posto=posto,
                                qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style)
     else:
         return redirect('/')
@@ -1211,23 +1214,23 @@ def get_all_groups():
 @login_required
 def edit_org_page(id):
     if request.method == 'POST':
-
         name = request.form.get("name")
         certx = request.form.get("certx")
         certy = request.form.get("certy")
-        print(certx, certy)
         qrx = request.form.get("qrx")
         qry = request.form.get("qry")
         certnox = request.form.get("certnox")
         certnoy = request.form.get("certnoy")
-
+        font_size = request.form.get("font_size")
+        font_name = request.form.get("font_name")
+        print(font_name, font_size)
         bg_image = request.files.get("bg_image")
         date = x
         if id == '0':
             if Group.query.filter_by(name=name, user_id=current_user.id).first():
                 return jsonify(group_duplicate=True)
             try:
-                post = Group(name=name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
+                post = Group(name=name, font_size=font_size, font_name=font_name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
                              certnox=certnox, certnoy=certnoy, date=date, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
                 if not app.debug:
@@ -1267,6 +1270,8 @@ def edit_org_page(id):
                 post.certy = certy
                 post.qrx = qrx
                 post.qry = qry
+                post.font_name = font_name
+                post.font_size = font_size
                 post.certnox = certnox
                 post.certnoy = certnoy
                 post.user_id = current_user.id
@@ -1284,6 +1289,8 @@ def edit_org_page(id):
         "qry": grp.qry,
         "certnox": grp.certnox,
         "certnoy": grp.certnoy,
+        "font_size": grp.font_size,
+        "font_name": grp.font_name,
     }
     return jsonify(favTitle=favTitle, id=id, post=post)
 
@@ -1295,9 +1302,9 @@ def delete_org_page(id):
     try:
         db.session.delete(delete_org_page)
         db.session.commit()
-        delete_from_s3(file=f'signatures/{delete_org_page.name}')
-        delete_from_s3(file=f'backgrounds/{delete_org_page.name}')
-        flash("Organization deleted successfully!", "success")
+        # delete_from_s3(file=f'signatures/{delete_org_page.name}')
+        # delete_from_s3(file=f'backgrounds/{delete_org_page.name}')
+        flash("Group deleted successfully!", "success")
     except Exception:
         flash("Something went wrong!", "error")
     return redirect('/view/groups')
@@ -2133,6 +2140,28 @@ def get_all_fonts():
 def view_fonts_page():
     post = Fonts.query.order_by(Fonts.id).all()
     return render_template('font_table.html', post=post, favTitle=favTitle, c_user_name=current_user.name, user=current_user)
+
+
+@app.route("/add/fonts", methods=['GET', 'POST'])
+@login_required
+def add_font():
+    if request.method == 'POST':
+        name = request.form.get("name")
+        font = request.form.get("font")
+        entry = Fonts(name=name, font_cdn=font)
+        db.session.add(entry)
+        db.session.commit()
+        return jsonify(result=True, status=200)
+
+
+@app.route("/delete/font/<string:id>", methods=['GET', 'POST'])
+@login_required
+def delete_font_page(id):
+    delete_font_page = Fonts.query.filter_by(id=id).first()
+    db.session.delete(delete_font_page)
+    db.session.commit()
+    flash("Font deleted successfully!", "success")
+    return redirect('/view/fonts')
 
 
 if __name__ == '__main__':

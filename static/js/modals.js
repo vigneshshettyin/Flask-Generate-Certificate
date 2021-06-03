@@ -730,7 +730,7 @@ $("#add_font").click(function (e) {
       const font = Swal.getPopup().querySelector("#font").value;
       if (!name) {
         Swal.showValidationMessage(`Font Name is missing`);
-      } else if (!bg_image) {
+      } else if (!font) {
         Swal.showValidationMessage(`Font CDN is missing`);
       }
       return {
@@ -748,7 +748,7 @@ $("#add_font").click(function (e) {
       formData.append("name", result.value.name);
       formData.append("font", result.value.font);
       $.ajax({
-        method: "post",
+        method: "POST",
         url: `/add/fonts`,
         data: formData,
         processData: false,

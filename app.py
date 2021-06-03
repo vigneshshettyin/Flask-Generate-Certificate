@@ -1883,12 +1883,12 @@ def view_fonts_page():
 
 @app.route("/add/fonts", methods=['GET', 'POST'])
 @login_required
-def add_font(id):
+def add_font():
     if request.method == 'POST':
         name = request.form.get("name")
         font = request.form.get("font")
-        post = Group(name=name,  font=font)
-        db.session.add(post)
+        entry = Fonts(name=name, font_cdn=font)
+        db.session.add(entry)
         db.session.commit()
         return jsonify(result=True, status=200)
 

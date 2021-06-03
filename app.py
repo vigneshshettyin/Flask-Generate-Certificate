@@ -1736,7 +1736,8 @@ def approve_public_api_key(api_id):
 @app.route('/v1/api/certificates', methods=['GET'])
 def get_groups_data():
     # Here we'll have an argument like ?group=1
-    header_api_key = request.headers.get('X-API-KEY')
+    header_api_key = request.headers.get(
+        'X-API-KEY') or request.headers.get('x-api-key')
     # If api key is not passed in request header
     if not header_api_key:
         data = {
@@ -1799,7 +1800,8 @@ def get_groups_data():
 
 @app.route('/v1/api/certificates/all', methods=['GET'])
 def get_all_certificates():
-    header_api_key = request.headers.get('X-API-KEY')
+    header_api_key = request.headers.get(
+        'X-API-KEY') or request.headers.get('x-api-key')
     if not header_api_key:
         data = {
             'status': 401,
@@ -1838,7 +1840,7 @@ def get_all_certificates():
 @app.post('/v1/api/certificates')
 def post_new_certificate():
     # Here we'll have an argument like ?group=1
-    header_api_key = request.headers.get('X-API-KEY')
+    header_api_key = request.headers.get('X-API-KEY') or request.headers.get('x-api-key')
     # If api key is not passed in request header
     if not header_api_key:
         data = {
@@ -1949,7 +1951,142 @@ def post_new_certificate():
     }
     return jsonify(data), 403
 
+
+@app.put('/v1/api/certificates')
+def update_certificate():
+    # Here we'll have an argument like ?group=1
+    header_api_key = request.headers.get(
+        'X-API-KEY') or request.headers.get('x-api-key')
+    # If api key is not passed in request header
+    if not header_api_key:
+        data = {
+            'status': 401,
+            'message': "You're not authorised to access the resource. Please add X-API-KEY in request header."
+        }
+        return jsonify(data), 401
+    certificate_id = request.args.get('id')
+    # If group id is not passed in request url
+    if not certificate_id:
+        data = {
+            'status': '406',
+            'message': "Welcome to CGV API V1. There is no content to send for this request, please add argument like ?id=certificate-id in the request url"
+        }
+        return jsonify(data), 406
+    api_key = APIKey.query.filter_by(key=header_api_key).first()
+    if api_key and api_key.is_valid:
+        certificate = Certificate.query.filter_by(id=certificate_id).first()
+        if certificate:
+            if api_key.group_id == certificate.group_id:
+                data = request.json
+                if not data:
+                    return jsonify({'status': 400, 'message': 'Empty Body'}), 400
+                name = data["name"] if data.get("name") else certificate.name
+                course = data["course"] if data.get("course") else certificate.coursename
+                email = data["email"] if data.get("email") else certificate.email
+                try:
+                    certificate.name = name
+                    certificate.coursename = course
+                    certificate.email = email
+                    certificate.last_update = x
+                    db.session.add(certificate)
+                    db.session.commit()
+                    data = {
+                        'status': 200,
+                        'message': 'Certificate updated successfully!',
+                        'certificate': {
+                            'user_name': certificate.name,
+                            'course_name': certificate.coursename,
+                            'group_name': api_key.group_name,
+                            'cert_number': certificate.number,
+                            'cert_link': f'https://cgv.in.net/certify/{certificate.number}',
+                            'date_generated': certificate.last_update[:10]
+                        }
+                    }    
+                    return jsonify(data), 200
+                except Exception:
+                    data = {
+                        'status': '500',
+                        'message': "Server encountered some error while updating certificate.",
+                    }
+                    return jsonify(data), 500
+            else:
+                data = {
+                    'status': 401,
+                    'message': "You're not authorised to add certificate in this group."
+                }
+                return jsonify(data), 409
+        else:
+            data = {
+                'status': 404,
+                'message': 'No such certificate found'
+            }
+            return jsonify(data), 404
+    # Invalid API Key
+    data = {
+        'status': 403,
+        'message': "Please add a valid API Key in the request header."
+    }
+    return jsonify(data), 403
+
+@app.delete('/v1/api/certificates')
+def delete_certificate():
+    # Here we'll have an argument like ?group=1
+    header_api_key = request.headers.get('X-API-KEY') or request.headers.get('x-api-key')
+    # If api key is not passed in request header
+    if not header_api_key:
+        data = {
+            'status': 401,
+            'message': "You're not authorised to access the resource. Please add X-API-KEY in request header."
+        }
+        return jsonify(data), 401
+    certificate_id = request.args.get('id')
+    # If group id is not passed in request url
+    if not certificate_id:
+        data = {
+            'status': '406',
+            'message': "Welcome to CGV API V1. There is no content to send for this request, please add argument like ?id=certificate-id in the request url"
+        }
+        return jsonify(data), 406
+    api_key = APIKey.query.filter_by(key=header_api_key).first()
+    if api_key and api_key.is_valid:
+        certificate = Certificate.query.filter_by(id=certificate_id).first()
+        if certificate:
+            if api_key.group_id == certificate.group_id:
+                try:
+                    db.session.delete(certificate)
+                    db.session.commit()
+                    data = {
+                        'status': 200,
+                        'message': 'Certificate deleted successfully!',
+                    }    
+                    return jsonify(data), 200
+                except Exception:
+                    data = {
+                        'status': '500',
+                        'message': "Server encountered some error while deleting certificate.",
+                    }
+                    return jsonify(data), 500
+            else:
+                data = {
+                    'status': 401,
+                    'message': "You're not authorised to delete certificate from this group."
+                }
+                return jsonify(data), 409
+        else:
+            data = {
+                'status': 404,
+                'message': 'No such certificate found'
+            }
+            return jsonify(data), 404
+    # Invalid API Key
+    data = {
+        'status': 403,
+        'message': "Please add a valid API Key in the request header."
+    }
+    return jsonify(data), 403
+
 # API PART ENDS HERE
+
 
 @login_required
 @app.route('/<int:id>/profile/edit', methods=['GET', 'POST'])

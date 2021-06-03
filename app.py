@@ -1002,7 +1002,7 @@ def edit_certificates_page(grp_id, id):
         last_update = x
         if id == '0':
             postcheck = Certificate.query.filter_by(
-                email=email, coursename=coursename).first()
+                email=email, coursename=coursename, group_id=grp_id).first()
             if (postcheck == None):
                 try:
                     post = Certificate(name=name, number=number, email=email, coursename=coursename, user_id=userid,
@@ -1880,7 +1880,7 @@ def post_new_certificate():
             course = data["course"]
             email = data["email"]
             postcheck = Certificate.query.filter_by(
-                email=email, coursename=course).first()
+                email=email, coursename=course, group_id=group_id).first()
             if not postcheck:
                 letters = string.ascii_letters
                 number = ''.join(random.choice(letters) for _ in range(4))

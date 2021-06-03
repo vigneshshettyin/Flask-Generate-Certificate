@@ -1,302 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 
-<head>
-  <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>CGV : Online Certificate Generation &amp Verification System</title>
+    <meta name="title" content="CGV : Online Certificate Verification System" />
+    <meta
+      name="description"
+      content="A Startup Company based in India, that offers Full-Stack Web Development, User Interface Design, etc at a very reasonable cost. Contact us at contact@vigneshshetty.in"
+    />
 
-  <title>CGV : Online Certificate Generation &amp Verification System</title>
-  <meta name="title" content="CGV : Online Certificate Verification System">
-	<meta name="description" content="A Startup Company based in India, that offers Full-Stack Web Development, User Interface Design, etc at a very reasonable cost. Contact us at contact@vigneshshetty.in">
-
-  <!-- Favicons -->
-  <link href="{{ url_for('static', filename='images/favicon/favicon.ico') }}" rel="icon">
-  <link href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}" rel="apple-touch-icon">
+    <!-- Favicons -->
+    <link
+      href="{{ url_for('static', filename='images/favicon/favicon.ico') }}"
+      rel="icon"
+    />
+    <link
+      href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}"
+      rel="apple-touch-icon"
+    />
 
     <!-- include summernote css/js -->
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css"
+      rel="stylesheet"
+    />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Montserrat:300,400,500,600,700" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Montserrat:300,400,500,600,700"
+      rel="stylesheet"
+    />
 
-  <!-- Vendor CSS Files -->
-  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendor/font-awesome/css/font-awesome.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendor/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendor/venobox/venobox.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendor/owl.carousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet">
+    <!-- Vendor CSS Files -->
+    <link
+      href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/font-awesome/css/font-awesome.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/ionicons/css/ionicons.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/venobox/venobox.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/owl.carousel/assets/owl.carousel.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/aos/aos.css') }}"
+      rel="stylesheet"
+    />
 
-  <!-- External CSS File -->
-  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/darkmode.css') }}">
-{#  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="d17af46b-afdd-4665-8862-2ca604c2cadc" data-blockingmode="auto" type="text/javascript"></script>#}
-  <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-  <link href="{{ url_for('static', filename='css/simple-notify.min.css') }}" rel="stylesheet">
-  <script src="{{ url_for('static', filename='js/simple-notify.min.js') }}"></script>
+    <!-- External CSS File -->
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/darkmode.css') }}"
+    />
+    {#
+    <script
+      id="Cookiebot"
+      src="https://consent.cookiebot.com/uc.js"
+      data-cbid="d17af46b-afdd-4665-8862-2ca604c2cadc"
+      data-blockingmode="auto"
+      type="text/javascript"
+    ></script>
+    #}
+    <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <link
+      href="{{ url_for('static', filename='css/simple-notify.min.css') }}"
+      rel="stylesheet"
+    />
+    <script src="{{ url_for('static', filename='js/simple-notify.min.js') }}"></script>
 
-  <style>
-    /* Custom Scroll */
+    <style>
 
-/* width */
-::-webkit-scrollbar {
-	width: 15px;
-  }
+      /* Custom Scroll */
 
-  /* Track */
-  ::-webkit-scrollbar-track {
-	box-shadow: inset 0 0 5px grey;
-	border-radius: 10px;
-  }
+      /* width */
+      ::-webkit-scrollbar {
+        width: 15px;
+      }
 
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-	background: #F9A826;
-	border-radius: 10px;
-  }
+      /* Track */
+      ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey;
+        border-radius: 10px;
+      }
 
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-	background: #D48C1A;
-  }
-/* End Custom Scroll */
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+        background: #f9a826;
+        border-radius: 10px;
+      }
 
-  .video-responsive{
-    overflow:hidden;
-    padding-bottom:56.25%;
-    position:relative;
-    height:0;
-}
-.video-responsive iframe{
-    left:0;
-    top:0;
-    height:100%;
-    width:100%;
-    position:absolute;
-}
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background: #d48c1a;
+      }
+      /* End Custom Scroll */
 
-.dark-mode #textarea
-{
-  background-color: #fff;
-}
-{% block css %}{% endblock css %}
-  </style>
+      .video-responsive {
+        overflow: hidden;
+        padding-bottom: 56.25%;
+        position: relative;
+        height: 0;
+      }
+      .video-responsive iframe {
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+      }
+
+      .dark-mode #textarea {
+        background-color: #fff;
+      }
+
+      {% block css %}{% endblock css %}
+    </style>
   </head>
 
-<body class="">
+  <body class="">
+    <!-- ======= Social-Links ======= -->
+    <div class="social-icons">
+      <a href="https://twitter.com/sdlsmartlabs" class="twitter"
+        ><i class="fa fa-twitter"></i
+      ></a>
+      <a href="https://facebook.com/sdlsmartlabs" class="facebook"
+        ><i class="fa fa-facebook"></i
+      ></a>
+      <a href="https://linkedin.com/company/sdlsmartlabs" class="linkedin"
+        ><i class="fa fa-linkedin"></i
+      ></a>
+      <a href="https://instagram.com/sdlsmartlabs" class="instagram"
+        ><i class="fa fa-instagram"></i
+      ></a>
+    </div>
 
-<!-- ======= Social-Links ======= -->
-  <div class="social-icons">
-    <a href="https://twitter.com/sdlsmartlabs" class="twitter"><i class="fa fa-twitter"></i></a>
-    <a href="https://facebook.com/sdlsmartlabs" class="facebook"><i class="fa fa-facebook"></i></a>
-    <a href="https://linkedin.com/company/sdlsmartlabs" class="linkedin"><i class="fa fa-linkedin"></i></a>
-    <a href="https://instagram.com/sdlsmartlabs" class="instagram"><i class="fa fa-instagram"></i></a>
-  </div>
- 
-{% block body %}  {% endblock %}
+    {% block body %} {% endblock %}
 
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="section-bg">
+      <div class="footer-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="row">
+                <div class="col-sm-6">
+                  <div class="footer-info">
+                    <h3>CGV</h3>
+                    <p>
+                      A Startup Company based in India, that offers Full-Stack
+                      Web Development, User Interface Design, etc at a very
+                      reasonable cost.
+                    </p>
+                  </div>
 
-
-
-  <!-- ======= Footer ======= -->
-  <footer id="footer" class="section-bg">
-    <div class="footer-top">
-      <div class="container">
-
-        <div class="row">
-
-
-          <div class="col-lg-6">
-
-            <div class="row">
-
-              <div class="col-sm-6">
-
-                <div class="footer-info">
-                  <h3>CGV</h3>
-                  <p>A Startup Company based in India, that offers Full-Stack Web Development, User Interface Design, etc at a very reasonable cost.</p>
+                  <div class="footer-newsletter">
+                    <h4>Our Newsletter</h4>
+                    <p>
+                      Get Free Email Updates!<br />Join us for FREE to get
+                      instant email updates!
+                    </p>
+                    <form action="/newsletter" method="post" role="form">
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Your Email"
+                        required
+                      /><input
+                        class="btn btn-primary"
+                        type="submit"
+                        value="Subscribe"
+                      />
+                    </form>
+                  </div>
                 </div>
+                <div class="col-sm-6">
+                  <div class="footer-links">
+                    <h4>Useful Links</h4>
+                    <ul>
+                      <li><a href="#services">Services</a></li>
+                      <li><a href="https://cgvs.tawk.help/">Helpdesk</a></li>
+                    </ul>
+                  </div>
 
-                <div class="footer-newsletter">
-                  <h4>Our Newsletter</h4>
-                <p>Get Free Email Updates!<br>Join us for FREE to get instant email updates!</p>
-                  <form action="/newsletter" method="post" role="form" >
-                    <input type="email" name="email" placeholder="Your Email" required><input class="btn btn-primary"  type="submit" value="Subscribe">
-                  </form>
+                  <div class="footer-links">
+                    <h4>Contact Us</h4>
+                    <p>
+                      SDL SMARTLABS<br />
+                      Mangalore<br />
+                      Karnataka, India<br />
+                      <strong>Phone:</strong> +91 6362 49 0109<br />
+                      <strong>Email:</strong> support@cgv.in.net<br />
+                    </p>
+                  </div>
+
+                  <div class="social-links">
+                    <a href="https://twitter.com/sdlsmartlabs" class="twitter"
+                      ><i class="fa fa-twitter"></i
+                    ></a>
+                    <a href="https://facebook.com/sdlsmartlabs" class="facebook"
+                      ><i class="fa fa-facebook"></i
+                    ></a>
+                    <a
+                      href="https://linkedin.com/company/sdlsmartlabs"
+                      class="linkedin"
+                      ><i class="fa fa-linkedin"></i
+                    ></a>
+                    <a
+                      href="https://instagram.com/sdlsmartlabs"
+                      class="instagram"
+                      ><i class="fa fa-instagram"></i
+                    ></a>
+                  </div>
                 </div>
-
               </div>
-              <div class="col-sm-6">
-                <div class="footer-links">
-                  <h4>Useful Links</h4>
-                  <ul>
-                    <li><a href="#services">Services</a></li>
-                    <li><a href="https://cgvs.tawk.help/">Helpdesk</a></li>
-                  </ul>
-                </div>
-
-                <div class="footer-links">
-                  <h4>Contact Us</h4>
-                  <p>
-                    SDL SMARTLABS<br>
-                    Mangalore<br>
-                    Karnataka, India<br>
-                    <strong>Phone:</strong> +91 6362 49 0109<br>
-                    <strong>Email:</strong> support@cgv.in.net<br>
-                  </p>
-                </div>
-
-                <div class="social-links">
-                  <a href="https://twitter.com/sdlsmartlabs" class="twitter"><i class="fa fa-twitter"></i></a>
-                  <a href="https://facebook.com/sdlsmartlabs" class="facebook"><i class="fa fa-facebook"></i></a>
-                  <a href="https://linkedin.com/company/sdlsmartlabs" class="linkedin"><i class="fa fa-linkedin"></i></a>
-                  <a href="https://instagram.com/sdlsmartlabs" class="instagram"><i class="fa fa-instagram"></i></a>
-                </div>
-
-              </div>
-
             </div>
 
-          </div>
+            <div class="col-lg-6">
+              <div class="form">
+                <h4>Connect. Meet. Move.</h4>
+                <p>
+                  Please fill out the form below to get in touch. We will
+                  contact you shortly.
+                </p>
 
-          <div class="col-lg-6">
-
-            <div class="form">
-
-              <h4>Connect. Meet. Move.</h4>
-              <p>Please fill out the form below to get in touch. We will contact you shortly.</p>
-
-              <form action="/contact" method="post" role="form" >
-                <div class="form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" data-rule="minlen:4" data-msg="Please enter at least 4 chars" required/>
-                </div>
-                <div class="form-group">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" data-rule="email" data-msg="Please enter a valid email" required/>
-                </div>
-                <div class="form-group">
-                  <input type="tel" class="form-control" name="phone" id="phone_number" placeholder="Your 10 digit phone number" pattern="^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$" data-msg="Please enter your contact number"  />
-                </div>
-                <div class="form-group" id="textarea">
-                  <textarea id="summernote" name="editordata" required></textarea>
+                <form action="/contact" method="post" role="form">
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      name="name"
+                      class="form-control"
+                      id="name"
+                      placeholder="Your Name"
+                      data-rule="minlen:4"
+                      data-msg="Please enter at least 4 chars"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="email"
+                      class="form-control"
+                      name="email"
+                      id="email"
+                      placeholder="Your Email"
+                      data-rule="email"
+                      data-msg="Please enter a valid email"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <input
+                      type="tel"
+                      class="form-control"
+                      name="phone"
+                      id="phone_number"
+                      placeholder="Your 10 digit phone number"
+                      pattern="^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$"
+                      data-msg="Please enter your contact number"
+                    />
+                  </div>
+                  <div class="form-group" id="textarea">
+                    <textarea
+                      id="summernote"
+                      name="editordata"
+                      required
+                    ></textarea>
+                  </div>
+                  <center>
+                    <button
+                      style="background-color: #f9a826; border-color: #f9a826"
+                      class="btn btn-primary"
+                      type="submit"
+                      id="message"
+                      title="Send Feedback"
+                    >
+                      Send Message
+                    </button>
+                  </center>
+                </form>
               </div>
-               <center><button style="background-color: #F9A826; border-color: #F9A826;" class="btn btn-primary" type="submit" id ="message" title="Send Feedback">Send Message</button></center>
-              </form>
-
             </div>
-
           </div>
-
         </div>
-
       </div>
-    </div>
-    <div class="container">
-      <div class="copyright">
-        Made with <i class="fa fa-heart" style="color: red;"></i> in <strong>CGV</strong> &amp;  Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+      <div class="container">
+        <div class="copyright">
+          Made with <i class="fa fa-heart" style="color: red"></i> in
+          <strong>CGV</strong> &amp; Designed by
+          <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        </div>
       </div>
-    </div>
-  </footer><!-- End  Footer -->
+    </footer>
+    <!-- End  Footer -->
 
-  <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
-  <!-- Vendor JS Files -->
-  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/jquery.easing/jquery.easing.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/php-email-form/validate.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/counterup/counterup.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/venobox/venobox.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/owl.carousel/owl.carousel.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/waypoints/jquery.waypoints.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
-  <script>
-    function myFoo() {
-      var x = document.getElementById("foo");
-      if (x.style.display === "none") {
-        x.style.display = "block";
-      } else {
-        x.style.display = "none";
+    <!-- Vendor JS Files -->
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/jquery.easing/jquery.easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/php-email-form/validate.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/counterup/counterup.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/venobox/venobox.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/owl.carousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/waypoints/jquery.waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+    <script>
+      function myFoo() {
+        var x = document.getElementById("foo");
+        if (x.style.display === "none") {
+          x.style.display = "block";
+        } else {
+          x.style.display = "none";
+        }
       }
-    }
-        </script>
+    </script>
 
-
-  <!-- Template Main JS File -->
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
-<!--Start of Tawk.to Script-->
-<script type="text/javascript">
-  var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-  (function(){
-  var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-  s1.async=true;
-  s1.src='https://embed.tawk.to/5f7aa38f4704467e89f4a000/default';
-  s1.charset='UTF-8';
-  s1.setAttribute('crossorigin','*');
-  s0.parentNode.insertBefore(s1,s0);
-  })();
-  </script>
-  <!--End of Tawk.to Script-->
+    <!-- Template Main JS File -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+      var Tawk_API = Tawk_API || {},
+        Tawk_LoadStart = new Date();
+      (function () {
+        var s1 = document.createElement("script"),
+          s0 = document.getElementsByTagName("script")[0];
+        s1.async = true;
+        s1.src = "https://embed.tawk.to/5f7aa38f4704467e89f4a000/default";
+        s1.charset = "UTF-8";
+        s1.setAttribute("crossorigin", "*");
+        s0.parentNode.insertBefore(s1, s0);
+      })();
+    </script>
+    <!--End of Tawk.to Script-->
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
     <script>
-    $(document).ready(function() {
-        $('#summernote').summernote();
-    });
-  </script>
+      $(document).ready(function () {
+        $("#summernote").summernote();
+      });
+    </script>
 
+    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+    {% with errors = get_flashed_messages(category_filter=["danger"]) %} {% if
+    errors %} {% for error in errors %}
+    <script>
+      new Notify({
+        title: "Error",
+        text: `{{error|safe}}`,
+        status: "error",
+      });
+    </script>
+    {% endfor %} {% endif %} {% endwith %} {% with messages =
+    get_flashed_messages(category_filter=["success"]) %} {% if messages %} {%
+    for message in messages %}
+    <script>
+      new Notify({
+        title: "Success",
+        text: `{{message|safe}}`,
+        status: "success",
+      });
+    </script>
+    {% endfor %} {% endif %} {% endwith %}
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-  <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
-  {% with errors = get_flashed_messages(category_filter=["danger"]) %}
-                    {% if errors %}
-                    {% for error in errors %}
-                    <script>
-                        new Notify ({
-                        title: 'Error',
-                        text: `{{error|safe}}`,
-                        status: 'error'
-                        })
-                    </script>
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-                    {% with messages = get_flashed_messages(category_filter=["success"]) %}
-                    {% if messages %}
-                    {% for message in messages %}
-                    <script>
-                        new Notify ({
-                            title: 'Success',
-                            text: `{{message|safe}}`,
-                            status: 'success'
-                            })
-                        </script>                      
-                    {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-<script>
-  function confirmation(){
-  swal({
-    title: "Are you sure?",
-    text: "",
-    icon: "warning",
-    buttons: true,
-    buttons: ['cancel','Yes, Log out'],
-    dangerMode: true,
-  })
-  .then((willDelete) => {
-    if (willDelete) {
-      window.location = "/logout";
-    } else {
-      
-    }
-  });
-  }
-</script>
-
-</body>
+    <script>
+      function confirmation() {
+        swal({
+          title: "Are you sure?",
+          text: "",
+          icon: "warning",
+          buttons: true,
+          buttons: ["cancel", "Yes, Log out"],
+          dangerMode: true,
+        }).then((willDelete) => {
+          if (willDelete) {
+            window.location = "/logout";
+          } else {
+          }
+        });
+      }
+    </script>
+  </body>
 </html>

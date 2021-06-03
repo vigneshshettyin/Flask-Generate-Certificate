@@ -158,6 +158,7 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     date = db.Column(db.String(50), nullable=False)
+    textColor = db.Column(db.String(50), nullable=True)
     bg_image = db.Column(db.String(500), nullable=True)
     font_size = db.Column(db.Integer, nullable=False)
     font_name = db.Column(db.String(250), nullable=False)
@@ -1223,14 +1224,14 @@ def edit_org_page(id):
         certnoy = request.form.get("certnoy")
         font_size = request.form.get("font_size")
         font_name = request.form.get("font_name")
-        print(font_name, font_size)
+        textColor = request.form.get("textColor")
         bg_image = request.files.get("bg_image")
         date = x
         if id == '0':
             if Group.query.filter_by(name=name, user_id=current_user.id).first():
                 return jsonify(group_duplicate=True)
             try:
-                post = Group(name=name, font_size=font_size, font_name=font_name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
+                post = Group(name=name, textColor=textColor, font_size=font_size, font_name=font_name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
                              certnox=certnox, certnoy=certnoy, date=date, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
                 if not app.debug:
@@ -1274,6 +1275,7 @@ def edit_org_page(id):
                 post.font_size = font_size
                 post.certnox = certnox
                 post.certnoy = certnoy
+                post.textColor = textColor
                 post.user_id = current_user.id
                 db.session.commit()
                 return jsonify(result=True, status=200)
@@ -1291,6 +1293,7 @@ def edit_org_page(id):
         "certnoy": grp.certnoy,
         "font_size": grp.font_size,
         "font_name": grp.font_name,
+        "textColor": grp.textColor,
     }
     return jsonify(favTitle=favTitle, id=id, post=post)
 
@@ -1847,7 +1850,8 @@ def get_all_certificates():
 @app.post('/v1/api/certificates')
 def post_new_certificate():
     # Here we'll have an argument like ?group=1
-    header_api_key = request.headers.get('X-API-KEY') or request.headers.get('x-api-key')
+    header_api_key = request.headers.get(
+        'X-API-KEY') or request.headers.get('x-api-key')
     # If api key is not passed in request header
     if not header_api_key:
         data = {
@@ -1988,8 +1992,10 @@ def update_certificate():
                 if not data:
                     return jsonify({'status': 400, 'message': 'Empty Body'}), 400
                 name = data["name"] if data.get("name") else certificate.name
-                course = data["course"] if data.get("course") else certificate.coursename
-                email = data["email"] if data.get("email") else certificate.email
+                course = data["course"] if data.get(
+                    "course") else certificate.coursename
+                email = data["email"] if data.get(
+                    "email") else certificate.email
                 try:
                     certificate.name = name
                     certificate.coursename = course
@@ -2008,7 +2014,7 @@ def update_certificate():
                             'cert_link': f'https://cgv.in.net/certify/{certificate.number}',
                             'date_generated': certificate.last_update[:10]
                         }
-                    }    
+                    }
                     return jsonify(data), 200
                 except Exception:
                     data = {
@@ -2035,10 +2041,12 @@ def update_certificate():
     }
     return jsonify(data), 403
 
+
 @app.delete('/v1/api/certificates')
 def delete_certificate():
     # Here we'll have an argument like ?group=1
-    header_api_key = request.headers.get('X-API-KEY') or request.headers.get('x-api-key')
+    header_api_key = request.headers.get(
+        'X-API-KEY') or request.headers.get('x-api-key')
     # If api key is not passed in request header
     if not header_api_key:
         data = {
@@ -2065,7 +2073,7 @@ def delete_certificate():
                     data = {
                         'status': 200,
                         'message': 'Certificate deleted successfully!',
-                    }    
+                    }
                     return jsonify(data), 200
                 except Exception:
                     data = {

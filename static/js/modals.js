@@ -12,9 +12,10 @@ $("#add_group").click(function (e) {
           <input type="number" id="certnox" name="certnox" class="swal2-input" placeholder="Certificate No (x-axis)">
           <input type="number" id="certnoy" name="certnoy" class="swal2-input" placeholder="Certificate No (y-axis)">
           <select id="category" name="font_name" class="swal2-input">
-          <option value="saab" disabled selected>Select the font</option>
+          <option value="Verdana" disabled selected>Select the font</option>
           </select>
           <input type="number" id="font_size" name="font_size" class="swal2-input" placeholder="Font Size">
+          <input type="color" class="form-control form-control-color" id="textColor" value="#000000" title="Choose your text color">
           </form>
         `,
     footer: `Note : Use PNG images only`,
@@ -51,6 +52,7 @@ $("#add_group").click(function (e) {
       const certnoy = Swal.getPopup().querySelector("#certnoy").value;
       const font_size = Swal.getPopup().querySelector("#font_size").value;
       const category = Swal.getPopup().querySelector("#category").value;
+      const textColor = Swal.getPopup().querySelector("#textColor").value;
       $("#bg_image").change(function () {
         var reader = new FileReader();
         reader.readAsDataURL(this.files[0]);
@@ -75,6 +77,8 @@ $("#add_group").click(function (e) {
         Swal.showValidationMessage(`Font Size is missing`);
       } else if (!category) {
         Swal.showValidationMessage(`Font Name is missing`);
+      } else if (!textColor) {
+        Swal.showValidationMessage(`Text Color is missing`);
       }
       return {
         name: name,
@@ -86,6 +90,7 @@ $("#add_group").click(function (e) {
         certnoy: certnoy,
         font_size: font_size,
         category: category,
+        textColor: textColor,
       };
     },
     willClose: () => {
@@ -106,6 +111,7 @@ $("#add_group").click(function (e) {
       formData.append("name", result.value.name);
       formData.append("font_size", result.value.font_size);
       formData.append("font_name", result.value.category);
+      formData.append("textColor", result.value.textColor);
       $.ajax({
         method: "post",
         url: `/edit/group/0`,
@@ -154,6 +160,7 @@ function editGrp(postId) {
           <option value="${data.post.font_name}" disabled selected>${data.post.font_name}</option>
           </select>
           <input type="number" value="${data.post.font_size}" id="font_size" name="font_size" class="swal2-input" placeholder="Font Size">
+          <input type="color" class="form-control form-control-color" id="textColor" value="${data.post.textColor}" title="Choose your text color">
         </form>
         `,
         confirmButtonText: "Update",
@@ -189,6 +196,7 @@ function editGrp(postId) {
           const certnoy = Swal.getPopup().querySelector("#certnoy").value;
           const font_size = Swal.getPopup().querySelector("#font_size").value;
           const category = Swal.getPopup().querySelector("#category").value;
+          const textColor = Swal.getPopup().querySelector("#textColor").value;
           $("#bg_image").change(function () {
             var reader = new FileReader();
             reader.readAsDataURL(this.files[0]);
@@ -213,6 +221,8 @@ function editGrp(postId) {
             Swal.showValidationMessage(`Font Size is missing`);
           } else if (!category) {
             Swal.showValidationMessage(`Font Name is missing`);
+          } else if (!textColor) {
+            Swal.showValidationMessage(`Text Color is missing`);
           }
           return {
             name: name,
@@ -224,6 +234,7 @@ function editGrp(postId) {
             certnoy: certnoy,
             font_size: font_size,
             category: category,
+            textColor: textColor,
           };
         },
         willClose: () => {
@@ -244,6 +255,7 @@ function editGrp(postId) {
           formData.append("certnoy", result.value.certnoy);
           formData.append("font_size", result.value.font_size);
           formData.append("font_name", result.value.category);
+          formData.append("textColor", result.value.textColor);
           $.ajax({
             method: "post",
             url: `/edit/group/${postId}`,

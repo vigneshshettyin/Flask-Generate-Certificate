@@ -9,8 +9,42 @@
     />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="{{postf.font_cdn}}" rel="stylesheet" />
-    <title>{{postc.name}} CERTIFICATE FROM {{posto.name}}</title>
+    <title>{{postc.name}} : Certificate : {{ favTitle }}</title>
+
+    <!-- Favicons -->
+    <link
+      href="{{ url_for('static', filename='images/favicon/favicon.ico') }}"
+      rel="icon"
+    />
+    <link
+      href="{{ url_for('static', filename='images/favicon/apple-touch-icon.png') }}"
+      rel="apple-touch-icon"
+    />
     <style>
+      /* Custom Scroll */
+
+      /* width */
+      ::-webkit-scrollbar {
+        width: 15px;
+      }
+
+      /* Track */
+      ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey;
+        border-radius: 10px;
+      }
+
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+        background: #f9a826;
+        border-radius: 10px;
+      }
+
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background: #d48c1a;
+      }
+      /* End Custom Scroll */
       body {
         font-size: 100%;
         -webkit-touch-callout: none;
@@ -297,7 +331,7 @@
           130
         ); //QrcodeLink
         ctx.font = "normal {{posto.font_size}}px {{posto.font_name}}";
-        ctx.fillStyle = "#F9920C";
+        ctx.fillStyle = "{{posto.textColor}}";
         ctx.fillText(nameInput.value, XnameInput.value, YnameInput.value);
         ctx.font = "bolder 15px Calibri";
         ctx.fillStyle = "#000000";

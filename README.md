@@ -1,8 +1,4 @@
-
-<h1 align="center">🚀 Certificate Generation and Verification System</h1> 
-
-![](https://res.cloudinary.com/vigneshshettyin/image/upload/v1622133162/rnw9cgp9birmmrjhlvf3.png)
-
+![Flask-Generate-Certificate](https://socialify.git.ci/vigneshshettyin/Flask-Generate-Certificate/image?description=1&font=KoHo&forks=1&issues=1&language=1&logo=https%3A%2F%2Fres.cloudinary.com%2Fvigneshshettyin%2Fimage%2Fupload%2Fv1622801205%2Fly3psnd195zupwke7pd4.png&owner=1&pattern=Overlapping%20Hexagons&pulls=1&stargazers=1&theme=Light)
 
 Certificate Generation and Verification System project aims in developing a computerized system to maintain and generate the certificate. It has an admin login through which the admin can monitor the whole system. It also has a facility where users after logging in to their account can monitor and generate a certificate for their particular use. Admin will manage user logins, will have the option to deactivate any user. Every time any changes are done an automated email will be sent depending on the update. Overall this project is being developed to help the users in the best way possible and also to reduce human efforts.
 <br><br>

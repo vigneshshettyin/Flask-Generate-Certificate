@@ -13,7 +13,7 @@ Flask==2.0.1
 Flask-Cors==3.0.10
 Flask-Login==0.5.0
 Flask-Mail==0.9.1
-Flask-Migrate==3.0.0
+Flask-Migrate==3.0.1
 Flask-RESTful==0.3.9
 Flask-SQLAlchemy==2.5.1
 greenlet==1.1.0
@@ -26,7 +26,7 @@ Mako==1.1.4
 MarkupSafe==2.0.1
 marshmallow==3.12.1
 mysqlclient==2.0.3
-oauthlib==3.1.0
+oauthlib==3.1.1
 passlib==1.7.4
 pdfkit==0.6.1
 Pillow==8.2.0

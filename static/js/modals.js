@@ -11,6 +11,7 @@ $("#add_group").click(function (e) {
           <input type="number" id="qry" name="qry" class="swal2-input" placeholder="QR Code (y-axis)">
           <input type="number" id="certnox" name="certnox" class="swal2-input" placeholder="Certificate No (x-axis)">
           <input type="number" id="certnoy" name="certnoy" class="swal2-input" placeholder="Certificate No (y-axis)">
+          <input type="text" id="prefix" name="prefix" class="swal2-input" placeholder="Certificate ID Prefix">
           <select id="category" name="font_name" class="swal2-input">
           <option value="" disabled selected>Select the font</option>
           </select>
@@ -53,6 +54,7 @@ $("#add_group").click(function (e) {
       const font_size = Swal.getPopup().querySelector("#font_size").value;
       const category = Swal.getPopup().querySelector("#category").value;
       const textColor = Swal.getPopup().querySelector("#textColor").value;
+      const prefix = Swal.getPopup().querySelector("#prefix").value;
       $("#bg_image").change(function () {
         var reader = new FileReader();
         reader.readAsDataURL(this.files[0]);
@@ -73,6 +75,8 @@ $("#add_group").click(function (e) {
         Swal.showValidationMessage(`Certificate No (x-axis) is missing`);
       } else if (!certnoy) {
         Swal.showValidationMessage(`Certificate No (y-axis) is missing`);
+      } else if (!prefix) {
+        Swal.showValidationMessage(`Certificate ID Prefix is missing`);
       } else if (!category) {
         Swal.showValidationMessage(`Font Name is missing`);
       } else if (!font_size) {
@@ -91,6 +95,7 @@ $("#add_group").click(function (e) {
         font_size: font_size,
         category: category,
         textColor: textColor,
+        prefix: prefix,
       };
     },
     willClose: () => {
@@ -108,6 +113,7 @@ $("#add_group").click(function (e) {
       formData.append("qry", result.value.qry);
       formData.append("certnox", result.value.certnox);
       formData.append("certnoy", result.value.certnoy);
+      formData.append("prefix", result.value.prefix);
       formData.append("name", result.value.name);
       formData.append("font_size", result.value.font_size);
       formData.append("font_name", result.value.category);

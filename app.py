@@ -168,6 +168,7 @@ class Group(db.Model):
     qry = db.Column(db.Integer, nullable=False)
     certnox = db.Column(db.Integer, nullable=False)
     certnoy = db.Column(db.Integer, nullable=False)
+    prefix = db.Column(db.String(20), default='CGV')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     certificates = db.relationship(
         'Certificate', cascade="all,delete", backref='certificates')
@@ -996,14 +997,19 @@ def edit_certificates_page(grp_id, id):
         name = data["name"]
         coursename = data["course"]
         email = data["email"]
-        letters = string.ascii_letters
-        number = ''.join(random.choice(letters) for _ in range(4))
-        number = 'CGV' + name[0:4].upper() + number
+        group = Group.query.filter_by(id=grp_id).first()
+        try:
+            last_certificate = Certificate.query.filter_by(group_id=grp_id).order_by(-Certificate.id).first()
+            last_certificate_num = int(last_certificate.number[len(last_certificate.number)-4:])
+            cert_number = str(last_certificate_num + 1).zfill(4)
+        except Exception as e:
+            cert_number = '1'.zfill(4)
+        number = group.prefix + cert_number
         userid = current_user.id
         last_update = x
         if id == '0':
             postcheck = Certificate.query.filter_by(
-                email=email, coursename=coursename, group_id=grp_id).first()
+                email=email, group_id=grp_id).first()
             if (postcheck == None):
                 try:
                     post = Certificate(name=name, number=number, email=email, coursename=coursename, user_id=userid,
@@ -1083,14 +1089,22 @@ def edit_certificates_page(grp_id, id):
 @app.route('/upload/<string:grp_id>/certificate', methods=['POST', 'GET'])
 @login_required
 def upload_csv(grp_id):
+    group = Group.query.filter_by(id=grp_id).first()
     csv_file = request.files['fileToUpload']
     csv_file = io.TextIOWrapper(csv_file, encoding='utf-8')
     csv_reader = csv.reader(csv_file, delimiter=',')
     # This skips the first row of the CSV file.
     next(csv_reader)
     for row in csv_reader:
-        number = ''.join(random.choice(string.ascii_letters) for _ in range(4))
-        number = 'CGV' + row[0][0:4].upper() + number
+        try:
+            last_certificate = Certificate.query.filter_by(
+                group_id=grp_id).order_by(-Certificate.id).first()
+            last_certificate_num = int(
+                last_certificate.number[len(last_certificate.number)-4:])
+            cert_number = str(last_certificate_num + 1).zfill(4)
+        except Exception as e:
+            cert_number = '1'.zfill(4)
+        number = group.prefix + cert_number
         certificate = Certificate(
             number=number, name=row[0], email=row[1], coursename=row[2], user_id=current_user.id, group_id=grp_id, last_update=time)
         db.session.add(certificate)
@@ -1226,13 +1240,14 @@ def edit_org_page(id):
         font_name = request.form.get("font_name")
         textColor = request.form.get("textColor")
         bg_image = request.files.get("bg_image")
+        prefix = request.form.get("prefix")
         date = x
         if id == '0':
             if Group.query.filter_by(name=name, user_id=current_user.id).first():
                 return jsonify(group_duplicate=True)
             try:
                 post = Group(name=name, textColor=textColor, font_size=font_size, font_name=font_name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
-                             certnox=certnox, certnoy=certnoy, date=date, user_id=current_user.id)
+                             certnox=certnox, certnoy=certnoy,prefix=prefix, date=date, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
                 if not app.debug:
                     # upload_image(bg_image, folder="backgrounds", name=name)
@@ -1884,14 +1899,20 @@ def post_new_certificate():
             course = data["course"]
             email = data["email"]
             postcheck = Certificate.query.filter_by(
-                email=email, coursename=course, group_id=group_id).first()
+                email=email, group_id=group_id).first()
             if not postcheck:
-                letters = string.ascii_letters
-                number = ''.join(random.choice(letters) for _ in range(4))
-                number = 'CGV' + name[0:4].upper() + number
+                group = Group.query.filter_by(id=group_id).first()
                 try:
-                    new_cert = Certificate(name=name, number=number, email=email, coursename=course,
-                                           user_id=api_key.user_id, group_id=group_id, last_update=x)
+                    last_certificate = Certificate.query.filter_by(
+                        group_id=group_id).order_by(-Certificate.id).first()
+                    last_certificate_num = int(
+                        last_certificate.number[len(last_certificate.number)-4:])
+                    cert_number = str(last_certificate_num + 1).zfill(4)
+                except Exception:
+                    cert_number = '1'.zfill(4)
+                number = group.prefix + cert_number
+                try:
+                    new_cert = Certificate(name=name, number=number, email=email, coursename=course, user_id=api_key.user_id, group_id=group_id, last_update=x)
                     db.session.add(new_cert)
                     db.session.commit()
                     # Create QR Code for this certificate

@@ -17,6 +17,7 @@
               <th>#</th>
               <th>Name</th>
               <th>Certficate Design</th>
+              <th>Certficate ID Prefix</th>
               <th>Name Coordinates</th>
               <th>QR Code Coordinates</th>
               <th>Cert Number Coordinates</th>
@@ -37,6 +38,7 @@
               <td>
                 <a href="{{post.bg_image}}">{{ post.bg_image|truncate(20) }}</a>
               </td>
+              <td>{{ post.prefix }}</td>
               <td>{{ post.certx }}:{{ post.certy }}</td>
               <td>{{ post.qrx }}:{{ post.qry }}</td>
               <td>{{ post.certnox }}:{{ post.certnoy }}</td>

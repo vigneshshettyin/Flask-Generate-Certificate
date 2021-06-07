@@ -9,12 +9,18 @@
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
                             
-                        <a class="btn btn-primary btn-icon-split mb-2" id="add_certificate" onclick="addCertificate('{{grp_id}}')" style="cursor: pointer">
+                        <a class="btn btn-primary btn-icon-split mb-2 mr-2" id="add_certificate" onclick="addCertificate('{{grp_id}}')" style="cursor: pointer">
                                         <span class="icon text-white-50">
                                            <i class="fa fa-plus" aria-hidden="true"></i>
                                         </span>
                                         <span class="text">Add Certificate</span>
-                  </a>
+                        </a>
+                        <a class="btn btn-info btn-icon-split mb-2" id="add_certificate" href="{{url_for('send_group_email', grp_id=grp_id )}}" onclick="showLoader()" style="cursor: pointer">
+                                        <span class="icon text-white-50">
+                                           <i class="fa fa-envelope" aria-hidden="true"></i>
+                                        </span>
+                                        <span class="text">Send Email</span>
+                        </a>
                     <a class="btn btn-primary btn-icon-split float-right ml-2 mb-2" href="{{ url_for('export_certificate_csv', grp_id=grp_id) }}">
                         <span class="icon text-white-50">
                            <i class="fa fa-upload" aria-hidden="true"></i>
@@ -37,6 +43,7 @@
                                             <th>Name</th>
                                             <th>Number</th>
                                             <th>Course Name</th>
+                                            <th>Email Sent</th>
                                             <th>Date</th>
                                             <th>Edit</th>
                                             <th>Delete</th>
@@ -50,6 +57,15 @@
                                             <td>{{ post.name}}</td>
                                             <td>{{ post.number }}</td>
                                             <td>{{ post.coursename }}</td>
+                                            <td class="text-center">
+                                                <a
+                                                style="cursor: pointer"
+                                                class="btn {{'btn-success' if post.is_email_sent else 'btn-danger'}} btn-circle"
+                                                >
+                                                <i
+                                                    class="fas {{'fa-check' if post.is_email_sent else 'fa-times'}}"
+                                                ></i>
+                                            </td>
                                             <td>{{ post.last_update }}</td>
                                             <td><a onclick="editCertificate('{{grp_id}}','{{post.id}}')" class="btn btn-success btn-circle" id="edit_certificate" style="cursor: pointer"><i class="fas fa-edit"></i></a></td>
                                             <td><a href="/delete/{{ grp_id }}/certificates/{{ post.id }}" class="btn btn-danger btn-circle"><i class="fas fa-trash"></i></a></td>
@@ -92,6 +108,22 @@
                     {% endfor %}
                     {% endif %}
                     {% endwith %}
-
+<script>
+    function showLoader(){
+        Swal.fire({
+            title: 'Sending Email',
+            icon: 'info',
+            html:
+                '<div class="spinner-border text-primary" role="status">'+
+                '<span class="sr-only">Loading...</span>'+
+                '</div>',
+            footer:"Note : Duplicate won't be sent.",
+            showCloseButton: false,
+            showCancelButton: false,
+            showConfirmButton: false,
+            focusConfirm: false,
+            })
+    }
+</script>
                         
             {% endblock %}

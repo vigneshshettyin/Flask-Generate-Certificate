@@ -179,6 +179,7 @@ class Certificate(db.Model):
     number = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False)
+    is_email_sent = db.Column(db.Boolean, default=False)
     coursename = db.Column(db.String(500), nullable=False)
     last_update = db.Column(db.String(50), nullable=False, default=x)
     group_id = db.Column(db.Integer, db.ForeignKey('group.id'))
@@ -1012,7 +1013,7 @@ def edit_certificates_page(grp_id, id):
                 email=email, group_id=grp_id).first()
             if (postcheck == None):
                 try:
-                    post = Certificate(name=name, number=number, email=email, coursename=coursename, user_id=userid,
+                    post = Certificate(name=name, number=number, email=email, coursename=coursename, user_id=userid, is_email_sent=False,
                                        group_id=grp_id, last_update=last_update)
                     db.session.add(post)
                     db.session.commit()
@@ -1052,6 +1053,9 @@ def edit_certificates_page(grp_id, id):
                     if not email_sent:
                         flash("Error while sending mail!", "danger")
                     else:
+                        post.is_email_sent = True
+                        db.session.add(post)
+                        db.session.commit()
                         flash(
                             "An email with certificate details has been sent!", "success")
                     return jsonify(certificate_success=True)
@@ -1083,7 +1087,24 @@ def edit_certificates_page(grp_id, id):
         "last_update": cert.last_update,
         "number": cert.number
     }
-    return jsonify(favTitle=favTitle, id=id, post=post)
+    return jsonify(favTitle=favTitle, id=id, post=post) 
+
+
+@app.get('/send-email/<string:grp_id>')  
+@login_required
+def send_group_email(grp_id):
+    all_certificates = Certificate.query.filter_by(group_id=grp_id).all()
+    for cert in all_certificates:
+        if not cert.is_email_sent:
+            subject = "Certificate Generated With Certificate Number : " + str(cert.number)
+            try:
+                send_email_now(cert.email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV', 'emails/new-certificate.html', number=cert.number, name=cert.name, site_url=config("site_url"))
+                cert.is_email_sent = True
+                db.session.add(cert)
+                db.session.commit()
+            except Exception:
+                pass
+    return redirect(f"/view/{grp_id}/certificates")
 
 
 @app.route('/upload/<string:grp_id>/certificate', methods=['POST', 'GET'])
@@ -1106,7 +1127,7 @@ def upload_csv(grp_id):
             cert_number = '1'.zfill(4)
         number = group.prefix + cert_number
         certificate = Certificate(
-            number=number, name=row[0], email=row[1], coursename=row[2], user_id=current_user.id, group_id=grp_id, last_update=time)
+            number=number, name=row[0], email=row[1], coursename=row[2], user_id=current_user.id, group_id=grp_id, is_email_sent=False, last_update=time)
         db.session.add(certificate)
         db.session.commit()
         # Create QR Code for this certificate
@@ -1912,7 +1933,7 @@ def post_new_certificate():
                     cert_number = '1'.zfill(4)
                 number = group.prefix + cert_number
                 try:
-                    new_cert = Certificate(name=name, number=number, email=email, coursename=course, user_id=api_key.user_id, group_id=group_id, last_update=x)
+                    new_cert = Certificate(name=name, number=number, email=email, coursename=course, user_id=api_key.user_id, is_email_sent=True, group_id=group_id, last_update=x)
                     db.session.add(new_cert)
                     db.session.commit()
                     # Create QR Code for this certificate
@@ -1945,6 +1966,9 @@ def post_new_certificate():
                         str(number)
                     send_email_now(email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
                                    'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
+                    new_cert.is_email_ent=True
+                    db.session.add(new_cert)
+                    db.session.commit()
                     data = {
                         'status': '200',
                         'message': "Certificate has been generated successfully.",

@@ -7,6 +7,9 @@
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+    
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link href="{{postf.font_cdn}}" rel="stylesheet" />
     <title>{{postc.name}} : Certificate : {{ favTitle }}</title>
@@ -333,7 +336,7 @@
         ctx.font = "normal {{posto.font_size}}px {{posto.font_name}}";
         ctx.fillStyle = "{{posto.textColor}}";
         ctx.fillText(nameInput.value, XnameInput.value, YnameInput.value);
-        ctx.font = "bolder 15px Calibri";
+        ctx.font = "bolder 20px Roboto";
         ctx.fillStyle = "#000000";
         ctx.fillText(
           "ID:#" + certificateIdInput.value,

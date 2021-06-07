@@ -1456,7 +1456,7 @@ def google_login_callback():
     # Doesn't exist? Add it to the database.
     if not Users.query.filter_by(email=users_email).first():
         entry = Users(name=users_name, email=users_email, password=password,
-                      profile_image=picture, last_login=time, status=1)
+                      profile_image=picture, last_login=time, status=1, is_staff=True)
         db.session.add(entry)
         db.session.commit()
 

@@ -12,7 +12,7 @@ $("#add_group").click(function (e) {
           <input type="number" id="certnox" name="certnox" class="swal2-input" placeholder="Certificate No (x-axis)">
           <input type="number" id="certnoy" name="certnoy" class="swal2-input" placeholder="Certificate No (y-axis)">
           <select id="category" name="font_name" class="swal2-input">
-          <option value="Verdana" disabled selected>Select the font</option>
+          <option value="" disabled selected>Select the font</option>
           </select>
           <input type="number" id="font_size" name="font_size" class="swal2-input" placeholder="Font Size">
           <input type="color" class="form-control form-control-color" id="textColor" value="#000000" title="Choose your text color">
@@ -73,10 +73,10 @@ $("#add_group").click(function (e) {
         Swal.showValidationMessage(`Certificate No (x-axis) is missing`);
       } else if (!certnoy) {
         Swal.showValidationMessage(`Certificate No (y-axis) is missing`);
-      } else if (!font_size) {
-        Swal.showValidationMessage(`Font Size is missing`);
       } else if (!category) {
         Swal.showValidationMessage(`Font Name is missing`);
+      } else if (!font_size) {
+        Swal.showValidationMessage(`Font Size is missing`);
       } else if (!textColor) {
         Swal.showValidationMessage(`Text Color is missing`);
       }
@@ -764,7 +764,7 @@ $("#add_font").click(function (e) {
           <input type="text" id="font" name="font" class="swal2-input" placeholder="Font CDN">
           </form>
         `,
-    footer: `Note : Get CDN From Google Fonts`,
+    footer: `<p>Note : Get CDN From <a href="https://fonts.google.com/" target="_blank">Google Fonts</a></p>`,
     confirmButtonText: "Create",
     focusConfirm: false,
     customClass: {

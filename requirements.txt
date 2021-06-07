@@ -45,7 +45,7 @@ requests==2.25.1
 s3transfer==0.4.2
 six==1.16.0
 SQLAlchemy==1.4.15
-starkbank-ecdsa==1.1.0
+starkbank-ecdsa==1.1.1
 toml==0.10.2
 urllib3==1.26.5
 webargs==8.0.0

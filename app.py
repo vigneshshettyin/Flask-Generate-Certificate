@@ -1515,18 +1515,20 @@ def google_login_callback():
         users_name = userinfo_response.json()["name"]
     else:
         abort(401)
-    pwo = PasswordGenerator()
-    pwd = pwo.generate()
-    password = sha256_crypt.hash(pwd)
     # Create a user in your db with the information provided
     # by Google
 
     # Doesn't exist? Add it to the database.
     if not Users.query.filter_by(email=users_email).first():
-        entry = Users(name=users_name, email=users_email, password=password,
-                      profile_image=picture, last_login=time, status=1, is_staff=False)
-        db.session.add(entry)
-        db.session.commit()
+        flash("Registration is blocked. Check some time later", "danger")
+        return redirect(url_for("loginPage"))
+        # pwo = PasswordGenerator()
+        # pwd = pwo.generate()
+        # password = sha256_crypt.hash(pwd)
+        # entry = Users(name=users_name, email=users_email, password=password,
+        #               profile_image=picture, last_login=time, status=1, is_staff=False)
+        # db.session.add(entry)
+        # db.session.commit()
 
     # Begin user session by logging the user in
 

@@ -31,7 +31,7 @@ import io
 from flask_cors import CORS
 
 # AWS S3 Bucket
-# import boto3
+import boto3
 # Facebook Login
 # import requests_oauthlib
 # from requests_oauthlib.compliance_fixes import facebook_compliance_fix
@@ -40,6 +40,9 @@ from flask_cors import CORS
 
 
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+
+# SES Conf
+CHARSET = "UTF-8"
 
 
 def check(email):
@@ -274,17 +277,42 @@ def admin_required(func):
 
 
 def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
-    msg = Message(
-        sender=(from_email_name, from_email),
-        recipients=[email],
-        subject=subject
-    )
-    msg.html = render_template(template_name, **kwargs)
+    sender = f"{from_email_name} <{from_email}>"
+    client = boto3.client('ses', 
+        region_name=config("AWS_REGION"), 
+        aws_access_key_id=config("AWS_ACCESS_KEY_ID"), 
+        aws_secret_access_key=config("AWS_ACCESS_KEY_SECRET")
+        )
+    msg_html = render_template(template_name, **kwargs)
     try:
-        mail.send(msg)
-        return True
-    except Exception:
+        # Provide the contents of the email.
+        client.send_email(
+            Destination={
+                'ToAddresses': [
+                    email,
+                ],
+            },
+            Message={
+                'Body': {
+                    'Html': {
+                        'Charset': CHARSET,
+                        'Data': msg_html,
+                    },
+                },
+                'Subject': {
+                    'Charset': CHARSET,
+                    'Data': subject,
+                },
+            },
+            Source=sender,
+        )
+    # Display an error if something goes wrong.
+    except Exception as e:
+        print(e)
+
         return False
+    else:
+        return True
 
 
 # def upload_image(file, bucket="cgv", **kwargs):
@@ -1000,8 +1028,10 @@ def edit_certificates_page(grp_id, id):
         email = data["email"]
         group = Group.query.filter_by(id=grp_id).first()
         try:
-            last_certificate = Certificate.query.filter_by(group_id=grp_id).order_by(-Certificate.id).first()
-            last_certificate_num = int(last_certificate.number[len(last_certificate.number)-4:])
+            last_certificate = Certificate.query.filter_by(
+                group_id=grp_id).order_by(-Certificate.id).first()
+            last_certificate_num = int(
+                last_certificate.number[len(last_certificate.number)-4:])
             cert_number = str(last_certificate_num + 1).zfill(4)
         except Exception as e:
             cert_number = '1'.zfill(4)
@@ -1087,18 +1117,20 @@ def edit_certificates_page(grp_id, id):
         "last_update": cert.last_update,
         "number": cert.number
     }
-    return jsonify(favTitle=favTitle, id=id, post=post) 
+    return jsonify(favTitle=favTitle, id=id, post=post)
 
 
-@app.get('/send-email/<string:grp_id>')  
+@app.get('/send-email/<string:grp_id>')
 @login_required
 def send_group_email(grp_id):
     all_certificates = Certificate.query.filter_by(group_id=grp_id).all()
     for cert in all_certificates:
         if not cert.is_email_sent:
-            subject = "Certificate Generated With Certificate Number : " + str(cert.number)
+            subject = "Certificate Generated With Certificate Number : " + \
+                str(cert.number)
             try:
-                send_email_now(cert.email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV', 'emails/new-certificate.html', number=cert.number, name=cert.name, site_url=config("site_url"))
+                send_email_now(cert.email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
+                               'emails/new-certificate.html', number=cert.number, name=cert.name, site_url=config("site_url"))
                 cert.is_email_sent = True
                 db.session.add(cert)
                 db.session.commit()
@@ -1268,7 +1300,7 @@ def edit_org_page(id):
                 return jsonify(group_duplicate=True)
             try:
                 post = Group(name=name, textColor=textColor, font_size=font_size, font_name=font_name,  certx=certx, certy=certy, qrx=qrx, qry=qry,
-                             certnox=certnox, certnoy=certnoy,prefix=prefix, date=date, user_id=current_user.id)
+                             certnox=certnox, certnoy=certnoy, prefix=prefix, date=date, user_id=current_user.id)
                 img_name = name.replace(" ", "+")
                 if not app.debug:
                     # upload_image(bg_image, folder="backgrounds", name=name)
@@ -1933,7 +1965,8 @@ def post_new_certificate():
                     cert_number = '1'.zfill(4)
                 number = group.prefix + cert_number
                 try:
-                    new_cert = Certificate(name=name, number=number, email=email, coursename=course, user_id=api_key.user_id, is_email_sent=True, group_id=group_id, last_update=x)
+                    new_cert = Certificate(name=name, number=number, email=email, coursename=course,
+                                           user_id=api_key.user_id, is_email_sent=True, group_id=group_id, last_update=x)
                     db.session.add(new_cert)
                     db.session.commit()
                     # Create QR Code for this certificate
@@ -1966,7 +1999,7 @@ def post_new_certificate():
                         str(number)
                     send_email_now(email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
                                    'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
-                    new_cert.is_email_ent=True
+                    new_cert.is_email_ent = True
                     db.session.add(new_cert)
                     db.session.commit()
                     data = {

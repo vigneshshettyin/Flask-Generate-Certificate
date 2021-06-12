@@ -1076,8 +1076,7 @@ def edit_certificates_page(grp_id, id):
                         db.session.commit()
                     except Exception as e:
                         print(e)
-                    subject = "Certificate Generated With Certificate Number : " + \
-                        str(number)
+                    subject = "Congratulations on being a part of GSSoC’21."
                     email_sent = send_email_now(email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
                                                 'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
                     if not email_sent:
@@ -1126,8 +1125,7 @@ def send_group_email(grp_id):
     all_certificates = Certificate.query.filter_by(group_id=grp_id).all()
     for cert in all_certificates:
         if not cert.is_email_sent:
-            subject = "Certificate Generated With Certificate Number : " + \
-                str(cert.number)
+            subject = "Congratulations on being a part of GSSoC’21."
             try:
                 send_email_now(cert.email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
                                'emails/new-certificate.html', number=cert.number, name=cert.name, site_url=config("site_url"))

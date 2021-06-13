@@ -1078,7 +1078,7 @@ def edit_certificates_page(grp_id, id):
                     except Exception as e:
                         print(e)
                     subject = "Congratulations on being a part of GSSOC’21."
-                    email_sent = send_email_now(email, subject, 'gssoc@cgv.in.net', 'GirlScript Summer of Code',
+                    email_sent = send_email_now(email, subject, 'gssoc@girlscript.tech', 'GirlScript Summer of Code',
                                                 'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
                     if not email_sent:
                         flash("Error while sending mail!", "danger")
@@ -1128,7 +1128,7 @@ def send_group_email(grp_id):
         if not cert.is_email_sent:
             subject = "Congratulations on being a part of GSSOC’21."
             try:
-                send_email_now(cert.email, subject, 'gssoc@cgv.in.net', 'GirlScript Summer of Code',
+                send_email_now(cert.email, subject, 'gssoc@girlscript.tech', 'GirlScript Summer of Code',
                                'emails/new-certificate.html', number=cert.number, name=cert.name, site_url=config("site_url"))
                 cert.is_email_sent = True
                 db.session.add(cert)

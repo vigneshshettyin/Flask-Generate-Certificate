@@ -1062,8 +1062,7 @@ def edit_certificates_page(grp_id, id):
                             # upload_image(buffer, number=number,
                             #              folder="qr_codes")
                             # img_url = f"https://cgv.s3.us-east-2.amazonaws.com/qr_codes/{number}.png"
-#                             img_url = upload(buffer)
-                              img_url = "https://demo.curlythemes.com/qr/wp-content/plugins/simple-qr/qr-generator.php?size=160&type=url&url=demo.curlythemes.com/qr"
+                            img_url = upload(buffer)
                         else:
                             try:
                                 os.mkdir("static/qr_codes")

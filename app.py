@@ -672,10 +672,10 @@ def certificate_generate_string(number):
         style = "display: none;"
         posto = Group.query.filter_by(id=postc.group_id).first()
         postf = Fonts.query.filter_by(name=posto.font_name).first()
-        qr_code = QRCode.query.filter_by(certificate_num=number).first()
-        img_url = qr_code.qr_code
-        return render_template('certificate.html', postf=postf, postc=postc, posto=posto,
-                               qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style)
+#         qr_code = QRCode.query.filter_by(certificate_num=number).first()
+#         img_url = qr_code.qr_code
+#         qr_code=img_url            
+        return render_template('certificate.html', postf=postf, postc=postc, posto=posto, favTitle=favTitle, site_url=site_url, number=number, style=style)
     else:
         return redirect('/')
 

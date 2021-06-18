@@ -629,11 +629,10 @@ def certificate_generate():
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
             postf = Fonts.query.filter_by(name=posto.font_name).first()
-            qr_code = QRCode.query.filter_by(
-                certificate_num=certificateno).first()
-            img_url = qr_code.qr_code
-            return render_template('certificate.html', postf=postf, postc=postc, posto=posto,
-                                   qr_code=img_url, favTitle=favTitle, site_url=site_url, number=certificateno)
+#             qr_code = QRCode.query.filter_by(
+#                 certificate_num=certificateno).first()
+#             img_url = qr_code.qr_code
+            return render_template('certificate.html', postf=postf, postc=postc, posto=posto,favTitle=favTitle, site_url=site_url, number=certificateno)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address, user=current_user)

@@ -1,23 +1,26 @@
 ![Flask-Generate-Certificate](https://socialify.git.ci/vigneshshettyin/Flask-Generate-Certificate/image?description=1&font=KoHo&forks=1&issues=1&language=1&logo=https%3A%2F%2Fres.cloudinary.com%2Fvigneshshettyin%2Fimage%2Fupload%2Fv1622801205%2Fly3psnd195zupwke7pd4.png&owner=1&pattern=Brick%20Wall&pulls=1&stargazers=1&theme=Light)
 
-[![forthebadge](https://forthebadge.com/images/badges/built-by-developers.svg)](https://github.com/vigneshshettyin/Flask-Generate-Certificate)
-[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://github.com/vigneshshettyin/Flask-Generate-Certificate)
-[![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)](https://github.com/vigneshshettyin/Flask-Generate-Certificate)
-[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://github.com/vigneshshettyin/Flask-Generate-Certificate)
+<div align="center">
+  
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate"><img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate"><img src="https://img.shields.io/badge/Built%20by-developers%20%3C%2F%3E-0059b3"></a>
+<a href="https://www.python.org/"><img src="https://img.shields.io/badge/Made%20with-Python-brightgreen.svg"></a>
 
-[![Open Source Love svg1](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/vigneshshettyin/Flask-Generate-Certificate)
-[![GitHub forks](https://img.shields.io/github/forks/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Fork&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/network/)
-[![GitHub stars](https://img.shields.io/github/stars/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Star&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/stargazers/)
-[![GitHub watchers](https://img.shields.io/github/watchers/vigneshshettyin/Flask-Generate-Certificate.svg?style=social&label=Watch&maxAge=2592000)](https://GitHub.com/vigneshshettyin/Flask-Generate-Certificate/watchers/)
-[![Issues](https://img.shields.io/github/issues/vigneshshettyin/Flask-Generate-Certificate.svg?logo=github)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-![Pull Requests](https://img.shields.io/github/issues-pr/vigneshshettyin/Flask-Generate-Certificate)
-![Maintenance](https://img.shields.io/maintenance/yes/2021?color=brightgreen&logo=github)
-[![MPL-2.0 License](https://img.shields.io/github/license/vigneshshettyin/Flask-Generate-Certificate.svg?style=flat-square)](https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/master/LICENSE)
-![GitHub contributors](https://img.shields.io/github/contributors/vigneshshettyin/Flask-Generate-Certificate)
-![](https://img.shields.io/github/repo-size/vigneshshettyin/Flask-Generate-Certificate.svg?label=Repo%20size&style=flat-square)
-![Lines of Code](https://img.shields.io/tokei/lines/github/vigneshshettyin/Flask-Generate-Certificate?color=red&label=Lines%20of%20Code)
-[![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate"><img src="https://img.shields.io/static/v1.svg?label=Contributions&message=Welcome&color=yellow"></a>
+<a href="https://github.com/vigneshshettyin/"><img src="https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg?v=103"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate"><img src="https://img.shields.io/github/repo-size/vigneshshettyin/Flask-Generate-Certificate.svg?label=Repo%20size&style=flat"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate"><img src="https://img.shields.io/tokei/lines/github/vigneshshettyin/Flask-Generate-Certificate?color=yellow&label=Lines%20of%20Code"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MPL_2.0-brightgreen.svg?v=103"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/watchers"><img src="https://img.shields.io/github/watchers/vigneshshettyin/Flask-Generate-Certificate"></a>
+  
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/graphs/contributors"><img src="https://img.shields.io/github/contributors/vigneshshettyin/Flask-Generate-Certificate?color=brightgreen"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/stargazers"><img src="https://img.shields.io/github/stars/vigneshshettyin/Flask-Generate-Certificate?color=0059b3"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/network/members"><img src="https://img.shields.io/github/forks/vigneshshettyin/Flask-Generate-Certificate?color=yellow"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues"><img src="https://img.shields.io/github/issues/vigneshshettyin/Flask-Generate-Certificate?color=brightgreen"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/vigneshshettyin/Flask-Generate-Certificate?color=0059b3"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/pulls"><img src="https://img.shields.io/github/issues-pr/vigneshshettyin/Flask-Generate-Certificate?color=yellow"></a>
+<a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/pulls?q=is%3Apr+is%3Aclosed"><img src="https://img.shields.io/github/issues-pr-closed-raw/vigneshshettyin/Flask-Generate-Certificate?color=brightgreen"></a> 
+</div>
 
 <h2 align=center> 📑 Introduction </h2>
 

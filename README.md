@@ -73,7 +73,7 @@ You can refer to the following articles on **_basics of Git and Github and also 
 
 </td><td valign="top" width="50%">
 
-[![MAC](http://img.youtube.com/vi/Ys2iFw8Bypk/0.jpg)](https://www.youtube.com/watch?v=h3VKpZDOVqw&feature=youtu.be "MAC DEMO")
+[![MAC](http://img.youtube.com/vi/h3VKpZDOVqw/0.jpg)](https://youtu.be/h3VKpZDOVqw "MAC DEMO")
 
 </td></tr></table>  
 

@@ -83,6 +83,10 @@ You can refer to the following articles on **_basics of Git and Github and also 
 
 - GirlScript Summer of Code is the 3 month long Open Source program  conducted by GirlScript Foundation, started in 2018, with an aim to help beginners get started with Open       Source Development while encouraging diversity.
 
+<img align="right" src="https://letsgrowmore.in/wp-content/uploads/2021/05/growmore-removebg-preview-768x314.png" width = "100" height = "80"><b>LetsGrowMore's Summer Of Code</b>
+
+- LGM – SOC is an online program designed to encourage student participation in open source software development under the guidance of mentors from the open source community.
+
 <h2 align=center>License 📄</h2>
 
 This project is licensed under the MPL-2.0 License. See the [LICENSE](./LICENSE) file for details

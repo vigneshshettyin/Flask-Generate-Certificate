@@ -47,6 +47,6 @@ six==1.16.0
 SQLAlchemy==1.4.15
 starkbank-ecdsa==1.1.0
 toml==0.10.2
-urllib3==1.26.5
+urllib3==1.26.6
 webargs==8.0.0
 Werkzeug==2.0.1

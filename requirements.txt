@@ -41,7 +41,7 @@ pytz==2021.1
 qrcode==6.1
 random-password-generator==2.2.0
 razorpay==1.2.0
-requests==2.25.1
+requests==2.26.0
 s3transfer==0.4.2
 six==1.16.0
 SQLAlchemy==1.4.15

@@ -24,7 +24,7 @@ Jinja2==3.0.1
 jmespath==0.10.0
 Mako==1.1.4
 MarkupSafe==2.0.1
-marshmallow==3.12.1
+marshmallow==3.13.0
 mysqlclient==2.0.3
 oauthlib==3.1.1
 passlib==1.7.4

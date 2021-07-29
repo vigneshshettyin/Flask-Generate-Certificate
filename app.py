@@ -369,40 +369,40 @@ def avatar(email, size):
     return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
 
 
-# def send_password_reset_email(name, email):
-#     token = s.dumps(email, salt='cgv-password-reset')
-#     new_token = Token(email=email, token_id=token, status='A')
-#     db.session.add(new_token)
-#     db.session.commit()
-#     if app.debug:
-#         link = f"http://127.0.0.1:5000/reset-password/{token}"
-#     else:
-#         link = f"{config('site_url')}/reset-password/{token}"
-#     print(link)
-#     subject = "Password Reset Link | CGV"
-#     return send_email_now(email, subject, 'password-bot@cgv.in.net', 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
+def send_password_reset_email(name, email):
+    token = s.dumps(email, salt='cgv-password-reset')
+    new_token = Token(email=email, token_id=token, status='A')
+    db.session.add(new_token)
+    db.session.commit()
+    if app.debug:
+        link = f"http://127.0.0.1:5000/reset-password/{token}"
+    else:
+        link = f"{config('site_url')}/reset-password/{token}"
+    print(link)
+    subject = "Password Reset Link | CGV"
+    return send_email_now(email, subject, 'password-bot@cgv.in.net', 'Password Bot CGV', 'emails/reset-password.html', name=name, link=link)
 
 
-# @app.route('/forgot', methods=['GET', 'POST'])
-# def forgot_password_page():
-#     if (request.method == 'POST'):
-#         email = request.form.get('email')
-#         post = Users.query.filter_by(email=email).first()
-#         name = post.name
-#         if (post != None):
-#             if (post.email == config("admin_email")):
-#                 flash("You can't reset password of administrator!", "danger")
-#             else:
-#                 if send_password_reset_email(name, email):
-#                     flash(
-#                         f"We've sent a password reset link on {email}", "success")
-#                 else:
-#                     flash("Error while sending password reset email!", "danger")
-#         elif (post == None):
-#             flash("We didn't find your account!", "danger")
-#             return render_template('forgot-password.html', favTitle=favTitle, verified=False)
+@app.route('/forgot', methods=['GET', 'POST'])
+def forgot_password_page():
+    if (request.method == 'POST'):
+        email = request.form.get('email')
+        post = Users.query.filter_by(email=email).first()
+        name = post.name
+        if (post != None):
+            if (post.email == config("admin_email")):
+                flash("You can't reset password of administrator!", "danger")
+            else:
+                if send_password_reset_email(name, email):
+                    flash(
+                        f"We've sent a password reset link on {email}", "success")
+                else:
+                    flash("Error while sending password reset email!", "danger")
+        elif (post == None):
+            flash("We didn't find your account!", "danger")
+            return render_template('forgot-password.html', favTitle=favTitle, verified=False)
 
-#     return render_template('forgot-password.html', favTitle=favTitle, verified=False)
+    return render_template('forgot-password.html', favTitle=favTitle, verified=False)
 
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
@@ -629,10 +629,10 @@ def certificate_generate():
         if (postc != None):
             posto = Group.query.filter_by(id=postc.group_id).first()
             postf = Fonts.query.filter_by(name=posto.font_name).first()
-#             qr_code = QRCode.query.filter_by(
-#                 certificate_num=certificateno).first()
-#             img_url = qr_code.qr_code
-            return render_template('certificate.html', postf=postf, postc=postc, posto=posto,favTitle=favTitle, site_url=site_url, number=certificateno)
+            qr_code = QRCode.query.filter_by(
+                certificate_num=certificateno).first()
+            img_url = qr_code.qr_code
+            return render_template('certificate.html', postf=postf, postc=postc, qr_code=img_url, posto=posto,favTitle=favTitle, site_url=site_url, number=certificateno)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address, user=current_user)
@@ -671,10 +671,9 @@ def certificate_generate_string(number):
         style = "display: none;"
         posto = Group.query.filter_by(id=postc.group_id).first()
         postf = Fonts.query.filter_by(name=posto.font_name).first()
-#         qr_code = QRCode.query.filter_by(certificate_num=number).first()
-#         img_url = qr_code.qr_code
-#         qr_code=img_url            
-        return render_template('certificate.html', postf=postf, postc=postc, posto=posto, favTitle=favTitle, site_url=site_url, number=number, style=style)
+        qr_code = QRCode.query.filter_by(certificate_num=number).first()
+        img_url = qr_code.qr_code           
+        return render_template('certificate.html', postf=postf, postc=postc, posto=posto,qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style)
     else:
         return redirect('/')
 
@@ -826,64 +825,64 @@ def match_passwords():
     return jsonify(password_mismatch='Password and Confirm Password do not match.')
 
 
-# def send_activation_email(name, email):
-#     token = s.dumps(email, salt='cgv-email-confirm')
-#     new_token = Token(email=email, token_id=token, status='A')
-#     db.session.add(new_token)
-#     db.session.commit()
-#     if app.debug:
-#         link = f"http://127.0.0.1:5000/confirm-email/{token}"
-#     else:
-#         link = f"{config('site_url')}/confirm-email/{token}"
-#     print(link)
-#     subject = "Welcome aboard " + name + "!"
-#     return send_email_now(email, subject, 'register-bot@cgv.in.net', 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
+def send_activation_email(name, email):
+    token = s.dumps(email, salt='cgv-email-confirm')
+    new_token = Token(email=email, token_id=token, status='A')
+    db.session.add(new_token)
+    db.session.commit()
+    if app.debug:
+        link = f"http://127.0.0.1:5000/confirm-email/{token}"
+    else:
+        link = f"{config('site_url')}/confirm-email/{token}"
+    print(link)
+    subject = "Welcome aboard " + name + "!"
+    return send_email_now(email, subject, 'register-bot@cgv.in.net', 'Register Bot CGV', 'emails/account-activation.html', name=name, link=link)
 
 
-# @app.route('/register', methods=['GET', 'POST'])
-# def register_page():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('dashboard_page'))
-#     if (request.method == 'POST'):
-#         name = request.form.get('name')
-#         email = request.form.get('email')
-#         password = request.form.get('password')
-#         password = sha256_crypt.hash(password)
-#         profile_image = avatar(email, 128)
-#         entry = Users(name=name, email=email, password=password, profile_image=profile_image,
-#                       status=0, is_staff=0, last_login=time,)
-#         db.session.add(entry)
-#         db.session.commit()
-#         if send_activation_email(name, email):
-#             flash(
-#                 f"We've sent an account activation link on {email}", "success")
-#         else:
-#             flash("Error while sending account activation email!", "danger")
-#             return render_template('resend.html', favTitle=favTitle)
-#     return render_template('register.html', favTitle=favTitle)
+@app.route('/register', methods=['GET', 'POST'])
+def register_page():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard_page'))
+    if (request.method == 'POST'):
+        name = request.form.get('name')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        password = sha256_crypt.hash(password)
+        profile_image = avatar(email, 128)
+        entry = Users(name=name, email=email, password=password, profile_image=profile_image,
+                      status=0, is_staff=0, last_login=time,)
+        db.session.add(entry)
+        db.session.commit()
+        if send_activation_email(name, email):
+            flash(
+                f"We've sent an account activation link on {email}", "success")
+        else:
+            flash("Error while sending account activation email!", "danger")
+            return render_template('resend.html', favTitle=favTitle)
+    return render_template('register.html', favTitle=favTitle)
 
 
-# @app.route('/resend-link/', methods=['GET', 'POST'])
-# def resend_email():
-#     if current_user.is_authenticated:
-#         return redirect(url_for('dashboard_page'))
-#     if request.method == 'POST':
-#         email = request.form.get('email')
-#         user = Users.query.filter_by(email=email).first()
-#         if user:
-#             if user.status == 1:
-#                 flash('Your account is already activated. Please login', 'danger')
-#                 return redirect(url_for('resend_email'))
-#             name = user.name
-#             if send_activation_email(name, email):
-#                 flash(
-#                     f"We've sent an account activation link on {email}", "success")
-#             else:
-#                 flash("Error while sending account activation email!", "danger")
-#         else:
-#             flash('You are not registered yet.', 'danger')
-#             return redirect(url_for('resend_email'))
-#     return render_template("resend.html", favTitle=favTitle)
+@app.route('/resend-link/', methods=['GET', 'POST'])
+def resend_email():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard_page'))
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = Users.query.filter_by(email=email).first()
+        if user:
+            if user.status == 1:
+                flash('Your account is already activated. Please login', 'danger')
+                return redirect(url_for('resend_email'))
+            name = user.name
+            if send_activation_email(name, email):
+                flash(
+                    f"We've sent an account activation link on {email}", "success")
+            else:
+                flash("Error while sending account activation email!", "danger")
+        else:
+            flash('You are not registered yet.', 'danger')
+            return redirect(url_for('resend_email'))
+    return render_template("resend.html", favTitle=favTitle)
 
 
 @app.route('/confirm-email/<token>', methods=['GET'])
@@ -1517,15 +1516,13 @@ def google_login_callback():
 
     # Doesn't exist? Add it to the database.
     if not Users.query.filter_by(email=users_email).first():
-        flash("Registration is blocked. Check some time later", "danger")
-        return redirect(url_for("loginPage"))
-        # pwo = PasswordGenerator()
-        # pwd = pwo.generate()
-        # password = sha256_crypt.hash(pwd)
-        # entry = Users(name=users_name, email=users_email, password=password,
-        #               profile_image=picture, last_login=time, status=1, is_staff=False)
-        # db.session.add(entry)
-        # db.session.commit()
+        pwo = PasswordGenerator()
+        pwd = pwo.generate()
+        password = sha256_crypt.hash(pwd)
+        entry = Users(name=users_name, email=users_email, password=password,
+                      profile_image=picture, last_login=time, status=1, is_staff=False)
+        db.session.add(entry)
+        db.session.commit()
 
     # Begin user session by logging the user in
 

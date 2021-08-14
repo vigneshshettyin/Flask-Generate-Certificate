@@ -1,24 +1,36 @@
 ## Running the code the conventional way
 
-Clone this repository to your local drive
+**1.** Clone the forked repository to your local drive
  ```shell
-$ git clone https://github.com/vigneshshettyin/Flask-Generate-Certificate.git
+git clone https://github.com/<YOUR_Username>/Flask-Generate-Certificate.git
 ```
 
 **2.** Change directory into the cloned repository  
  ```shell
-$ cd Flask-Generate-Certificate
+cd Flask-Generate-Certificate
 ```
 
 **3.** Setup virtual environment
- ```shell
-$ py -m venv env
-$ .\env\Scripts\activate
-```
+ 
+ **3.1** For Windows
+  ```shell
+  py -m venv env
+  .\env\Scripts\activate
+  ```
+  **3.2** For Linux
+  ```shell
+  pip install virtualenv
+  ```
+  ```shell
+  virtualenv your_name
+  ```
+  ```shell
+  virtualenv -p /usr/bin/python3 your_name
+  ```
 
-**4.** Install requirements from requirements.txt  
+**4.** Install requirements from requirements.txt (While installing if you get any error regarding the boto3, botocore, simply remove the specified versions from both and do not disturb the other.)
  ```shell
-$ pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 **5.** Create a new file called `.env` and copy all the data from `.env.sample` to `.env` as it is.
@@ -45,7 +57,7 @@ $ pip3 install -r requirements.txt
 
 **7.** Run the development server
 ```shell
-$ flask run
+flask run
 ```
 
 Now open Google Chrome/IE6/Edge/Firefox browser and go to http://127.0.0.1:5000/

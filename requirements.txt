@@ -22,7 +22,7 @@ idna==2.10
 itsdangerous==2.0.1
 Jinja2==3.0.1
 jmespath==0.10.0
-Mako==1.1.4
+Mako==1.1.5
 MarkupSafe==2.0.1
 marshmallow==3.12.1
 mysqlclient==2.0.3

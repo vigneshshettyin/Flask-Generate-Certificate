@@ -1049,8 +1049,8 @@ def edit_certificates_page(grp_id, id):
                         db.session.commit()
                     except Exception as e:
                         print(e)
-                    subject = "Congratulations on being a part of GSSOC’21."
-                    email_sent = send_email_now(email, subject, 'gssoc@girlscript.tech', 'GirlScript Summer of Code',
+                    subject = f"Certificate Generated With Certificate Number : {number}"
+                    email_sent = send_email_now(email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
                                                 'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
                     if not email_sent:
                         flash("Error while sending mail!", "danger")
@@ -1098,9 +1098,10 @@ def send_group_email(grp_id):
     all_certificates = Certificate.query.filter_by(group_id=grp_id).all()
     for cert in all_certificates:
         if not cert.is_email_sent:
-            subject = "Congratulations on being a part of GSSOC’21."
+            subject = "Certificate Generated With Certificate Number : " + \
+                str(cert.number)
             try:
-                send_email_now(cert.email, subject, 'gssoc@girlscript.tech', 'GirlScript Summer of Code',
+                send_email_now(cert.email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
                                'emails/new-certificate.html', number=cert.number, name=cert.name, site_url=config("site_url"))
                 cert.is_email_sent = True
                 db.session.add(cert)
@@ -1968,7 +1969,7 @@ def post_new_certificate():
                         print(e)
                     subject = "Certificate Generated With Certificate Number : " + \
                         str(number)
-                    send_email_now(email, subject, 'gssoc@cgv.in.net', 'GirlScript Summer of Code',
+                    send_email_now(email, subject, 'certificate-bot@cgv.in.net', 'Certificate Generate Bot CGV',
                                    'emails/new-certificate.html', number=str(number), name=name, site_url=config("site_url"))
                     new_cert.is_email_ent = True
                     db.session.add(new_cert)

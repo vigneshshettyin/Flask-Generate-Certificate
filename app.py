@@ -277,42 +277,17 @@ def admin_required(func):
 
 
 def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
-    sender = f"{from_email_name} <{from_email}>"
-    client = boto3.client('ses', 
-        region_name=config("AWS_REGION"), 
-        aws_access_key_id=config("AWS_ACCESS_KEY_ID"), 
-        aws_secret_access_key=config("AWS_ACCESS_KEY_SECRET")
-        )
-    msg_html = render_template(template_name, **kwargs)
+    msg = Message(
+        sender=(from_email_name, from_email),
+        recipients=[email],
+        subject=subject
+    )
+    msg.html = render_template(template_name, **kwargs)
     try:
-        # Provide the contents of the email.
-        client.send_email(
-            Destination={
-                'ToAddresses': [
-                    email,
-                ],
-            },
-            Message={
-                'Body': {
-                    'Html': {
-                        'Charset': CHARSET,
-                        'Data': msg_html,
-                    },
-                },
-                'Subject': {
-                    'Charset': CHARSET,
-                    'Data': subject,
-                },
-            },
-            Source=sender,
-        )
-    # Display an error if something goes wrong.
-    except Exception as e:
-        print(e)
-
-        return False
-    else:
+        mail.send(msg)
         return True
+    except Exception:
+        return False
 
 
 # def upload_image(file, bucket="cgv", **kwargs):

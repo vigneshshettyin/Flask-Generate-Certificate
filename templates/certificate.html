@@ -157,8 +157,9 @@
             <div class="row">
               <div class="col">
                 <label for="pwd">Qr Code Link:</label>
-<!--                                   value="{{qr_code}}" -->
+                                  
                 <input
+                  value="{{qr_code}}"
                   type="url"
                   class="form-control"
                   id="QrCode"
@@ -320,7 +321,7 @@
       image1.setAttribute("crossorigin", "anonymous");
 
       const image2 = new Image();
-//       image2.src = "{{qr_code}}";
+      image2.src = "{{qr_code}}";
       image2.setAttribute("crossorigin", "anonymous");
 
       function drawImage() {

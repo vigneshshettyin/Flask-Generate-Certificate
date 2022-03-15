@@ -21,7 +21,7 @@ gunicorn==20.1.0
 idna==2.10
 itsdangerous==2.0.1
 Jinja2==3.0.3
-jmespath==0.10.0
+jmespath==1.0.0
 Mako==1.1.5
 MarkupSafe==2.0.1
 marshmallow==3.14.1

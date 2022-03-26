@@ -1,4 +1,5 @@
 import os
+import threading
 from flask.globals import current_app
 from oauthlib.oauth2 import WebApplicationClient
 from flask import Flask, render_template, redirect, request, flash, url_for, jsonify, abort, send_from_directory, make_response
@@ -276,7 +277,14 @@ def admin_required(func):
     return decorated_view
 
 
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+        return True
+
+
 def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
+    app = current_app._get_current_object()
     msg = Message(
         sender=(from_email_name, from_email),
         recipients=[email],
@@ -284,9 +292,10 @@ def send_email_now(email, subject, from_email, from_email_name, template_name, *
     )
     msg.html = render_template(template_name, **kwargs)
     try:
-        mail.send(msg)
-        return True
-    except Exception:
+        thr = threading.Thread(target=send_async_email, args=[app, msg]).start()
+        return thr
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -607,7 +616,7 @@ def certificate_generate():
             qr_code = QRCode.query.filter_by(
                 certificate_num=certificateno).first()
             img_url = qr_code.qr_code
-            return render_template('certificate.html', postf=postf, postc=postc, qr_code=img_url, posto=posto,favTitle=favTitle, site_url=site_url, number=certificateno)
+            return render_template('certificate.html', postf=postf, postc=postc, qr_code=img_url, posto=posto, favTitle=favTitle, site_url=site_url, number=certificateno)
         elif (postc == None):
             flash("No details found. Contact your organization!", "danger")
     return render_template('Redesign-generate.html', favTitle=favTitle, ip=ip_address, user=current_user)
@@ -647,8 +656,8 @@ def certificate_generate_string(number):
         posto = Group.query.filter_by(id=postc.group_id).first()
         postf = Fonts.query.filter_by(name=posto.font_name).first()
         qr_code = QRCode.query.filter_by(certificate_num=number).first()
-        img_url = qr_code.qr_code           
-        return render_template('certificate.html', postf=postf, postc=postc, posto=posto,qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style)
+        img_url = qr_code.qr_code
+        return render_template('certificate.html', postf=postf, postc=postc, posto=posto, qr_code=img_url, favTitle=favTitle, site_url=site_url, number=number, style=style)
     else:
         return redirect('/')
 

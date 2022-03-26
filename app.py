@@ -1,3 +1,4 @@
+from multiprocessing.pool import ThreadPool
 import os
 import threading
 from flask.globals import current_app
@@ -277,23 +278,74 @@ def admin_required(func):
     return decorated_view
 
 
-def send_async_email(app, msg):
+# Use if Sendgrid is configured
+
+# def send_async_email(app, msg):
+#     with app.app_context():
+#         mail.send(msg)
+#         return True
+
+# def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
+#     app = current_app._get_current_object()
+#     msg = Message(
+#         sender=(from_email_name, from_email),
+#         recipients=[email],
+#         subject=subject
+#     )
+#     msg.html = render_template(template_name, **kwargs)
+#     try:
+#         thr = threading.Thread(target=send_async_email, args=[app, msg]).start()
+#         return thr
+#     except Exception as e:
+#         print(e)
+#         return False
+
+def send_async_email(app, client, data):
     with app.app_context():
-        mail.send(msg)
-        return True
+        response = client.send_email(
+            Destination={
+                'ToAddresses': [
+                    data["email"],
+                ],
+            },
+            Message={
+                'Body': {
+                    'Html': {
+                        'Charset': CHARSET,
+                        'Data': data["msg_html"],
+                    },
+                },
+                'Subject': {
+                    'Charset': CHARSET,
+                    'Data': data["subject"],
+                },
+            },
+            Source=data["sender"],
+        )
+        return response["ResponseMetadata"]["HTTPStatusCode"]
 
 
 def send_email_now(email, subject, from_email, from_email_name, template_name, **kwargs):
-    app = current_app._get_current_object()
-    msg = Message(
-        sender=(from_email_name, from_email),
-        recipients=[email],
-        subject=subject
-    )
-    msg.html = render_template(template_name, **kwargs)
+    aws_email = config("AWS_SES_VERIFIED_EMAIL")
+    sender = f"{from_email_name} <{aws_email}>"
+    client = boto3.client('ses',
+                          region_name=config("AWS_REGION"),
+                          aws_access_key_id=config("AWS_ACCESS_KEY_ID"),
+                          aws_secret_access_key=config("AWS_ACCESS_KEY_SECRET")
+                          )
+    msg_html = render_template(template_name, **kwargs)
+    data = {
+        "email": email,
+        "subject": subject,
+        "sender": sender,
+        "msg_html": msg_html
+    }
     try:
-        thr = threading.Thread(target=send_async_email, args=[app, msg]).start()
-        return thr
+        pool = ThreadPool(processes=1)
+        # Provide the contents of the email.
+        async_res = pool.apply_async(send_async_email, [app, client, data])
+        return async_res.get() == 200
+    # Display an error if something goes wrong.
     except Exception as e:
         print(e)
         return False

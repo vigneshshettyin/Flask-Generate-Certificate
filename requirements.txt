@@ -6,7 +6,7 @@ boto3
 botocore
 certifi==2020.12.5
 chardet==4.0.0
-click==8.0.3
+click==8.1.0
 cloudinary==1.29.0
 colorama==0.4.4
 Flask==2.0.3

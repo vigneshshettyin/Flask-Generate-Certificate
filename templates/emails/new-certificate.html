@@ -1,34 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Certificate Download</title>
-    </head>
-    <body>
-        <table cellspacing="0" cellpadding="0" border="0" style="color:#333;background:#fff;padding:0;margin:0;width:100%;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica">
-            <tbody>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Certificate Download</title>
+  </head>
+  <body>
+    <table
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      style="
+        color: #333;
+        background: #fff;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        font: 15px/1.25em 'Helvetica Neue', Arial, Helvetica;
+      "
+    >
+      <tbody>
+        <tr width="100%">
+          <td
+            valign="top"
+            align="left"
+            style="
+              background: #eef0f1;
+              font: 15px/1.25em 'Helvetica Neue', Arial, Helvetica;
+            "
+          >
+            <table
+              style="
+                border: none;
+                padding: 0 18px;
+                margin: 50px auto;
+                width: 500px;
+              "
+            >
+              <tbody>
+                <tr width="100%" height="60">
+                  <td
+                    valign="top"
+                    align="left"
+                    style="
+                      border-top-left-radius: 4px;
+                      border-top-right-radius: 4px;
+                      background: white;
+                      padding: 10px 18px;
+                      text-align: center;
+                    "
+                  >
+                    <img
+                      height="75"
+                      width="75"
+                      src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png"
+                      title="CGV"
+                      style="
+                        font-weight: bold;
+                        font-size: 18px;
+                        color: #fff;
+                        vertical-align: top;
+                      "
+                      class="CToWUd"
+                    />
+                  </td>
+                </tr>
                 <tr width="100%">
-                    <td valign="top" align="left" style="background:#eef0f1;font:15px/1.25em 'Helvetica Neue',Arial,Helvetica">
-                        <table style="border:none;padding:0 18px;margin:50px auto;width:500px">
-                            <tbody>
-                                <tr width="100%" height="60">
-                                    <td valign="top" align="left" style="border-top-left-radius:4px;border-top-right-radius:4px;background: white; padding:10px 18px;text-align:center"> 
-                                        <img height="75" width="75" src="https://cdn.discordapp.com/attachments/708550144827719811/792008916451328010/android-chrome-512x512.png" title="CGV" style="font-weight:bold;font-size:18px;color:#fff;vertical-align:top" class="CToWUd">
-                                    </td>
-                                </tr>
-                                <tr width="100%">
-                                    <td valign="top" align="left" style="background:#fff;padding:18px">
-                                        <h1 style="font-size:20px;margin:16px 0;color:#333;text-align:center">India’s Largest Online Verification Network</h1>
-                                        <p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333;text-align:center">Hey, {{name}}
+                  <td
+                    valign="top"
+                    align="left"
+                    style="background: #fff; padding: 18px"
+                  >
+                    <h1
+                      style="
+                        font-size: 20px;
+                        margin: 16px 0;
+                        color: #333;
+                        text-align: center;
+                      "
+                    >
+                      CGV
+                    </h1>
+                    <p
+                      style="
+                        font: 15px/1.25em 'Helvetica Neue', Arial, Helvetica;
+                        color: #333;
+                        text-align: center;
+                      "
+                    >
+                      Hey, {{name}}
                     </p>
-                    <div style="background:#f6f7f8;border-radius:3px"> 
-                        <br>
-                        <p>Congratulations! Your certificate has been issued successfully.</p>
-                        <p>Certificate Number : {{number}}
-                    </p>
-                    <p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="https://{{site_url}}/certify/{{number}}" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> Download Certificate Here!</a>
-                            <p style="font:15px/1.25em 'Helvetica Neue',Arial,Helvetica;margin-bottom:0;text-align:center"> <a href="https://{{site_url}}/certificate/verify" style="border-radius:3px;background:#3aa54c;color:#fff;display:block;font-weight:700;font-size:16px;line-height:1.25em;margin:24px auto 6px;padding:10px 18px;text-decoration:none;width:215px" target="_blank"> E-Verify Certificate Here!</a>
-                        </p> 
-                        <br> <br>
+                    <div style="background: #f6f7f8; border-radius: 3px">
+                      <br />
+                      <p>
+                        Congratulations, Your certificate has been issued
+                        successfully!
+                      </p>
+                      <p>Certificate Number : {{number}}</p>
+                      <p
+                        style="
+                          font: 15px/1.25em 'Helvetica Neue', Arial, Helvetica;
+                          margin-bottom: 0;
+                          text-align: center;
+                        "
+                      >
+                        <a
+                          href="https://{{site_url}}/certify/{{number}}"
+                          style="
+                            border-radius: 3px;
+                            background: #3aa54c;
+                            color: #fff;
+                            display: block;
+                            font-weight: 700;
+                            font-size: 16px;
+                            line-height: 1.25em;
+                            margin: 24px auto 6px;
+                            padding: 10px 18px;
+                            text-decoration: none;
+                            width: 215px;
+                          "
+                          target="_blank"
+                        >
+                          Download Certificate Here!</a
+                        >
+                      </p>
+                      <p
+                        style="
+                          font: 15px/1.25em 'Helvetica Neue', Arial, Helvetica;
+                          margin-bottom: 0;
+                          text-align: center;
+                        "
+                      >
+                        <a
+                          href="https://{{site_url}}/certificate/verify"
+                          style="
+                            border-radius: 3px;
+                            background: #3aa54c;
+                            color: #fff;
+                            display: block;
+                            font-weight: 700;
+                            font-size: 16px;
+                            line-height: 1.25em;
+                            margin: 24px auto 6px;
+                            padding: 10px 18px;
+                            text-decoration: none;
+                            width: 215px;
+                          "
+                          target="_blank"
+                        >
+                          E-Verify Certificate Here!</a
+                        >
+                      </p>
+                      <p>
+                        We would like to assure you that your data is safe with
+                        us and is used for one reason alone: Verification of
+                        your Documents. We do not and will never share your data
+                        with anyone.
+                      </p>
+                      <p>
+                        In case you are having trouble reaching your certificate
+                        please copy and paste below URL
+                      </p>
+                      <p>
+                        <a href="https://{{site_url}}/certify/{{number}}">
+                          https://{{site_url}}/certify/{{number}}
+                        </a>
+                      </p>
                     </div>
-                    <p style="font:14px/1.25em 'Helvetica Neue',Arial,Helvetica;color:#333"> <strong>What's CGV?</strong> We generate and verify certificates online which also includes a backend dashboard. Click to know more. <a href="https://github.com/vigneshshettyin/Flask-Generate-Certificate/" style="color:#306f9c;text-decoration:none;font-weight:bold" target="_blank">Learn more »</a></p></td></tr></tbody></table></td></tr></tbody></table></body></html>
+
+                    <p
+                      style="
+                        font: 14px/1.25em 'Helvetica Neue', Arial, Helvetica;
+                        color: #333;
+                      "
+                    >
+                      This is a open-source service provided free of cost. Any
+                      spam emails please report at
+                      <a href="mailto:report-spam-cgv@vigneshcodes.in"
+                        >report-spam-cgv@vigneshcodes.in</a
+                      >
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

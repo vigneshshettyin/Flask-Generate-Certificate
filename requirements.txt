@@ -4,7 +4,7 @@ autopep8==1.6.0
 blinker==1.4
 boto3
 botocore
-certifi==2020.12.5
+certifi==2022.6.15
 chardet==4.0.0
 click==8.0.3
 cloudinary==1.29.0

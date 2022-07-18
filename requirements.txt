@@ -1,7 +1,7 @@
 alembic==1.7.3
 aniso8601==9.0.1
 autopep8==1.6.0
-blinker==1.4
+blinker==1.5
 boto3
 botocore
 certifi==2020.12.5

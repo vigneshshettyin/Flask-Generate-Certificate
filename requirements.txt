@@ -5,7 +5,7 @@ blinker==1.4
 boto3
 botocore
 certifi==2022.12.7
-chardet==4.0.0
+chardet==5.1.0
 click==8.0.3
 cloudinary==1.30.0
 colorama==0.4.6

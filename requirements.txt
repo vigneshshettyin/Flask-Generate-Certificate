@@ -49,4 +49,4 @@ starkbank-ecdsa==2.0.2
 toml==0.10.2
 urllib3==1.26.13
 webargs==8.1.0
-Werkzeug==2.0.3
+Werkzeug==2.2.3

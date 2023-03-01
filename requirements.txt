@@ -33,7 +33,7 @@ Pillow==9.3.0
 psycopg2==2.9.1
 pycodestyle==2.10.0
 python-dateutil==2.8.2
-python-decouple==3.6
+python-decouple==3.8
 python-dotenv==0.21.0
 python-editor==1.0.4
 python-http-client==3.3.7

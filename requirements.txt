@@ -25,7 +25,7 @@ jmespath==0.10.0
 Mako==1.2.4
 MarkupSafe==2.0.1
 marshmallow==3.19.0
-mysqlclient==2.0.3
+mysqlclient==2.2.4
 oauthlib==3.2.2
 passlib==1.7.4
 pdfkit==1.0.0
